@@ -1,0 +1,31 @@
+.gitignore
+  s_a211b7c4e58be4::t_7d2992119a9ca5 1-24
+.oxlintrc.json
+  s_a211b7c4e58be4::t_d3fba10bbc4a7f 1-8
+assets/index-BvVbGzXr.js
+  s_a211b7c4e58be4::t_b961d0dca12751 1-67
+assets/index-DO4xdqoj.css
+  s_a211b7c4e58be4::t_4fc0ba158b22aa 1
+favicon.svg
+  s_a211b7c4e58be4::t_e29f33f73cca66 1
+icons.svg
+  s_a211b7c4e58be4::t_ee9f61695ee29d 1-24
+index.html
+  s_a211b7c4e58be4::t_20022aaeb788bb 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "a9614a3dd5a85f4b0022332ae33fd39cc505aad0",
+  "prompts": {},
+  "sessions": {
+    "s_a211b7c4e58be4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6e150d97-8212-4593-b8af-54a2ad65cc0d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
