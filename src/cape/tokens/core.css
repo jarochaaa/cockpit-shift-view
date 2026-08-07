@@ -1,0 +1,343 @@
+/**
+ * Do not edit directly
+ */
+
+[data-theme$="b2b"] {
+  --cp-color-jacaranda-grey-10: #CECED4;
+  --cp-color-jacaranda-grey-20: #b9bac1;
+  --cp-color-jacaranda-grey-30: #93949D;
+  --cp-color-jacaranda-grey-40: #7F8088;
+  --cp-color-jacaranda-grey-50: #6C6D73;
+  --cp-color-jacaranda-grey-60: #56565C;
+  --cp-color-jacaranda-grey-70: #434347;
+  --cp-color-jacaranda-grey-80: #343437;
+  --cp-color-jacaranda-grey-90: #28282A;
+  --cp-color-jacaranda-grey-95: #1E1E20;
+  --cp-color-jacaranda-grey-99: #141415;
+  --cp-color-jacaranda-grey-100: #000000;
+  --cp-color-jacaranda-grey-05: #E9EAEC;
+  --cp-color-jacaranda-grey-01: #F4F5F6;
+  --cp-color-jacaranda-grey-00: #FFFFFF;
+  --cp-color-cape-warning-10: #FFF1C2;
+  --cp-color-cape-warning-20: #FFEAA3;
+  --cp-color-cape-warning-30: #FFE285;
+  --cp-color-cape-warning-40: #FFD95C;
+  --cp-color-cape-warning-50: #FFCF33;
+  --cp-color-cape-warning-60: #FFC400;
+  --cp-color-cape-warning-70: #E5A100;
+  --cp-color-cape-warning-80: #BE7F00;
+  --cp-color-cape-warning-90: #8F5D00;
+  --cp-color-cape-warning-95: #664200;
+  --cp-color-cape-warning-05: #FFF8DF;
+  --cp-color-cape-success-10: #BDE5D0;
+  --cp-color-cape-success-20: #95D5B2;
+  --cp-color-cape-success-30: #6CC695;
+  --cp-color-cape-success-40: #31B46E;
+  --cp-color-cape-success-50: #05A34E;
+  --cp-color-cape-success-60: #048A42;
+  --cp-color-cape-success-70: #047538;
+  --cp-color-cape-success-80: #03582A;
+  --cp-color-cape-success-90: #024420;
+  --cp-color-cape-success-95: #012D15;
+  --cp-color-cape-success-05: #E5F5EC;
+  --cp-color-cape-danger-10: #F9D9D2;
+  --cp-color-cape-danger-20: #F4B7AB;
+  --cp-color-cape-danger-30: #EF9381;
+  --cp-color-cape-danger-40: #EC6B51;
+  --cp-color-cape-danger-50: #E54B2C;
+  --cp-color-cape-danger-60: #D62D0B;
+  --cp-color-cape-danger-70: #BF280A;
+  --cp-color-cape-danger-80: #A62309;
+  --cp-color-cape-danger-90: #871C07;
+  --cp-color-cape-danger-95: #601405;
+  --cp-color-cape-danger-05: #FCEBE8;
+  --cp-color-cape-highlight-10: #E1D6F0;
+  --cp-color-cape-highlight-20: #CBBAE8;
+  --cp-color-cape-highlight-30: #B59DDC;
+  --cp-color-cape-highlight-40: #9C7CCF;
+  --cp-color-cape-highlight-50: #7C53C1;
+  --cp-color-cape-highlight-60: #6635B6;
+  --cp-color-cape-highlight-70: #522B92;
+  --cp-color-cape-highlight-80: #45237B;
+  --cp-color-cape-highlight-90: #351C5F;
+  --cp-color-cape-highlight-95: #261343;
+  --cp-color-cape-highlight-05: #F7F5FC;
+  --cp-color-fast-red-10: #F1B4B7;
+  --cp-color-fast-red-20: #EB8F93;
+  --cp-color-fast-red-30: #E46A6E;
+  --cp-color-fast-red-40: #DD444A;
+  --cp-color-fast-red-50: #D61F26;
+  --cp-color-fast-red-60: #B21A20;
+  --cp-color-fast-red-70: #97161A;
+  --cp-color-fast-red-80: #7C1316;
+  --cp-color-fast-red-90: #610E11;
+  --cp-color-fast-red-05: #F8DADB;
+  --cp-font-family-roboto-ltr: Roboto, var(--cp-font-fallback);
+  --cp-font-family-outfit-ltr: Outfit, var(--cp-font-fallback);
+  --cp-font-family-noto-sans-ltr: 'Noto Sans', var(--cp-font-fallback);
+  --cp-font-family-figtree-ltr: Figtree, var(--cp-font-fallback);
+  --cp-font-family-glovo-sans-ltr: 'Glovo Sans', var(--cp-font-fallback);
+  --cp-font-family-noto-sans-rtl: 'Noto Sans Arabic', var(--cp-font-fallback);
+  --cp-font-size-mini: 8px;
+  --cp-font-size-tiny: 10px;
+  --cp-font-size-xsmall: 12px;
+  --cp-font-size-small: 14px;
+  --cp-font-size-medium: 16px;
+  --cp-font-size-large: 20px;
+  --cp-font-size-xlarge: 24px;
+  --cp-font-size-2xlarge: 30px;
+  --cp-font-size-3xlarge: 36px;
+  --cp-font-size-4xlarge: 48px;
+  --cp-font-size-5xlarge: 56px;
+  --cp-font-weight-book: Book;
+  --cp-font-weight-regular: 400;
+  --cp-font-weight-medium: 500;
+  --cp-font-weight-semi-bold: 600;
+  --cp-font-weight-bold: 700;
+  --cp-font-weight-extra-bold: 800;
+  --cp-font-weight-black: 900;
+  --cp-font-line-height-tighter: 1.25;
+  --cp-font-line-height-tight: 1.34;
+  --cp-font-line-height-snug: 1.45;
+  --cp-font-line-height-normal: 1.5;
+  --cp-font-line-height-loose: 1.6;
+  --cp-font-letter-spacing-none: 0;
+  --cp-font-letter-spacing-small: 0.2;
+  --cp-font-letter-spacing-medium: 0.3;
+  --cp-font-letter-spacing-large: 0.4;
+  --cp-font-fallback: system-ui, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  --cp-spacing-none: 0;
+  --cp-spacing-tiny: 2px;
+  --cp-spacing-xsmall: 4px;
+  --cp-spacing-small: 8px;
+  --cp-spacing-medium: 12px;
+  --cp-spacing-large: 16px;
+  --cp-spacing-xlarge: 20px;
+  --cp-spacing-2xlarge: 24px;
+  --cp-spacing-3xlarge: 32px;
+  --cp-spacing-4xlarge: 36px;
+  --cp-spacing-5xlarge: 40px;
+  --cp-spacing-6xlarge: 48px;
+  --cp-spacing-7xlarge: 56px;
+  --cp-border-radius-none: 0;
+  --cp-border-radius-tiny: 2px;
+  --cp-border-radius-small: 4px;
+  --cp-border-radius-medium: 6px;
+  --cp-border-radius-large: 8px;
+  --cp-border-radius-xlarge: 12px;
+  --cp-border-radius-2xlarge: 16px;
+  --cp-border-radius-3xlarge: 20px;
+  --cp-border-radius-4xlarge: 24px;
+  --cp-border-radius-pill: 200px;
+  --cp-border-width-none: 0;
+  --cp-border-width-thin: 1px;
+  --cp-border-width-small: 1.5px;
+  --cp-border-width-medium: 2px;
+  --cp-border-width-thick: 4px;
+  --cp-elevation-low-onlight: 0 2px 8px 0 rgba(20, 20, 21, 0.08);
+  --cp-elevation-low-ondark: 0 2px 8px 0 rgba(0, 0, 0, 0.72);
+  --cp-elevation-high-onlight: 0 2px 16px 0 rgba(20, 20, 21, 0.12);
+  --cp-elevation-high-ondark: 0 4px 12px 0 rgba(0, 0, 0, 0.88);
+  --cp-elevation-highest-onlight: 0 4px 24px 0 rgba(20, 20, 21, 0.16);
+  --cp-elevation-highest-ondark: 0 8px 16px 0 rgba(0, 0, 0, 0.96);
+  --cp-opacity-lowest: 0;
+  --cp-opacity-low: 0.08;
+  --cp-opacity-normal: 0.16;
+  --cp-opacity-high: 0.24;
+  --cp-opacity-highest: 0.96;
+  --cp-sizing-mini: 8px;
+  --cp-sizing-tiny: 12px;
+  --cp-sizing-xsmall: 16px;
+  --cp-sizing-small: 20px;
+  --cp-sizing-medium: 24px;
+  --cp-sizing-large: 32px;
+  --cp-sizing-xlarge: 40px;
+  --cp-sizing-2xlarge: 48px;
+  --cp-sizing-3xlarge: 56px;
+  --cp-sizing-4xlarge: 64px;
+  --cp-sizing-5xlarge: 80px;
+  --cp-breakpoint-xsmall: 0px;
+  --cp-breakpoint-small: 375px;
+  --cp-breakpoint-medium: 768px;
+  --cp-breakpoint-large: 1024px;
+  --cp-breakpoint-xlarge: 1440px;
+  --cp-breakpoint-2xlarge: 1920px;
+  --cp-z-index-auto: auto; /* auto z-index */
+  --cp-z-index-top: 9999; /* Top z-index is for elements which appears on top of all others such as a dropdown leaf or tooltip on a dialog. */
+  --cp-z-index-overlay: 500; /* Overlay z-index is for overlay components such as dialogs and side sheets. */
+  --cp-z-index-toast: 400; /* Toast z-index is for messages that appear on top of pages. */
+  --cp-z-index-floating: 300; /* Floating z-index is for components which have sticky attributes such as floating buttons, headers, navigation bars etc. */
+  --cp-z-index-high: 200; /* High z-index is for tooltips and dropdowns that appear on top of default level components. */
+  --cp-z-index-default: 100; /* The default z-index for components and also the elements inside components. */
+  --cp-z-index-bottom: 0; /* Bottom z-index for is for page or surfaces. */
+  --cp-z-index-deep: -9999; /* Deep z-index is used to stack something behind everything else. */
+  --cp-focus-inset-high: inset 0 0 0 2px #000000, inset 0 0 0 4px #FFFFFF;
+  --cp-focus-inset-low: inset 0 0 0 2px #FFFFFF, inset 0 0 0 4px #000000;
+  --cp-focus-outset-high: 0 0 0 3px #FFFFFF, 0 0 0 5px #000000;
+  --cp-focus-center-high: 0 0 0 2px #000000, 0 0 0 4px #FFFFFF;
+  --cp-focus-center-high-danger: 0 0 0 2px #000000, 0 0 0 4px #FFFFFF;
+  --cp-focus-center-low: 0 0 0 2px #FFFFFF, 0 0 0 4px #000000;
+  --cp-focus-center-low-danger: 0 0 0 2px #FFFFFF, 0 0 0 4px #000000;
+  --cp-focus-outset-low: 0 0 0 3px #000000, 0 0 0 5px #FFFFFF;
+  --cp-base-spacing-none: 0;
+  --cp-base-spacing-tiny: 2px;
+  --cp-base-spacing-xsmall: 4px;
+  --cp-base-spacing-small: 8px;
+  --cp-base-spacing-medium: 12px;
+  --cp-base-spacing-large: 16px;
+  --cp-base-spacing-xlarge: 20px;
+  --cp-base-spacing-2xlarge: 24px;
+  --cp-base-spacing-3xlarge: 32px;
+  --cp-base-spacing-4xlarge: 40px;
+  --cp-base-spacing-5xlarge: 48px;
+  --cp-base-sizing-mini: 12px;
+  --cp-base-sizing-tiny: 16px;
+  --cp-base-sizing-xsmall: 20px;
+  --cp-base-sizing-small: 24px;
+  --cp-base-sizing-medium: 32px;
+  --cp-base-sizing-large: 48px;
+  --cp-base-sizing-xlarge: 56px;
+  --cp-base-sizing-2xlarge: 64px;
+  --cp-base-border-radius-none: 0; /* Border radius value used in sharp base elements */
+  --cp-base-border-radius-small: 6px; /* Border radius value used in smallest children elements */
+  --cp-base-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-base-border-radius-large: 12px; /* Border radius value used in smaller containers */
+  --cp-base-border-radius-xlarge: 20px; /* Border radius value used in mother containers such as cards, dialogs or overlays */
+  --cp-base-border-width-xsmall: 0; /* Default border width for surface elements */
+  --cp-base-border-width-small: 1px; /* Default border width for surface elements */
+  --cp-base-border-width-medium: 2px; /* Border width for active or focused states of surface elements */
+  --cp-base-border-width-large: 4px; /* Border width for stong highlights on surface elements */
+  --cp-base-opacity-lowest: 0;
+  --cp-base-opacity-low: 0.08;
+  --cp-base-opacity-normal: 0.16;
+  --cp-base-opacity-high: 0.24;
+  --cp-base-opacity-highest: 0.96;
+  --cp-base-z-index-auto: auto; /* auto z-index */
+  --cp-base-z-index-top: 9999; /* Top z-index is for elements which appears on top of all others such as a dropdown leaf or tooltip on a dialog. */
+  --cp-base-z-index-overlay: 500; /* Overlay z-index is for overlay components such as dialogs and side sheets. */
+  --cp-base-z-index-toast: 400; /* Toast z-index is for messages that appear on top of pages. */
+  --cp-base-z-index-floating: 300; /* Floating z-index is for components which have sticky attributes such as floating buttons, headers, navigation bars etc. */
+  --cp-base-z-index-high: 200; /* High z-index is for tooltips and dropdowns that appear on top of default level components. */
+  --cp-base-z-index-default: 100; /* The default z-index for components and also the elements inside components. */
+  --cp-base-z-index-bottom: 0; /* Bottom z-index for is for page or surfaces. */
+  --cp-base-z-index-deep: -9999; /* Deep z-index is used to stack something behind everything else. */
+  --cp-base-breakpoint-xsmall: 0px; /* Breakpoint for smallest mobile screens which are less than 374px wide */
+  --cp-base-breakpoint-small: 375px; /* Breakpoint for small screens which are between 375px to 767px wide */
+  --cp-base-breakpoint-medium: 768px; /* Breakpoint for medium screens which are between 768px to 1023px wide */
+  --cp-base-breakpoint-large: 1024px; /* Breakpoint for large screens which are between 1024px to 1439px wide */
+  --cp-base-breakpoint-xlarge: 1440px; /* Breakpoint for extra large screens which are between 1440px to 1919px wide */
+  --cp-base-breakpoint-2xlarge: 1920px; /* Breakpoint for largest screens which are wider than 1920 px */
+  --cp-action-sizing-mini: 20px;
+  --cp-action-sizing-tiny: 24px;
+  --cp-action-sizing-xsmall: 32px;
+  --cp-action-sizing-small: 40px;
+  --cp-action-sizing-medium: 48px;
+  --cp-action-sizing-large: 56px;
+  --cp-action-border-radius-none: 0; /* Border radius value used in sharp action elements */
+  --cp-action-border-radius-small: 6px; /* Border radius value used in smallest children elements */
+  --cp-action-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-action-border-radius-large: 12px; /* Border radius value used in smaller containers */
+  --cp-action-border-radius-pill: 200px; /* Border radius value used in chips and round elements */
+  --cp-action-border-width-small: 1px; /* Default border width for action elements */
+  --cp-action-border-width-medium: 2px; /* Border width for active or focused states of action elements */
+  --cp-action-border-width-large: 4px; /* Border width for stong highlights on action elements */
+  --cp-action-spacing-none: 0;
+  --cp-action-spacing-tiny: 2px;
+  --cp-action-spacing-xsmall: 4px;
+  --cp-action-spacing-small: 8px;
+  --cp-action-spacing-medium: 12px;
+  --cp-action-spacing-large: 16px;
+  --cp-action-spacing-xlarge: 20px;
+  --cp-action-spacing-2xlarge: 24px;
+  --cp-control-sizing-mini: 16px;
+  --cp-control-sizing-tiny: 24px;
+  --cp-control-sizing-xsmall: 32px;
+  --cp-control-sizing-small: 40px;
+  --cp-control-sizing-medium: 48px;
+  --cp-control-sizing-large: 56px;
+  --cp-control-border-radius-none: 0; /* Border radius value used in sharp control elements */
+  --cp-control-border-radius-xsmall: 4px; /* Border radius value used in the smallest variants of control elements */
+  --cp-control-border-radius-small: 6px; /* Border radius value used in smallest children elements */
+  --cp-control-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-control-border-radius-large: 12px; /* Border radius value used in smaller containers */
+  --cp-control-border-radius-pill: 200px; /* Border radius value used in chips and round elements */
+  --cp-control-border-width-xsmall: 1px; /* Default border width for control elements */
+  --cp-control-border-width-small: 1px; /* Default border width for form elements */
+  --cp-control-border-width-medium: 2px; /* Border width for active or focused states of control elements */
+  --cp-control-border-width-large: 4px; /* Border width for stong highlights on control elements */
+  --cp-control-spacing-none: 0;
+  --cp-control-spacing-tiny: 2px;
+  --cp-control-spacing-xsmall: 4px;
+  --cp-control-spacing-small: 8px;
+  --cp-control-spacing-medium: 12px;
+  --cp-control-spacing-large: 16px;
+  --cp-control-spacing-xlarge: 20px;
+  --cp-control-spacing-2xlarge: 24px;
+  --cp-search-border-radius-small: 6px; /* Border radius value used in smallest children elements */
+  --cp-search-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-search-border-width-xsmall: 1px; /* The default border width of small sized icons */
+  --cp-search-border-width-small: 1px; /* The default border width of small sized icons */
+  --cp-search-border-width-medium: 1px; /* The default border width for medium sized icons */
+  --cp-motion-duration-50: 50ms;
+  --cp-motion-duration-100: 100ms;
+  --cp-motion-duration-150: 150ms;
+  --cp-motion-duration-200: 200ms;
+  --cp-motion-duration-250: 250ms;
+  --cp-motion-duration-300: 300ms;
+  --cp-motion-duration-400: 400ms;
+  --cp-motion-duration-500: 500ms;
+  --cp-motion-duration-700: 700ms;
+  --cp-motion-duration-800: 800ms;
+  --cp-motion-duration-1000: 1000ms;
+  --cp-motion-duration-2000: 2000ms;
+  --cp-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+  --cp-motion-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --cp-motion-easing-easein: cubic-bezier(0.4, 0.0, 1, 1);
+  --cp-motion-easing-easeout: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --cp-motion-easing-easeinout: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --cp-motion-easing-emphasized: cubic-bezier(0.2, 0.0, 0, 1);
+  --cp-motion-easing-overshoot: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --cp-motion-easing-spring: cubic-bezier(0.32, 1.43, 0.65, 0.93);
+  --cp-text-display2xlarge: 700 2.25rem/1.25 Figtree, var(--cp-font-fallback); /* Largest display text style. Reserved for main titles and headlines and used only once per screen */
+  --cp-text-display-xlarge: 700 1.875rem/1.25 Figtree, var(--cp-font-fallback); /* Largest display text style. Reserved for main titles and headlines and used only once per screen */
+  --cp-text-display-large: 700 1.5rem/1.5 Figtree, var(--cp-font-fallback); /* Second largest display text style. Used as section headings or to emphasise key information on a screen (e.g. dashboard statistics) */
+  --cp-text-display-medium: 700 1.25rem/1.5 Figtree, var(--cp-font-fallback); /* Third largest display text style. Used as section headings or to emphasise important information on a screen (e.g. dashboard statistics) */
+  --cp-text-display-small: 700 1rem/1.5 Figtree, var(--cp-font-fallback); /* Smalles display text style. Used when an extra level or heading hierarchy is needed (e.g. subsections titles). */
+  --cp-text-display-xsmall: 700 0.875rem/1.5 Figtree, var(--cp-font-fallback); /* Smallest display text style. Used when an extra level or heading hierarchy is needed (e.g. subsections titles). */
+  --cp-text-subtitle-xlarge: 600 1.25rem/1.5 Figtree, var(--cp-font-fallback); /* Subtitle style used as larger heading sinside containers */
+  --cp-text-subtitle-large: 600 1rem/1.5 Figtree, var(--cp-font-fallback); /* Subtitle style used as headings inside containers */
+  --cp-text-subtitle-medium: 600 0.875rem/1.5 Figtree, var(--cp-font-fallback); /* Subtitle style used as medium headings inside containers */
+  --cp-text-subtitle-small: 600 0.75rem/1.5 Figtree, var(--cp-font-fallback); /* Subtitle style used as small headings inside containers */
+  --cp-text-body-large: 500 1rem/1.5 Figtree, var(--cp-font-fallback); /* The default paragraph size used for long copy */
+  --cp-text-body-medium: 500 0.875rem/1.5 Figtree, var(--cp-font-fallback); /* The secondary paragraph size used in less prominent and short copy */
+  --cp-text-body-small: 500 0.75rem/1.5 Figtree, var(--cp-font-fallback); /* The tertiary paragraph size used only in least prominent short copy */
+  --cp-text-caption: 700 0.625rem/1.6 Figtree, var(--cp-font-fallback); /* The text style for small captions and labels */
+  --cp-icon-sizing-small: 16px; /* The default size for small icons */
+  --cp-icon-sizing-medium: 24px; /* The default size for medium icons */
+  --cp-icon-sizing-large: 32px; /* The icon size which will be used in edge cases. If teams require 32px icons, they can override the size value of medium icons to achieve this size */
+  --cp-icon-border-width-small: 1px; /* The default border width of small sized icons */
+  --cp-icon-border-width-medium: 1.5px; /* The default border width for medium sized icons */
+  --cp-icon-border-width-large: 2px; /* The border width for icons that equal or larger than 32px size. This token should be used as an override to the enlarged medium icon borders */
+  --cp-tag-border-radius-small: 6px; /* Border radius value used in smallest children elements */
+  --cp-tag-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-alert-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-alert-border-radius-large: 12px; /* Border radius value used in smaller containers */
+  --cp-form-border-radius-small: 6px; /* Border radius value used in smallest children elements */
+  --cp-form-border-radius-medium: 8px; /* Border radius value used in children elements */
+  --cp-form-border-radius-large: 12px; /* Border radius value used in smaller containers */
+  --cp-form-border-radius-pill: 200px; /* Border radius value used in chips and round elements */
+  --cp-form-border-width-xsmall: 1px; /* The default border width of small sized icons */
+  --cp-form-border-width-small: 1px; /* The default border width of small sized icons */
+  --cp-form-border-width-medium: 1px; /* The default border width for medium sized icons */
+  --cp-form-border-width-large: 2px; /* The border width for icons that equal or larger than 32px size. This token should be used as an override to the enlarged medium icon borders */
+  --cp-switch-border-width-xsmall: 0; /* Default border width for surface elements */
+  --cp-switch-border-width-small: 0; /* Default border width for surface elements */
+  --cp-switch-border-radius-small: 200px; /* Border radius value used in smallest children elements */
+  --cp-switch-border-radius-pill: 200px; /* Border radius value used in chips and round elements */
+  --cp-quantity-selector-border-radius-large: 200px;
+  --cp-tabs-border-radius-medium: 6px; /* Border radius value used in smallest children elements */
+  --cp-tabs-border-radius-large: 8px; /* Border radius value used in chips and round elements */
+  --cp-tabs-border-width-medium: 2px; /* Default border width for surface elements */
+  --cp-list-border-radius-medium: 0; /* Border radius value used in smallest children elements */
+  --cp-card-border-radius-xlarge: 12px;
+}

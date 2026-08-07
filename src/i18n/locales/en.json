@@ -1,0 +1,103 @@
+{
+  "box": {
+    "needs_attention": { "label": "Needs Attention" },
+    "people_tasks": { "label": "People & Tasks" },
+    "shift_metrics": { "label": "Shift Metrics" },
+    "orders_timing": { "label": "Orders Timing" },
+    "picker_team": { "label": "Picker Team" },
+    "sku_alerts": { "label": "SKU Alert Queue" },
+    "picker_alerts": { "label": "Picker Alerts" }
+  },
+  "chrome": {
+    "unassigned": "Unassigned",
+    "picking": "Picking",
+    "packing": "Packing",
+    "readyForRider": "Ready for Rider",
+    "vendorsOpen": "{{open}}/{{total}} open",
+    "idlePickers": "{{count}} idle pickers",
+    "lateOrders": "{{count}} orders running late",
+    "live": "LIVE"
+  },
+  "needsAttention": {
+    "empty": "Nothing needs attention — every open order is inside its promise time.",
+    "late": "Late",
+    "pendingPf": "PF pending",
+    "unassigned": "Unassigned",
+    "overdueBy": "+{{minutes}}m late"
+  },
+  "peopleTasks": {
+    "idle": "Idle",
+    "picking": "Picking",
+    "packing": "Packing",
+    "offline": "Offline",
+    "idleSince": "Idle {{minutes}}m",
+    "empty": "All {{count}} pickers idle — nothing in the queue to assign.",
+    "workingIdle": "{{working}} working · {{idle}} idle"
+  },
+  "shiftMetrics": {
+    "successfulOrders": "Successful orders",
+    "issueRate": "{{rate}} order issues",
+    "avgPrepTime": "Avg prep time",
+    "assignment": "Assignment",
+    "picking": "Picking",
+    "packing": "Packing",
+    "pfr": "PFR",
+    "updated": "Updated {{minutes}}m ago"
+  },
+  "ordersTiming": {
+    "title": "Time per order, by hour",
+    "range": {
+      "last6h": "Last 6h",
+      "last12h": "Last 12h",
+      "last24h": "Last 24h"
+    }
+  },
+  "pickerTeam": {
+    "columns": {
+      "picker": "Picker",
+      "assign": "Assign",
+      "pick": "Pick",
+      "pack": "Pack",
+      "prep": "Prep",
+      "pfr": "PFR",
+      "failRate": "Fail rate",
+      "orders": "Orders"
+    },
+    "sortedBy": "Sorted by prep time"
+  },
+  "placeholder": {
+    "reserved": "Reserved for Slice 2 — no data stream yet.",
+    "previewData": "Preview data — Slice 2, not yet live"
+  },
+  "skuAlerts": {
+    "soh": "{{soh}} on hand / {{threshold}} threshold",
+    "severity": {
+      "warning": "Low",
+      "error": "Critical"
+    }
+  },
+  "ordersTimingChart": {
+    "style": {
+      "bars": "Bars",
+      "pie": "Pie"
+    },
+    "pieLegend": {
+      "assignment": "Assignment",
+      "picking": "Picking",
+      "packing": "Packing"
+    }
+  },
+  "grid": {
+    "span": {
+      "1": "S",
+      "2": "M",
+      "3": "L"
+    },
+    "spanLabel": {
+      "1": "Small — 1 column",
+      "2": "Medium — 2 columns",
+      "3": "Large — 3 columns"
+    },
+    "dragHandle": "Drag to reorder {{box}}"
+  }
+}

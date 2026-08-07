@@ -1,0 +1,298 @@
+@import './cape/cape.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cp-base-color-lowest);
+  color: var(--cp-text-color-primary);
+  font-family: Roboto, var(--cp-font-fallback);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  padding: var(--cp-spacing-2xlarge);
+}
+
+/* Chrome — fixed, never part of the draggable grid (IA §1) */
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--cp-base-color-flat);
+  border-bottom: 1px solid var(--cp-border-color-normal);
+  padding: var(--cp-spacing-large) var(--cp-spacing-2xlarge);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cp-spacing-medium);
+}
+
+.chrome__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--cp-spacing-small);
+}
+
+.chrome__title {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+}
+
+.chrome__badges {
+  display: flex;
+  gap: var(--cp-spacing-small);
+}
+
+.chrome__stages {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-2xlarge);
+  flex-wrap: wrap;
+}
+
+.chrome__live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cp-spacing-xsmall);
+  font: var(--cp-text-caption);
+  color: var(--cp-feedback-color-danger-high);
+}
+
+.chrome__stage-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--cp-spacing-small) var(--cp-spacing-large);
+  border-radius: var(--cp-base-border-radius-medium);
+}
+
+.chrome__stage-cell--warning { background: var(--cp-feedback-color-warning-low); }
+.chrome__stage-cell--warning .cp-display-small { color: var(--cp-feedback-color-warning-accent-low); }
+.chrome__stage-cell--info { background: var(--cp-feedback-color-info-low); }
+.chrome__stage-cell--info .cp-display-small { color: var(--cp-feedback-color-info-accent-low); }
+.chrome__stage-cell--branded { background: var(--cp-feedback-color-branded-low); }
+.chrome__stage-cell--branded .cp-display-small { color: var(--cp-feedback-color-branded-accent-low); }
+.chrome__stage-cell--success { background: var(--cp-feedback-color-success-low); }
+.chrome__stage-cell--success .cp-display-small { color: var(--cp-feedback-color-success-accent-low); }
+
+/* Box grid — flex-wrap, not CSS Grid: a 3-col grid's "span 2" is 2/3 (66%),
+   not a true half. Flex-basis percentages give real third/half/full, and
+   align-items:stretch (the default) makes each row's boxes equal-height to
+   its tallest member automatically — no JS needed for "adapt to siblings". */
+.box-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--cp-spacing-2xlarge);
+}
+
+.box-grid-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.box-grid-item--span-3 { flex: 0 0 100%; }
+.box-grid-item--span-2 { flex: 0 0 calc(50% - var(--cp-spacing-2xlarge) / 2); }
+.box-grid-item--span-1 { flex: 0 0 calc(33.3333% - var(--cp-spacing-2xlarge) * 2 / 3); }
+
+.box-grid-item:has(.cp-card--dragging) {
+  z-index: 50;
+}
+
+.grid-box-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  transition: box-shadow 0.15s ease;
+}
+
+@media (max-width: 1279px) {
+  /* Thirds don't work at tablet width — collapse S to a half, same as M. */
+  .box-grid-item--span-1 {
+    flex-basis: calc(50% - var(--cp-spacing-2xlarge) / 2);
+  }
+}
+
+@media (max-width: 767px) {
+  .box-grid-item--span-1,
+  .box-grid-item--span-2,
+  .box-grid-item--span-3 {
+    flex-basis: 100%;
+  }
+  main {
+    padding: var(--cp-spacing-large);
+  }
+  /* Span toggle is moot at 1 column — hiding it also fixes header overflow (§3 stress test) */
+  .box-header .cp-segmented-control {
+    display: none;
+  }
+}
+
+.box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cp-spacing-medium);
+  margin-bottom: var(--cp-spacing-large);
+  cursor: grab;
+  touch-action: none;
+  flex-shrink: 0;
+}
+
+.box-header:active {
+  cursor: grabbing;
+}
+
+.box-header__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+}
+
+.box-header__drag-icon {
+  color: var(--cp-icon-color-tertiary);
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.box-body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* L: alone in its row, so height is purely its own content — no cap. */
+.grid-box-card--fluid .box-body {
+  overflow: visible;
+}
+
+/* M/S: shares a row, height comes from the tallest sibling (flex stretch
+   above). The cap is a safety net so one long list (e.g. Picker Team) can't
+   blow the whole row out and waste space in its shorter row-mates. */
+.grid-box-card--capped .box-body {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+/* Needs Attention */
+.needs-attention-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cp-spacing-medium);
+}
+
+.needs-attention-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cp-spacing-medium);
+  padding: var(--cp-spacing-small) var(--cp-spacing-medium);
+  background: var(--cp-base-color-lowest);
+  border-left: 3px solid var(--cp-feedback-color-danger-high);
+  border-radius: var(--cp-base-border-radius-small);
+}
+
+.needs-attention-row__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+}
+
+/* People & Tasks */
+.people-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cp-spacing-medium);
+}
+
+.people-row {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+}
+
+.people-row__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Shift Metrics */
+.shift-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--cp-spacing-2xlarge);
+  margin-bottom: var(--cp-spacing-small);
+}
+
+.shift-metrics-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cp-spacing-tiny);
+}
+
+/* 2x cp-text-display-large's 1.5rem — bigger than any token Cape defines,
+   by explicit request, so this is a one-off override, not a new Cape size. */
+.shift-metrics-cell .metric-hero-value {
+  font-size: 3rem;
+  line-height: 1.1;
+}
+
+/* Orders Timing chart — 220px is right when the box is alone (L) and sized
+   to the chart itself; when it shares a row (M/S) the box's height comes
+   from its taller sibling instead, so the chart fills that fully rather
+   than leaving dead space below a fixed 220px. */
+.orders-timing-chart {
+  height: 220px;
+}
+
+.grid-box-card--capped .orders-timing-chart {
+  height: 100%;
+}
+
+/* Picker Team table */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.picker-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+  white-space: nowrap;
+}
+
+.sort-header {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Placeholder boxes (SKU/Picker alerts — reserved for Slice 2) */
+.placeholder-box {
+  border: 1px dashed var(--cp-border-color-high);
+  border-radius: var(--cp-base-border-radius-small);
+  padding: var(--cp-spacing-2xlarge);
+  text-align: center;
+}
