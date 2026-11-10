@@ -2,8 +2,12 @@ import type { Scenario } from './domain/types';
 
 export type Lang = 'en' | 'es' | 'ar';
 export type TimingRange = '1h' | '6h' | '12h' | '24h';
+export const RANGES: TimingRange[] = ['1h', '6h', '12h', '24h'];
+export const RANGE_HOURS: Record<TimingRange, number> = { '1h': 1, '6h': 6, '12h': 12, '24h': 24 };
 export type TeamSortKey = 'prep' | 'avgAssignmentSeconds' | 'avgPickingSeconds' | 'avgPackingSeconds' | 'pfr' | 'failRate' | 'ordersCount';
 export type SortDir = 'asc' | 'desc';
+/** 1 = Cockpit Polish 1B (talabat); 2 = DMarts Portal layout (Cape default theme). Same content. */
+export type Version = 1 | 2;
 
 // Cockpit Polish 1B: a now bar over a shift board. The layout is fixed, so the
 // state only holds what the manager can change plus the mock-data scenario.
@@ -12,6 +16,7 @@ export interface State {
   scenario: Scenario;
   sort: { key: TeamSortKey; dir: SortDir };
   lang: Lang;
+  version: Version;
 }
 
 export type Action =
@@ -19,6 +24,7 @@ export type Action =
   | { type: 'scenario'; scenario: Scenario }
   | { type: 'sort'; key: TeamSortKey }
   | { type: 'lang'; lang: Lang }
+  | { type: 'version'; version: Version }
   | { type: 'jump'; preset: string };
 
 const DEFAULT_SORT = { key: 'prep', dir: 'desc' } as const;
@@ -28,6 +34,7 @@ export const initialState: State = {
   scenario: 'normal',
   sort: DEFAULT_SORT,
   lang: 'en',
+  version: 1,
 };
 
 function apply(s: State, a: Action): State {
@@ -41,11 +48,13 @@ function apply(s: State, a: Action): State {
       return { ...s, sort: s.sort.key === a.key ? { key: a.key, dir: s.sort.dir === 'desc' ? 'asc' : 'desc' } : { key: a.key, dir: 'desc' } };
     case 'lang':
       return { ...s, lang: a.lang };
+    case 'version':
+      return { ...s, version: a.version };
     case 'jump': {
       const preset = PRESETS.find((p) => p.id === a.preset);
       if (!preset) return s;
-      // Presets are action replays through this same reducer; the language survives the jump.
-      return preset.actions.reduce(apply, { ...initialState, lang: s.lang });
+      // Presets are action replays through this same reducer; the language and the version survive the jump.
+      return preset.actions.reduce(apply, { ...initialState, lang: s.lang, version: s.version });
     }
   }
 }

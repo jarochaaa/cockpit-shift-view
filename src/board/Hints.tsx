@@ -93,6 +93,7 @@ export function Hints({ s, code }: { s: State; code: string }) {
           ))}
         </div>
       )}
+      {s.version === 2 && <p className="tester-notes__note">Version 2: same content as Version 1, in the DMarts Portal layout on the default Cape theme. The now bar becomes the Live orders tiles; Late orders and Working now are the two lists.</p>}
       {s.lang !== 'en' && <p className="tester-notes__note">The Cockpit is in {s.lang === 'es' ? 'Spanish' : 'Arabic'}; these hints stay in English.</p>}
       <details className="edge" open={code === 'SM1'}>
         <summary>Edge cases · how to recreate them</summary>

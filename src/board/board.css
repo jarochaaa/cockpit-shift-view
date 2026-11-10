@@ -156,6 +156,21 @@ body {
     color: var(--board-cyan);
     font-size: 14px;
   }
+  .version-switch {
+    flex: none;
+    padding: 10px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--board-cyan);
+    background: var(--board-surface);
+    color: var(--board-cyan);
+    font: 600 13px/1 var(--board-font);
+    text-align: start;
+    cursor: pointer;
+  }
+  .version-switch:focus-visible {
+    outline: 2px solid var(--board-cyan);
+    outline-offset: 2px;
+  }
   .lang-switch {
     flex: none;
     display: flex;

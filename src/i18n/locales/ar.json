@@ -85,5 +85,42 @@
   "state": {
     "loading": "جارٍ التحميل…",
     "error": "تعذّر تحميل هذه البيانات. ستظهر مجددًا فور عودة الاتصال."
+  },
+  "v2": {
+    "nav": {
+      "main": "التنقل الرئيسي",
+      "overview": "نظرة عامة",
+      "orders": "الطلبات",
+      "ordersDashboard": "لوحة الطلبات",
+      "pendingApproval": "بانتظار الموافقة",
+      "inventory": "المخزون",
+      "inventoryManagement": "إدارة المخزون",
+      "stockAdjustment": "تعديل المخزون",
+      "expiry": "إدارة الصلاحية",
+      "storeActivities": "أنشطة المتجر",
+      "cycleCount": "الجرد الدوري",
+      "poReceiving": "استلام أوامر الشراء",
+      "inbound": "الوارد",
+      "outbound": "الصادر",
+      "putaway": "التخزين",
+      "tasks": "إدارة المهام",
+      "settings": "الإعدادات",
+      "pickers": "الجامعون",
+      "stores": "المتاجر والمستودعات"
+    },
+    "open": "مفتوح",
+    "closed": "مغلق",
+    "help": "المساعدة",
+    "notifications": "الإشعارات",
+    "more": "المزيد",
+    "liveOrders": "الطلبات المباشرة",
+    "lateOrders": "طلبات متأخرة",
+    "workingNow": "يعملون الآن ({{count}})",
+    "pickersWorking": "يعملون · {{idle}} غير نشطين",
+    "lateMeta": "{{stage}} · {{items}} · {{picker}}",
+    "workingMeta": "#{{order}} · {{stage}}",
+    "prepByStage": "وقت التحضير حسب المرحلة",
+    "avgPrep": "المتوسط {{value}}",
+    "pickerTeam": "فريق الجامعين ({{count}})"
   }
 }

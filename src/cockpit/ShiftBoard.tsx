@@ -6,14 +6,13 @@ import { Tag } from '../cape/Tag';
 import { fetchOrderTiming, fetchPickerTeam, fetchShiftMetrics } from '../domain/mockApi';
 import { formatPercent, formatSeconds } from '../domain/format';
 import type { FloorSnapshot, PickerTeamRow } from '../domain/types';
+import { RANGES, RANGE_HOURS } from '../state';
 import type { Action, State, TeamSortKey, TimingRange } from '../state';
 import { BoxState } from './BoxState';
 import { TimingChart } from './TimingChart';
 import type { Loaded } from './useMock';
 import { useMock } from './useMock';
 
-const RANGES: TimingRange[] = ['1h', '6h', '12h', '24h'];
-const RANGE_HOURS: Record<TimingRange, number> = { '1h': 1, '6h': 6, '12h': 12, '24h': 24 };
 const COLUMNS: TeamSortKey[] = ['prep', 'avgAssignmentSeconds', 'avgPickingSeconds', 'avgPackingSeconds', 'pfr', 'failRate', 'ordersCount'];
 
 const prepSeconds = (r: PickerTeamRow) => r.avgAssignmentSeconds + r.avgPickingSeconds + r.avgPackingSeconds;
@@ -95,77 +94,82 @@ function Timing({ s }: { s: State }) {
   );
 }
 
+/** The sortable picker team table, shared by both Cockpit versions. */
+export function PickerTeamTable({ rows, sort, onSort, floor }: { rows: PickerTeamRow[]; sort: State['sort']; onSort: (key: TeamSortKey) => void; floor: Loaded<FloorSnapshot> }) {
+  const { t } = useTranslation();
+  const status = new Map(floor.status === 'ready' ? floor.data.pickers.map((p) => [p.pickerId, p.status]) : []);
+  const { key, dir } = sort;
+  const sorted = [...rows].sort((a, b) => (dir === 'desc' ? valueOf(b, key) - valueOf(a, key) : valueOf(a, key) - valueOf(b, key)));
+  return (
+    <div className="table-scroll">
+      <table className="cp-table team-table">
+        <thead>
+          <tr>
+            <th>{t('team.columns.picker')}</th>
+            {COLUMNS.map((c) => {
+              const on = c === key;
+              const label = t(`team.columns.${c}`);
+              return (
+                <th key={c} className="num" aria-sort={on ? (dir === 'desc' ? 'descending' : 'ascending') : 'none'}>
+                  <button type="button" className={`sort-header${on ? ' sort-header--on' : ''}`} aria-label={t('team.sortBy', { column: label })} onClick={() => onSort(c)}>
+                    {on && (
+                      <span className="sort-header__arrow" aria-hidden>
+                        {dir === 'desc' ? '↓' : '↑'}
+                      </span>
+                    )}
+                    {label}
+                  </button>
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {sorted.map((r) => {
+            const st = status.get(r.pickerId);
+            return (
+              <tr key={r.pickerId}>
+                <td>
+                  <span className="team-table__picker">
+                    <span className="team-table__name">{r.displayName}</span>
+                    {(st === 'picking' || st === 'packing') && (
+                      <Tag status="success" size="small">
+                        {t(`now.stage.${st}`)}
+                      </Tag>
+                    )}
+                  </span>
+                </td>
+                {COLUMNS.map((c) => (
+                  <td key={c} className={`num team-table__${c === 'prep' ? 'prep' : c === 'failRate' ? `fail team-table__fail--${failTone(r.failRate)}` : c === 'pfr' ? 'pfr' : 'muted'}`}>
+                    {cell(r, c)}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function PickerTeam({ s, dispatch, floor }: { s: State; dispatch: Dispatch<Action>; floor: Loaded<FloorSnapshot> }) {
   const { t } = useTranslation();
   const team = useMock(fetchPickerTeam, s.scenario);
-  const status = new Map(floor.status === 'ready' ? floor.data.pickers.map((p) => [p.pickerId, p.status]) : []);
-
   return (
     <Card variant="outlined" className="board-card">
       <BoxState state={team} lines={8}>
-        {(rows) => {
-          const { key, dir } = s.sort;
-          const sorted = [...rows].sort((a, b) => (dir === 'desc' ? valueOf(b, key) - valueOf(a, key) : valueOf(a, key) - valueOf(b, key)));
-          return (
-            <>
-              <div className="board-card__head">
-                <h3 className="board-card__title">
-                  {t('team.title')} <span className="board-card__count">{rows.length}</span>
-                </h3>
-                <span className="board-card__note">{t('team.nonZero', { count: rows.filter((r) => r.failRate > 0).length })}</span>
-              </div>
-              <div className="table-scroll">
-                <table className="cp-table team-table">
-                  <thead>
-                    <tr>
-                      <th>{t('team.columns.picker')}</th>
-                      {COLUMNS.map((c) => {
-                        const on = c === key;
-                        const label = t(`team.columns.${c}`);
-                        return (
-                          <th key={c} className="num" aria-sort={on ? (dir === 'desc' ? 'descending' : 'ascending') : 'none'}>
-                            <button type="button" className={`sort-header${on ? ' sort-header--on' : ''}`} aria-label={t('team.sortBy', { column: label })} onClick={() => dispatch({ type: 'sort', key: c })}>
-                              {on && (
-                                <span className="sort-header__arrow" aria-hidden>
-                                  {dir === 'desc' ? '↓' : '↑'}
-                                </span>
-                              )}
-                              {label}
-                            </button>
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sorted.map((r) => {
-                      const st = status.get(r.pickerId);
-                      return (
-                        <tr key={r.pickerId}>
-                          <td>
-                            <span className="team-table__picker">
-                              <span className="team-table__name">{r.displayName}</span>
-                              {(st === 'picking' || st === 'packing') && (
-                                <Tag status="success" size="small">
-                                  {t(`now.stage.${st}`)}
-                                </Tag>
-                              )}
-                            </span>
-                          </td>
-                          {COLUMNS.map((c) => (
-                            <td key={c} className={`num team-table__${c === 'prep' ? 'prep' : c === 'failRate' ? `fail team-table__fail--${failTone(r.failRate)}` : c === 'pfr' ? 'pfr' : 'muted'}`}>
-                              {cell(r, c)}
-                            </td>
-                          ))}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          );
-        }}
+        {(rows) => (
+          <>
+            <div className="board-card__head">
+              <h3 className="board-card__title">
+                {t('team.title')} <span className="board-card__count">{rows.length}</span>
+              </h3>
+              <span className="board-card__note">{t('team.nonZero', { count: rows.filter((r) => r.failRate > 0).length })}</span>
+            </div>
+            <PickerTeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} floor={floor} />
+          </>
+        )}
       </BoxState>
     </Card>
   );

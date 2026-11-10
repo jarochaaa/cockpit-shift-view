@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="download-thick-box">
+<path id="Shape" d="M12 10.5V19.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_2" d="M15 16.5L12 19.5L9 16.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Rectangle-path" d="M2.25 23.25H21.75C22.5784 23.25 23.25 22.5784 23.25 21.75V8.25C23.25 7.42157 22.5784 6.75 21.75 6.75H2.25C1.42157 6.75 0.75 7.42157 0.75 8.25V21.75C0.75 22.5784 1.42157 23.25 2.25 23.25Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_3" d="M0.953 7.5L3.353 1.641C3.59388 1.0988 4.1317 0.74953 4.725 0.75H19.275C19.8679 0.749925 20.4053 1.09913 20.646 1.641L22.99 7.406" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_4" d="M12 6.75V0.75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+</g>
+</svg>

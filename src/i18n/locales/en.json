@@ -73,5 +73,42 @@
   "state": {
     "loading": "Loading…",
     "error": "Couldn't load this data. It shows up again as soon as the connection is back."
+  },
+  "v2": {
+    "nav": {
+      "main": "Main navigation",
+      "overview": "Overview",
+      "orders": "Orders",
+      "ordersDashboard": "Orders dashboard",
+      "pendingApproval": "Pending approval",
+      "inventory": "Inventory",
+      "inventoryManagement": "Inventory management",
+      "stockAdjustment": "Stock adjustment",
+      "expiry": "Expiry management",
+      "storeActivities": "Store activities",
+      "cycleCount": "Cycle count",
+      "poReceiving": "PO receiving",
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "putaway": "Putaway",
+      "tasks": "Task management",
+      "settings": "Settings",
+      "pickers": "Pickers",
+      "stores": "Stores & warehouses"
+    },
+    "open": "Open",
+    "closed": "Closed",
+    "help": "Help",
+    "notifications": "Notifications",
+    "more": "More",
+    "liveOrders": "Live orders",
+    "lateOrders": "Late orders",
+    "workingNow": "Working now ({{count}})",
+    "pickersWorking": "Working · {{idle}} idle",
+    "lateMeta": "{{stage}} · {{items}} · {{picker}}",
+    "workingMeta": "#{{order}} · {{stage}}",
+    "prepByStage": "Prep time by stage",
+    "avgPrep": "Avg {{value}}",
+    "pickerTeam": "Picker team ({{count}})"
   }
 }

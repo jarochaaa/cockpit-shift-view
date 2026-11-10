@@ -4,5 +4,8 @@ export * from './Indicator';
 export * from './Avatar';
 export * from './IconButton';
 export * from './Select';
+export * from './Button';
+export * from './Divider';
+export * from './List';
 export * from './Typography';
 import './cape.css';

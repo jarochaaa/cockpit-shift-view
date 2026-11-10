@@ -3,6 +3,7 @@ import { Avatar } from '../cape/Avatar';
 import { Indicator } from '../cape/Indicator';
 import { Tag } from '../cape/Tag';
 import type { FloorOrder, FloorSnapshot, Store } from '../domain/types';
+import { deriveLive } from './live';
 import type { Loaded } from './useMock';
 
 type Tone = 'warning' | 'info' | 'success';
@@ -38,32 +39,21 @@ function LateRow({ order, pickerName }: { order: FloorOrder; pickerName: string 
  */
 export function NowBar({ store, floor }: { store: Loaded<Store>; floor: Loaded<FloorSnapshot> }) {
   const { t } = useTranslation();
-  const f = floor.status === 'ready' ? floor.data : null;
-  const closed = store.status === 'ready' && store.data.status === 'closed';
-  const failed = store.status === 'error' || floor.status === 'error';
-  const ready = f != null && !failed;
-
-  const count = (stage: FloorOrder['stage']) => f?.orders.filter((o) => o.stage === stage).length ?? 0;
-  const late = (f?.orders.filter((o) => o.lateByMinutes != null) ?? []).sort((a, b) => b.lateByMinutes! - a.lateByMinutes!);
-  const pickers = new Map(f?.pickers.map((p) => [p.pickerId, p]));
-  const working = (f?.orders.filter((o) => o.pickerId && o.stage !== 'unassigned') ?? []).sort((a, b) => b.minutesInStage - a.minutesInStage);
-  const idle = f?.pickers.filter((p) => p.status === 'idle').length ?? 0;
-  // The live dot turns red only while there are open orders; an idle store keeps it neutral.
-  const live = ready && !closed && f.orders.length > 0;
-  const showLists = ready && !closed && (late.length > 0 || working.length > 0);
+  const { ready, closed, failed, live, showLists, late, working, idle, pickerName, stages } = deriveLive(store, floor);
+  const loadingFloor = floor.status === 'loading' && !failed;
 
   return (
     <section className="nowbar" aria-label={t('now.live')}>
       <div className="nowbar__strip">
         <span className={`nowbar__live${live ? ' nowbar__live--on' : ''}`}>
           <Indicator status={live ? 'error' : 'neutral'} size="small" />
-          {floor.status === 'loading' && !failed ? t('now.loading') : closed || failed ? t('now.offline') : t('now.live')}
+          {loadingFloor ? t('now.loading') : closed || failed ? t('now.offline') : t('now.live')}
         </span>
         <div className="nowbar__stages">
-          <StageChip ready={ready} value={count('unassigned')} label={t('now.stage.unassigned')} tone="warning" />
-          <StageChip ready={ready} value={count('picking')} label={t('now.stage.picking')} tone="warning" />
-          <StageChip ready={ready} value={count('packing')} label={t('now.stage.packing')} tone="info" />
-          <StageChip ready={ready} value={f?.readyForRider ?? 0} label={t('now.stage.readyForRider')} tone="success" />
+          <StageChip ready={ready} value={stages.unassigned} label={t('now.stage.unassigned')} tone="warning" />
+          <StageChip ready={ready} value={stages.picking} label={t('now.stage.picking')} tone="warning" />
+          <StageChip ready={ready} value={stages.packing} label={t('now.stage.packing')} tone="info" />
+          <StageChip ready={ready} value={stages.readyForRider} label={t('now.stage.readyForRider')} tone="success" />
         </div>
         <span className="nowbar__divider" aria-hidden />
         <span className="nowbar__spacer" />
@@ -92,7 +82,7 @@ export function NowBar({ store, floor }: { store: Loaded<Store>; floor: Loaded<F
             {late.length ? (
               <ul className="late-list">
                 {late.map((o) => (
-                  <LateRow key={o.orderId} order={o} pickerName={o.pickerId ? (pickers.get(o.pickerId)?.displayName ?? null) : null} />
+                  <LateRow key={o.orderId} order={o} pickerName={pickerName(o.pickerId)} />
                 ))}
               </ul>
             ) : (
@@ -104,7 +94,7 @@ export function NowBar({ store, floor }: { store: Loaded<Store>; floor: Loaded<F
             {working.length ? (
               <ul className="working-list">
                 {working.map((o) => {
-                  const name = pickers.get(o.pickerId!)?.displayName ?? '';
+                  const name = pickerName(o.pickerId) ?? '';
                   return (
                     <li key={o.orderId} className="working-row">
                       <Avatar size="small" title={name} initials={initials(name)} />

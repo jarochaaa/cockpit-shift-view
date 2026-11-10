@@ -12,7 +12,7 @@ export function Indicator({ role = 'status', status = 'branded', size = 'medium'
   return (
     <span
       role={role}
-      className={classNames('cp-indicator', `cp-indicator--${status}`, `cp-indicator--${size}`, className)}
+      className={classNames('cp-indicator', `cp-indicator--${status}`, `cp-indicator--${size}`, { 'cp-indicator--content': children != null }, className)}
       {...rest}
     >
       {children}

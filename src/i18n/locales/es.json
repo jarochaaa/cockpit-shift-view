@@ -73,5 +73,42 @@
   "state": {
     "loading": "Cargando…",
     "error": "No pudimos cargar estos datos. Aparecen de nuevo apenas vuelva la conexión."
+  },
+  "v2": {
+    "nav": {
+      "main": "Navegación principal",
+      "overview": "Resumen",
+      "orders": "Órdenes",
+      "ordersDashboard": "Dashboard de órdenes",
+      "pendingApproval": "Pendientes de aprobación",
+      "inventory": "Inventario",
+      "inventoryManagement": "Gestión de inventario",
+      "stockAdjustment": "Ajuste de stock",
+      "expiry": "Gestión de vencimientos",
+      "storeActivities": "Actividades de la tienda",
+      "cycleCount": "Conteo cíclico",
+      "poReceiving": "Recepción de PO",
+      "inbound": "Inbound",
+      "outbound": "Outbound",
+      "putaway": "Putaway",
+      "tasks": "Gestión de tareas",
+      "settings": "Configuración",
+      "pickers": "Pickers",
+      "stores": "Tiendas y almacenes"
+    },
+    "open": "Abierta",
+    "closed": "Cerrada",
+    "help": "Ayuda",
+    "notifications": "Notificaciones",
+    "more": "Ver más",
+    "liveOrders": "Órdenes en vivo",
+    "lateOrders": "Órdenes atrasadas",
+    "workingNow": "Trabajando ahora ({{count}})",
+    "pickersWorking": "Trabajando · {{idle}} inactivos",
+    "lateMeta": "{{stage}} · {{items}} · {{picker}}",
+    "workingMeta": "#{{order}} · {{stage}}",
+    "prepByStage": "Tiempo de preparación por etapa",
+    "avgPrep": "Promedio {{value}}",
+    "pickerTeam": "Equipo de pickers ({{count}})"
   }
 }

@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="warehouse-cart-worker">
+<path id="Shape" d="M19.113 9.769C17.1538 10.0409 15.7084 11.7365 15.75 13.714V17.25H17.25V22.5C17.25 22.9142 17.5858 23.25 18 23.25H21C21.4142 23.25 21.75 22.9142 21.75 22.5V17.25H23.25V13.5C23.2497 12.4381 22.7994 11.4261 22.0108 10.7149C21.2223 10.0038 20.1693 9.66004 19.113 9.769V9.769Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Oval" d="M19.5 6.75C21.1569 6.75 22.5 5.40685 22.5 3.75C22.5 2.09315 21.1569 0.75 19.5 0.75C17.8431 0.75 16.5 2.09315 16.5 3.75C16.5 5.40685 17.8431 6.75 19.5 6.75Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_2" d="M13.5 9.75H12.462C11.7541 9.74942 11.1422 10.2438 10.994 10.936L9.254 19.064C9.10589 19.7558 8.49451 20.2501 7.787 20.25H0.75" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_3" d="M1.875 22.5C2.08211 22.5 2.25 22.6679 2.25 22.875C2.25 23.0821 2.08211 23.25 1.875 23.25C1.66789 23.25 1.5 23.0821 1.5 22.875C1.5 22.6679 1.66789 22.5 1.875 22.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_4" d="M7.875 22.5C8.08211 22.5 8.25 22.6679 8.25 22.875C8.25 23.0821 8.08211 23.25 7.875 23.25C7.66789 23.25 7.5 23.0821 7.5 22.875C7.5 22.6679 7.66789 22.5 7.875 22.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Rectangle-path" d="M1.5 17.25H6C6.41421 17.25 6.75 16.9142 6.75 16.5V12C6.75 11.5858 6.41421 11.25 6 11.25H1.5C1.08579 11.25 0.75 11.5858 0.75 12V16.5C0.75 16.9142 1.08579 17.25 1.5 17.25Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Shape_5" d="M22.5 3.75H15" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+</g>
+</svg>
