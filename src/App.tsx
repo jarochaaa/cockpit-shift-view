@@ -1,103 +1,70 @@
-import { useState } from 'react';
-import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Box } from './grid/Box';
-import { BoxGrid } from './grid/BoxGrid';
-import { useDashboardLayout } from './grid/useDashboardLayout';
-import { Chrome } from './components/Chrome';
-import { NeedsAttentionBox } from './boxes/NeedsAttentionBox';
-import { PeopleTasksBox } from './boxes/PeopleTasksBox';
-import { ShiftMetricsBox } from './boxes/ShiftMetricsBox';
-import { OrdersTimingBox } from './boxes/OrdersTimingBox';
-import type { ChartStyle, TimingRange } from './boxes/OrdersTimingBox';
-import { PickerTeamBox } from './boxes/PickerTeamBox';
-import { SkuAlertsBox } from './boxes/SkuAlertsBox';
-import { PickerAlertsBox } from './boxes/PickerAlertsBox';
-import { Select } from './cape/Select';
-import { SegmentedControl, SegmentedControlItem } from './cape/SegmentedControl';
-import { getBoxConfig } from './domain/boxCatalog';
+import { useEffect, useReducer, useState } from 'react';
+import { Hints } from './board/Hints';
+import { Navigator } from './board/Navigator';
+import { Cockpit } from './cockpit/Cockpit';
+import i18n from './i18n';
+import { codeFor, initialState, reducer } from './state';
+import type { Lang } from './state';
 
-// No auth flow in Layer 2 scope (IA §7) — RBAC is modeled in the schema for
-// later, not exposed here. Fixed demo identity for the prototype.
-const DEMO_USER_ID = 'demo-user';
-const DEMO_STORE_ID = 'store_1';
+const LANGS: { id: Lang; label: string }[] = [
+  { id: 'en', label: 'English' },
+  { id: 'es', label: 'Español' },
+  { id: 'ar', label: 'العربية' },
+];
 
-function App() {
-  const { t } = useTranslation();
-  const { orderedKeys, setColSpan, reorder, resolvedColSpan } = useDashboardLayout(DEMO_USER_ID, DEMO_STORE_ID);
-  const [range, setRange] = useState<TimingRange>('24h');
-  const [chartStyle, setChartStyle] = useState<ChartStyle>('bars');
+export default function App() {
+  const [s, dispatch] = useReducer(reducer, initialState);
+  const [navOpen, setNavOpen] = useState(true);
+  const code = codeFor(s);
 
-  function renderBody(boxKey: string): ReactNode {
-    switch (boxKey) {
-      case 'needs_attention':
-        return <NeedsAttentionBox />;
-      case 'people_tasks':
-        return <PeopleTasksBox />;
-      case 'shift_metrics':
-        return <ShiftMetricsBox />;
-      case 'orders_timing':
-        return <OrdersTimingBox range={range} chartStyle={chartStyle} />;
-      case 'picker_team':
-        return <PickerTeamBox />;
-      case 'sku_alerts':
-        return <SkuAlertsBox />;
-      case 'picker_alerts':
-        return <PickerAlertsBox />;
-      default:
-        return null;
-    }
-  }
-
-  function renderHeaderRightSlot(boxKey: string): ReactNode {
-    if (boxKey !== 'orders_timing') return undefined;
-    return (
-      <>
-        <SegmentedControl size="xsmall" value={chartStyle} onChange={(v) => setChartStyle(v as ChartStyle)}>
-          <SegmentedControlItem value="bars" onPointerDown={(e) => e.stopPropagation()}>
-            {t('ordersTimingChart.style.bars')}
-          </SegmentedControlItem>
-          <SegmentedControlItem value="pie" onPointerDown={(e) => e.stopPropagation()}>
-            {t('ordersTimingChart.style.pie')}
-          </SegmentedControlItem>
-        </SegmentedControl>
-        <Select
-          value={range}
-          onChange={(v) => setRange(v as TimingRange)}
-          options={[
-            { value: '6h', label: t('ordersTiming.range.last6h') },
-            { value: '12h', label: t('ordersTiming.range.last12h') },
-            { value: '24h', label: t('ordersTiming.range.last24h') },
-          ]}
-        />
-      </>
-    );
-  }
+  // The language switch changes the Cockpit only; the board stays English.
+  useEffect(() => {
+    void i18n.changeLanguage(s.lang);
+  }, [s.lang]);
 
   return (
-    <div className="app">
-      <Chrome />
-      <main>
-        <BoxGrid boxKeys={orderedKeys} onReorder={reorder}>
-          {orderedKeys.map((boxKey) => {
-            const config = getBoxConfig(boxKey);
-            return (
-              <Box
-                key={boxKey}
-                boxKey={boxKey}
-                title={t(config.labelI18nKey)}
-                colSpan={resolvedColSpan(boxKey)}
-                onColSpanChange={(span) => setColSpan(boxKey, span)}
-                headerRightSlot={renderHeaderRightSlot(boxKey)}
-              >
-                {renderBody(boxKey)}
-              </Box>
-            );
-          })}
-        </BoxGrid>
-      </main>
+    <div className="stage">
+      <Navigator code={code} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })} />
+
+      <div className="board" onScroll={(e) => e.currentTarget.scrollLeft > 8 && setNavOpen(false)}>
+        <section className="board__web" aria-label="Store Management Cockpit">
+          <header className="board__title">
+            <h2>Store Management Cockpit - Shift View</h2>
+            <div className="board__tags">
+              <span className="board__tag">Web</span>
+              <span className="board__tag">Desktop</span>
+              <span className="board__tag board__tag--user">
+                User: <b>Store Manager</b>
+              </span>
+              <span className="board__tag">Shift View</span>
+              <span className="board__tag board__tag--view">
+                View <b>{code}</b>
+              </span>
+            </div>
+          </header>
+          <div className="board__row">
+            <div className="product">
+              <Cockpit s={s} dispatch={dispatch} />
+            </div>
+            <div className="side">
+              <div className="view-tag">
+                View <b>{code}</b>
+              </div>
+              <div className="lang-switch" role="group" aria-label="App language">
+                <span>App language</span>
+                <div className="lang-switch__opts">
+                  {LANGS.map((l) => (
+                    <button key={l.id} type="button" aria-pressed={s.lang === l.id} onClick={() => dispatch({ type: 'lang', lang: l.id })}>
+                      {l.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Hints s={s} code={code} />
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }
-
-export default App;

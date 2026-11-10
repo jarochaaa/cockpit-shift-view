@@ -13,12 +13,13 @@ export interface BoxProps {
   colSpan: ColSpan;
   onColSpanChange: (span: ColSpan) => void;
   headerRightSlot?: ReactNode;
+  interactive: boolean;
   children: ReactNode;
 }
 
-export function Box({ boxKey, title, colSpan, onColSpanChange, headerRightSlot, children }: BoxProps) {
+export function Box({ boxKey, title, colSpan, onColSpanChange, headerRightSlot, interactive, children }: BoxProps) {
   const config = getBoxConfig(boxKey);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: boxKey });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: boxKey, disabled: !interactive });
 
   // L (span 3) is always alone in its row — content drives its height with
   // no cap. M/S share a row, so height comes from the tallest sibling with
@@ -48,6 +49,7 @@ export function Box({ boxKey, title, colSpan, onColSpanChange, headerRightSlot, 
           dragAttributes={attributes}
           dragListeners={listeners}
           rightSlot={headerRightSlot}
+          interactive={interactive}
         />
         <div className="box-body">{children}</div>
       </Card>

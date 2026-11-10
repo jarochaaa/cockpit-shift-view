@@ -1,5 +1,5 @@
 @import './tokens/core.css';
-@import './tokens/pelican-light.css';
+@import './tokens/cape-light.css';
 
 .cp-card {
   background: var(--cp-base-color-flat);
@@ -81,7 +81,6 @@
   background: var(--cp-action-color-tertiary-enabled);
   color: var(--cp-icon-color-primary);
 }
-.cp-icon-button:hover { background: var(--cp-action-color-tertiary-hover); }
 .cp-icon-button:active { background: var(--cp-action-color-tertiary-pressed); }
 .cp-icon-button--2xsmall { width: 20px; height: 20px; }
 .cp-icon-button--xsmall { width: 24px; height: 24px; }
@@ -125,7 +124,7 @@
 
 .cp-table { width: 100%; border-collapse: collapse; }
 .cp-table th {
-  text-align: left;
+  text-align: start;
   font: var(--cp-text-body-small);
   color: var(--cp-text-color-tertiary);
   background: var(--cp-base-color-lowest);

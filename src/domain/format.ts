@@ -3,8 +3,8 @@ export function formatSeconds(totalSeconds: number) {
   return `${minutes.toFixed(1)}m`;
 }
 
-export function formatPercent(ratio: number) {
-  return `${(ratio * 100).toFixed(2)}%`;
+export function formatPercent(ratio: number, digits = 2) {
+  return `${(ratio * 100).toFixed(digits)}%`;
 }
 
 export function minutesSince(iso: string) {

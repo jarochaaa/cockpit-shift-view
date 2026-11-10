@@ -17,35 +17,41 @@ export interface Store {
   vendorsTotal: number;
 }
 
-export interface ChromeStageCounts {
-  unassigned: number;
-  picking: number;
-  packing: number;
-  readyForRider: number;
-  idlePickers: number;
-  lateOrders: number;
-  updatedAt: string; // ISO — Live tier, chrome shows an active dot, not this timestamp
-}
+// Mock-data scenario: lets the prototype reach states the live stream would
+// only produce on a bad day (spike, closed store, slow or failing API).
+export type Scenario = 'normal' | 'spike' | 'quiet' | 'closed' | 'slow' | 'error';
 
-export interface NeedsAttentionRow {
+// Orders & pickers is one connected list (critique Aug 17, items 1–2): each
+// open order points at its picker, each picker carries today's performance.
+export interface FloorOrder {
   orderId: string;
   externalOrderId: string;
-  stage: OrderStage;
-  assignedPickerName: string | null;
-  overdueByMinutes: number | null;
-  pfStatus: PfStatus;
+  stage: 'unassigned' | 'picking' | 'packing';
+  items: number;
+  minutesInStage: number;
+  lateByMinutes: number | null;
+  pfPending: boolean;
+  pickerId: string | null;
 }
 
-export interface PersonRow {
+export interface FloorPicker {
   pickerId: string;
   displayName: string;
   status: PickerStatus;
-  statusChangedAt: string; // ISO — live, per Pelican push-on-task-complete
-  currentOrderExternalId: string | null;
+  minutesInStatus: number;
+  ordersToday: number;
+  failRate: number;
+}
+
+export interface FloorSnapshot {
+  orders: FloorOrder[];
+  pickers: FloorPicker[];
+  readyForRider: number;
 }
 
 export interface ShiftMetrics {
   successfulOrders: number;
+  receivedOrders: number;
   issueRate: number;
   avgAssignmentSeconds: number;
   avgPickingSeconds: number;
@@ -99,10 +105,13 @@ export interface SkuAlertRow {
   severity: AlertSeverity;
 }
 
+export type PickerAlertType = 'idle' | 'noCheckIn' | 'failRate' | 'slowPicking';
+
 export interface PickerAlertRow {
   pickerId: string;
   displayName: string;
-  alertType: string;
-  detail: string;
+  alertType: PickerAlertType;
+  value: number;
+  threshold: number;
   severity: AlertSeverity;
 }

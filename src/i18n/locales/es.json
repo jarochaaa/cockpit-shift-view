@@ -1,0 +1,88 @@
+{
+  "box": {
+    "floor": { "label": "Órdenes y pickers" },
+    "shift_metrics": { "label": "Métricas del turno" },
+    "orders_timing": { "label": "Tiempos de órdenes" },
+    "picker_team": { "label": "Equipo de pickers" },
+    "sku_alerts": { "label": "Alertas de SKU" },
+    "picker_alerts": { "label": "Alertas de pickers" }
+  },
+  "chrome": {
+    "product": "Store Management Cockpit",
+    "unassigned": "Sin asignar",
+    "picking": "En picking",
+    "packing": "En packing",
+    "readyForRider": "Listas para rider",
+    "vendorsOpen": "{{open}}/{{total}} abiertos",
+    "closed": "Cerrada",
+    "idlePickers": "{{count}} pickers inactivos",
+    "lateOrders": "{{count}} órdenes atrasadas",
+    "pfPending": "{{count}} PF pendientes",
+    "dataUnavailable": "Datos en vivo no disponibles",
+    "live": "En vivo",
+    "offline": "Sin conexión"
+  },
+  "state": {
+    "loading": "Cargando…",
+    "error": "No pudimos cargar estos datos. Aparecen de nuevo apenas vuelva la conexión."
+  },
+  "floor": {
+    "filter": { "all": "Todo", "attention": "Requiere atención", "unassigned": "Sin asignar", "idle": "Inactivos" },
+    "late": "{{minutes}}m tarde",
+    "pfPending": "PF pendiente",
+    "items_one": "{{count}} ítem",
+    "items_other": "{{count}} ítems",
+    "waiting": "esperando {{minutes}}m",
+    "status": { "picking": "En picking", "packing": "En packing", "offline": "Desconectado", "idleFor": "Inactivo {{minutes}}m" },
+    "perf": "{{orders}} órdenes · {{failRate}} fail rate",
+    "summary": "{{orders}} órdenes abiertas · {{working}} de {{onShift}} pickers trabajando · {{perPicker}} órdenes por picker activo",
+    "section": { "unassigned": "Órdenes sin asignar · {{count}}", "pickers": "Pickers · {{count}}" },
+    "empty": {
+      "closed": "La tienda está cerrada. Las órdenes y los pickers aparecen aquí cuando abra.",
+      "attention": "Nada requiere atención. Todas las órdenes abiertas están dentro de su tiempo prometido.",
+      "unassigned": "No hay órdenes sin asignar.",
+      "idle": "No hay pickers inactivos.",
+      "noOrders": "No hay órdenes abiertas ahora."
+    }
+  },
+  "stage": { "assignedIn": "Asignada en", "pickedIn": "Picking en", "packedIn": "Packing en" },
+  "shiftMetrics": {
+    "successfulOrders": "Órdenes exitosas",
+    "ofReceived": "{{share}} de {{received}} recibidas",
+    "issueRate": "Órdenes con problemas",
+    "prepTime": "Tiempo de preparación",
+    "shareOfPrep": "{{share}}% del tiempo de preparación",
+    "pfr": "PFR",
+    "updated": "Actualizado hace {{minutes}}m"
+  },
+  "ordersTiming": {
+    "completed": "Órdenes completadas",
+    "range": { "last6h": "Últimas 6h", "last12h": "Últimas 12h", "last24h": "Últimas 24h" },
+    "style": { "bars": "Barras", "pie": "Torta" }
+  },
+  "pickerTeam": {
+    "columns": { "picker": "Picker", "prep": "Preparación", "pfr": "PFR", "failRate": "Fail rate", "orders": "Órdenes" },
+    "ordersShare": "{{count}} · {{share}}%",
+    "sortedDesc": "Ordenado por {{column}}, de mayor a menor",
+    "sortedAsc": "Ordenado por {{column}}, de menor a mayor",
+    "aboveThreshold": "{{count}} sobre el umbral de 2% de fail rate"
+  },
+  "placeholder": { "previewData": "Datos de muestra · Slice 2, aún no en vivo" },
+  "skuAlerts": { "soh": "{{soh}} en stock · umbral {{threshold}}", "empty": "No hay alertas de SKU ahora." },
+  "pickerAlerts": {
+    "empty": "No hay alertas de pickers ahora.",
+    "type": { "idle": "Inactivo demasiado tiempo", "noCheckIn": "Sin check-in en Pelican", "failRate": "Pico de fail rate", "slowPicking": "Picking lento" },
+    "detail": {
+      "idle": "Inactivo {{value}}m · umbral {{threshold}}m",
+      "noCheckIn": "Sin login a {{value}}m del turno",
+      "failRate": "{{value}}% en las últimas 10 órdenes · umbral {{threshold}}%",
+      "slowPicking": "{{value}}% más lento que el promedio del turno"
+    }
+  },
+  "alerts": { "severity": { "warning": "Baja", "error": "Crítica" } },
+  "grid": {
+    "span": { "1": "S", "2": "M", "3": "L" },
+    "spanLabel": { "1": "Pequeño, 1 columna", "2": "Mediano, 2 columnas", "3": "Grande, 3 columnas" },
+    "dragHandle": "Arrastra para mover {{box}}"
+  }
+}

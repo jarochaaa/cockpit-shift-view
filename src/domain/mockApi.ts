@@ -1,59 +1,43 @@
-import type { ChromeStageCounts } from './types';
-import {
-  MOCK_NEEDS_ATTENTION,
-  MOCK_ORDER_TIMING,
-  MOCK_PEOPLE,
-  MOCK_PICKER_ALERTS,
-  MOCK_PICKER_TEAM,
-  MOCK_SHIFT_METRICS,
-  MOCK_SKU_ALERTS,
-  MOCK_STORE,
-} from './mockData';
+import type { FloorSnapshot, OrderTimingBucket, PickerAlertRow, PickerTeamRow, Scenario, ShiftMetrics, SkuAlertRow, Store } from './types';
+import { MOCK_PICKER_ALERTS, MOCK_PICKER_TEAM, MOCK_SHIFT_METRICS, MOCK_SKU_ALERTS, MOCK_STORE, floorFor, orderTimingFor } from './mockData';
 
 // Every export here is async and shaped like a Postgres query result, so
 // swapping to real Supabase calls (see schema.sql's views) means changing
-// this file only — no component touches Supabase directly.
+// this file only — no component touches Supabase directly. The scenario
+// argument only exists for the prototype (spike, closed store, slow/failing API).
 
-export async function fetchStore() {
-  return MOCK_STORE;
+const LATENCY_MS: Record<Scenario, number> = { normal: 150, spike: 150, quiet: 150, closed: 150, slow: 4000, error: 400 };
+
+function respond<T>(scenario: Scenario, data: T): Promise<T> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => (scenario === 'error' ? reject(new Error('mock API error')) : resolve(data)), LATENCY_MS[scenario]);
+  });
 }
 
-export async function fetchChromeStageCounts(): Promise<ChromeStageCounts> {
-  return {
-    unassigned: 1,
-    picking: 1,
-    packing: 2,
-    readyForRider: 1,
-    idlePickers: MOCK_PEOPLE.filter((p) => p.status === 'idle').length,
-    lateOrders: MOCK_NEEDS_ATTENTION.filter((o) => (o.overdueByMinutes ?? 0) > 0).length,
-    updatedAt: new Date().toISOString(),
-  };
+export function fetchStore(scenario: Scenario): Promise<Store> {
+  return respond(scenario, scenario === 'closed' ? { ...MOCK_STORE, status: 'closed', vendorsOpen: 0 } : MOCK_STORE);
 }
 
-export async function fetchNeedsAttention() {
-  return MOCK_NEEDS_ATTENTION;
+export function fetchFloor(scenario: Scenario): Promise<FloorSnapshot> {
+  return respond(scenario, floorFor(scenario));
 }
 
-export async function fetchPeople() {
-  return MOCK_PEOPLE;
+export function fetchShiftMetrics(scenario: Scenario): Promise<ShiftMetrics> {
+  return respond(scenario, MOCK_SHIFT_METRICS);
 }
 
-export async function fetchShiftMetrics() {
-  return MOCK_SHIFT_METRICS;
+export function fetchOrderTiming(scenario: Scenario): Promise<OrderTimingBucket[]> {
+  return respond(scenario, orderTimingFor(scenario));
 }
 
-export async function fetchOrderTiming() {
-  return MOCK_ORDER_TIMING;
+export function fetchPickerTeam(scenario: Scenario): Promise<PickerTeamRow[]> {
+  return respond(scenario, MOCK_PICKER_TEAM);
 }
 
-export async function fetchPickerTeam() {
-  return MOCK_PICKER_TEAM;
+export function fetchSkuAlerts(scenario: Scenario): Promise<SkuAlertRow[]> {
+  return respond(scenario, scenario === 'quiet' || scenario === 'closed' ? [] : MOCK_SKU_ALERTS);
 }
 
-export async function fetchSkuAlerts() {
-  return MOCK_SKU_ALERTS;
-}
-
-export async function fetchPickerAlerts() {
-  return MOCK_PICKER_ALERTS;
+export function fetchPickerAlerts(scenario: Scenario): Promise<PickerAlertRow[]> {
+  return respond(scenario, scenario === 'quiet' || scenario === 'closed' ? [] : MOCK_PICKER_ALERTS);
 }

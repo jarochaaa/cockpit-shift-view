@@ -8,16 +8,27 @@ body {
   margin: 0;
   background: var(--cp-base-color-lowest);
   color: var(--cp-text-color-primary);
-  font-family: Roboto, var(--cp-font-fallback);
+  font: var(--cp-text-body-medium);
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+/* The Cockpit web product. It is its own scroll container (the page and the board never scroll
+   vertically) and a size container, so its grid reacts to its own width, not the viewport's. */
+.cockpit {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  container: cockpit / inline-size;
+  background: var(--cp-base-color-lowest);
+  color: var(--cp-text-color-primary);
+  font: var(--cp-text-body-medium);
 }
 
-main {
+/* Arabic: same Cape type scale, script-capable font first in the fallback chain. */
+.cockpit[dir='rtl'] {
+  --cp-font-fallback: 'Noto Sans Arabic', system-ui, Segoe UI, Helvetica, Arial, sans-serif;
+}
+
+.cockpit__main {
   padding: var(--cp-spacing-2xlarge);
 }
 
@@ -44,6 +55,7 @@ main {
 
 .chrome__title {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--cp-spacing-small);
 }
@@ -60,12 +72,21 @@ main {
   flex-wrap: wrap;
 }
 
+.chrome__crumb {
+  color: var(--cp-text-color-tertiary);
+}
+
 .chrome__live {
+  text-transform: uppercase;
   display: inline-flex;
   align-items: center;
   gap: var(--cp-spacing-xsmall);
   font: var(--cp-text-caption);
   color: var(--cp-feedback-color-danger-high);
+}
+
+.chrome__live--off {
+  color: var(--cp-text-color-tertiary);
 }
 
 .chrome__stage-cell {
@@ -84,6 +105,8 @@ main {
 .chrome__stage-cell--branded .cp-display-small { color: var(--cp-feedback-color-branded-accent-low); }
 .chrome__stage-cell--success { background: var(--cp-feedback-color-success-low); }
 .chrome__stage-cell--success .cp-display-small { color: var(--cp-feedback-color-success-accent-low); }
+.chrome__stage-cell--empty { background: var(--cp-base-color-lowest); }
+.chrome__stage-cell--empty .cp-display-small { color: var(--cp-text-color-tertiary); }
 
 /* Box grid — flex-wrap, not CSS Grid: a 3-col grid's "span 2" is 2/3 (66%),
    not a true half. Flex-basis percentages give real third/half/full, and
@@ -118,45 +141,49 @@ main {
   transition: box-shadow 0.15s ease;
 }
 
-@media (max-width: 1279px) {
-  /* Thirds don't work at tablet width — collapse S to a half, same as M. */
-  .box-grid-item--span-1 {
-    flex-basis: calc(50% - var(--cp-spacing-2xlarge) / 2);
-  }
-}
-
-@media (max-width: 767px) {
+/* Below 1100px the Cockpit is full-bleed: one column, no drag or S/M/L (see Cockpit.tsx). */
+@container cockpit (max-width: 1099px) {
   .box-grid-item--span-1,
   .box-grid-item--span-2,
   .box-grid-item--span-3 {
     flex-basis: 100%;
   }
-  main {
+  .cockpit__main {
     padding: var(--cp-spacing-large);
   }
-  /* Span toggle is moot at 1 column — hiding it also fixes header overflow (§3 stress test) */
-  .box-header .cp-segmented-control {
-    display: none;
+  .chrome {
+    padding: var(--cp-spacing-medium) var(--cp-spacing-large);
+  }
+  .chrome__stages {
+    gap: var(--cp-spacing-small);
+  }
+  .chrome__stage-cell {
+    padding: var(--cp-spacing-xsmall) var(--cp-spacing-medium);
   }
 }
 
 .box-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--cp-spacing-medium);
   margin-bottom: var(--cp-spacing-large);
-  cursor: grab;
-  touch-action: none;
   flex-shrink: 0;
 }
 
-.box-header:active {
+.box-header--draggable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.box-header--draggable:active {
   cursor: grabbing;
 }
 
 .box-header__controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--cp-spacing-small);
 }
@@ -185,54 +212,157 @@ main {
   overflow-y: auto;
 }
 
-/* Needs Attention */
-.needs-attention-list {
+/* Orders & pickers: one connected list */
+.floor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cp-spacing-large);
+}
+
+.floor-summary {
+  color: var(--cp-text-color-secondary);
+}
+
+.floor-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cp-spacing-small);
+}
+
+.floor-section__title {
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.floor-list,
+.alert-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--cp-spacing-medium);
+  gap: var(--cp-spacing-small);
 }
 
-.needs-attention-row {
+.floor-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--cp-spacing-medium);
+  gap: var(--cp-spacing-small) var(--cp-spacing-large);
   padding: var(--cp-spacing-small) var(--cp-spacing-medium);
-  background: var(--cp-base-color-lowest);
-  border-left: 3px solid var(--cp-feedback-color-danger-high);
+  background: var(--cp-base-color-flat);
+  border: 1px solid var(--cp-border-color-normal);
+  border-inline-start: 3px solid var(--cp-border-color-normal);
   border-radius: var(--cp-base-border-radius-small);
 }
 
-.needs-attention-row__meta {
+.floor-row--attention {
+  border-inline-start-color: var(--cp-feedback-color-danger-high);
+  background: var(--cp-feedback-color-danger-low);
+}
+
+.floor-row__main {
+  display: flex;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.floor-row__name,
+.floor-row__id {
+  color: var(--cp-text-color-primary);
+  white-space: nowrap;
+}
+
+.floor-row__order,
+.floor-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cp-spacing-small);
+}
+
+.floor-row__perf {
+  margin-inline-start: auto;
+  white-space: nowrap;
+}
+
+/* SKU and Picker alerts */
+.alert-list {
+  margin-top: var(--cp-spacing-small);
+}
+
+.alert-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cp-spacing-small) var(--cp-spacing-medium);
+  padding: var(--cp-spacing-small) var(--cp-spacing-medium);
+  background: var(--cp-base-color-flat);
+  border: 1px solid var(--cp-border-color-normal);
+  border-inline-start: 3px solid var(--cp-feedback-color-warning-high);
+  border-radius: var(--cp-base-border-radius-small);
+}
+
+.alert-row--error {
+  border-inline-start-color: var(--cp-feedback-color-danger-high);
+}
+
+.alert-row__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.alert-row__meta {
   display: flex;
   align-items: center;
   gap: var(--cp-spacing-small);
 }
 
-/* People & Tasks */
-.people-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Shared loading, empty and error states */
+.box-skeleton {
   display: flex;
   flex-direction: column;
   gap: var(--cp-spacing-medium);
 }
 
-.people-row {
-  display: flex;
-  align-items: center;
-  gap: var(--cp-spacing-small);
+.box-skeleton__line {
+  height: 16px;
+  border-radius: var(--cp-base-border-radius-small);
+  background: var(--cp-skeleton-color-static);
+  background-image: var(--cp-skeleton-color-animation);
+  background-size: 200% 100%;
+  animation: skeleton 1.4s ease-in-out infinite;
 }
 
-.people-row__name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.box-skeleton__line:nth-child(odd) {
+  width: 72%;
+}
+
+@keyframes skeleton {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box-skeleton__line { animation: none; }
+}
+
+.box-message {
+  padding: var(--cp-spacing-large);
+  border: 1px dashed var(--cp-border-color-high);
+  border-radius: var(--cp-base-border-radius-small);
+  text-align: center;
+}
+
+.box-message--error {
+  border-style: solid;
+  border-color: var(--cp-feedback-color-danger-high);
+  background: var(--cp-feedback-color-danger-low);
 }
 
 /* Shift Metrics */
@@ -254,6 +384,10 @@ main {
 .shift-metrics-cell .metric-hero-value {
   font-size: 3rem;
   line-height: 1.1;
+}
+
+.shift-metrics-cell .metric-value {
+  line-height: 1.2;
 }
 
 /* Orders Timing chart — 220px is right when the box is alone (L) and sized
@@ -280,19 +414,33 @@ main {
   white-space: nowrap;
 }
 
+.picker-team__caption {
+  display: block;
+  margin-bottom: var(--cp-spacing-small);
+}
+
 .sort-header {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cp-spacing-xsmall);
   background: none;
   border: none;
   font: inherit;
   color: inherit;
   cursor: pointer;
   padding: 0;
+  white-space: nowrap;
 }
 
-/* Placeholder boxes (SKU/Picker alerts — reserved for Slice 2) */
-.placeholder-box {
-  border: 1px dashed var(--cp-border-color-high);
-  border-radius: var(--cp-base-border-radius-small);
-  padding: var(--cp-spacing-2xlarge);
-  text-align: center;
+.sort-header--on {
+  color: var(--cp-text-color-primary);
 }
+
+.sort-header__arrow {
+  color: var(--cp-text-color-tertiary);
+}
+
+.sort-header--on .sort-header__arrow {
+  color: var(--cp-text-color-branded);
+}
+

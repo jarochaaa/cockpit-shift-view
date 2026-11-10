@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../cape/Avatar';
 import { Tag } from '../cape/Tag';
 import { Typography } from '../cape/Typography';
+import { BoxState } from '../cockpit/BoxState';
+import { useMock } from '../cockpit/useMock';
 import { fetchPickerTeam } from '../domain/mockApi';
 import { formatPercent, formatSeconds } from '../domain/format';
-import type { PickerTeamRow } from '../domain/types';
-
-type SortKey = keyof Pick<PickerTeamRow, 'avgAssignmentSeconds' | 'avgPickingSeconds' | 'avgPackingSeconds' | 'pfr' | 'failRate' | 'ordersCount'> | 'prep';
+import type { PickerTeamRow, Scenario } from '../domain/types';
+import type { SortDir, TeamSortKey } from '../state';
 
 function failRateStatus(rate: number): 'success' | 'warning' | 'error' {
   if (rate === 0) return 'success';
@@ -16,82 +16,89 @@ function failRateStatus(rate: number): 'success' | 'warning' | 'error' {
   return 'error';
 }
 
-function prepSeconds(row: PickerTeamRow) {
-  return row.avgAssignmentSeconds + row.avgPickingSeconds + row.avgPackingSeconds;
+const prepSeconds = (r: PickerTeamRow) => r.avgAssignmentSeconds + r.avgPickingSeconds + r.avgPackingSeconds;
+const valueOf = (r: PickerTeamRow, key: TeamSortKey) => (key === 'prep' ? prepSeconds(r) : r[key]);
+
+interface Props {
+  scenario: Scenario;
+  sort: { key: TeamSortKey; dir: SortDir };
+  onSort: (key: TeamSortKey) => void;
 }
 
-export function PickerTeamBox() {
+// Every column sorts (critique item 4); the same column again flips the direction.
+export function PickerTeamBox({ scenario, sort, onSort }: Props) {
   const { t } = useTranslation();
-  const [rows, setRows] = useState<PickerTeamRow[] | null>(null);
-  const [sortKey, setSortKey] = useState<SortKey>('prep');
-
-  useEffect(() => {
-    fetchPickerTeam().then(setRows);
-  }, []);
-
-  const sorted = useMemo(() => {
-    if (!rows) return [];
-    return [...rows].sort((a, b) => {
-      const va = sortKey === 'prep' ? prepSeconds(a) : a[sortKey];
-      const vb = sortKey === 'prep' ? prepSeconds(b) : b[sortKey];
-      return vb - va;
-    });
-  }, [rows, sortKey]);
-
-  if (!rows) return null;
-
-  const columns: { key: SortKey; label: string; render: (row: PickerTeamRow) => ReactNode }[] = [
-    { key: 'avgAssignmentSeconds', label: t('pickerTeam.columns.assign'), render: (r) => formatSeconds(r.avgAssignmentSeconds) },
-    { key: 'avgPickingSeconds', label: t('pickerTeam.columns.pick'), render: (r) => formatSeconds(r.avgPickingSeconds) },
-    { key: 'avgPackingSeconds', label: t('pickerTeam.columns.pack'), render: (r) => formatSeconds(r.avgPackingSeconds) },
-    { key: 'prep', label: t('pickerTeam.columns.prep'), render: (r) => formatSeconds(prepSeconds(r)) },
-    { key: 'pfr', label: t('pickerTeam.columns.pfr'), render: (r) => formatPercent(r.pfr) },
-    {
-      key: 'failRate',
-      label: t('pickerTeam.columns.failRate'),
-      render: (r) => (
-        <Tag status={failRateStatus(r.failRate)} size="small">
-          {formatPercent(r.failRate)}
-        </Tag>
-      ),
-    },
-    { key: 'ordersCount', label: t('pickerTeam.columns.orders'), render: (r) => String(r.ordersCount) },
-  ];
+  const team = useMock(fetchPickerTeam, scenario);
 
   return (
-    <div>
-      <Typography variant="caption">{t('pickerTeam.sortedBy')}</Typography>
-      <div className="table-scroll">
-      <table className="cp-table">
-        <thead>
-          <tr>
-            <th>{t('pickerTeam.columns.picker')}</th>
-            {columns.map((col) => (
-              <th key={col.label}>
-                <button type="button" className="sort-header" onClick={() => setSortKey(col.key)}>
-                  {col.label}
-                </button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((row) => (
-            <tr key={row.pickerId}>
-              <td>
-                <div className="picker-cell">
-                  <Avatar size="small" title={row.displayName} />
-                  <span>{row.displayName}</span>
-                </div>
-              </td>
-              {columns.map((col) => (
-                <td key={col.label}>{col.render(row)}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>
-    </div>
+    <BoxState state={team} lines={6}>
+      {(rows) => {
+        const total = rows.reduce((n, r) => n + r.ordersCount, 0);
+        const sorted = [...rows].sort((a, b) => (sort.dir === 'desc' ? valueOf(b, sort.key) - valueOf(a, sort.key) : valueOf(a, sort.key) - valueOf(b, sort.key)));
+        const columns: { key: TeamSortKey; label: string; render: (r: PickerTeamRow) => ReactNode }[] = [
+          { key: 'prep', label: t('pickerTeam.columns.prep'), render: (r) => formatSeconds(prepSeconds(r)) },
+          { key: 'avgAssignmentSeconds', label: t('stage.assignedIn'), render: (r) => formatSeconds(r.avgAssignmentSeconds) },
+          { key: 'avgPickingSeconds', label: t('stage.pickedIn'), render: (r) => formatSeconds(r.avgPickingSeconds) },
+          { key: 'avgPackingSeconds', label: t('stage.packedIn'), render: (r) => formatSeconds(r.avgPackingSeconds) },
+          { key: 'pfr', label: t('pickerTeam.columns.pfr'), render: (r) => formatPercent(r.pfr) },
+          {
+            key: 'failRate',
+            label: t('pickerTeam.columns.failRate'),
+            render: (r) => (
+              <Tag status={failRateStatus(r.failRate)} size="small">
+                {formatPercent(r.failRate)}
+              </Tag>
+            ),
+          },
+          { key: 'ordersCount', label: t('pickerTeam.columns.orders'), render: (r) => t('pickerTeam.ordersShare', { count: r.ordersCount, share: Math.round((r.ordersCount / total) * 100) }) },
+        ];
+        const active = columns.find((c) => c.key === sort.key)!;
+        const above = rows.filter((r) => r.failRate > 0.02).length;
+        return (
+          <div>
+            <Typography variant="caption" className="picker-team__caption">
+              {t(sort.dir === 'desc' ? 'pickerTeam.sortedDesc' : 'pickerTeam.sortedAsc', { column: active.label })} · {t('pickerTeam.aboveThreshold', { count: above })}
+            </Typography>
+            <div className="table-scroll">
+              <table className="cp-table">
+                <thead>
+                  <tr>
+                    <th>{t('pickerTeam.columns.picker')}</th>
+                    {columns.map((col) => {
+                      const on = col.key === sort.key;
+                      return (
+                        <th key={col.key} aria-sort={on ? (sort.dir === 'desc' ? 'descending' : 'ascending') : 'none'}>
+                          <button type="button" className={`sort-header${on ? ' sort-header--on' : ''}`} onClick={() => onSort(col.key)} onPointerDown={(e) => e.stopPropagation()}>
+                            {col.label}
+                            <span className="sort-header__arrow" aria-hidden>
+                              {on ? (sort.dir === 'desc' ? '↓' : '↑') : '↕'}
+                            </span>
+                          </button>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((row) => (
+                    <tr key={row.pickerId}>
+                      <td>
+                        <div className="picker-cell">
+                          <Avatar size="small" title={row.displayName} initials={row.displayName.replace('Picker ', 'P')} />
+                          <span>{row.displayName}</span>
+                        </div>
+                      </td>
+                      {columns.map((col) => (
+                        <td key={col.key}>{col.render(row)}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+      }}
+    </BoxState>
   );
 }
