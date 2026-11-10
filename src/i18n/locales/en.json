@@ -1,88 +1,77 @@
 {
-  "box": {
-    "floor": { "label": "Orders & pickers" },
-    "shift_metrics": { "label": "Shift metrics" },
-    "orders_timing": { "label": "Orders timing" },
-    "picker_team": { "label": "Picker team" },
-    "sku_alerts": { "label": "SKU alerts" },
-    "picker_alerts": { "label": "Picker alerts" }
+  "header": {
+    "product": "Cockpit",
+    "backToStores": "Back to stores",
+    "country": "United Arab Emirates",
+    "help": "Get help",
+    "account": "Account",
+    "vendorsOpen": "{{open}} / {{total}} open",
+    "closed": "Closed"
   },
-  "chrome": {
-    "product": "Store Management Cockpit",
-    "unassigned": "Unassigned",
+  "now": {
+    "live": "Live",
+    "offline": "Offline",
+    "loading": "Loading…",
+    "dataUnavailable": "Live data unavailable",
+    "stage": {
+      "unassigned": "Unassigned",
+      "picking": "Picking",
+      "packing": "Packing",
+      "readyForRider": "Ready for rider"
+    },
+    "lateOrders_one": "{{count}} late order",
+    "lateOrders_other": "{{count}} late orders",
+    "nothingLate": "Nothing late",
+    "storeClosed": "Store closed",
+    "team": "{{working}} working · {{idle}} idle",
+    "lateTitle": "Late orders",
+    "workingTitle": "Working now",
+    "notAssigned": "Not assigned",
+    "late": "{{minutes}}m late",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "inStage": "{{stage}} · {{items}}",
+    "minutes": "{{minutes}}m",
+    "noWorking": "No picker is on an order right now."
+  },
+  "shift": {
+    "title": "Shift performance",
+    "timeWindow": "Time window",
+    "range": {
+      "1h": "Last 1h",
+      "6h": "Last 6h",
+      "12h": "Last 12h",
+      "24h": "Last 24h"
+    },
+    "successfulOrders": "Successful orders",
+    "failRate": "{{rate}} fail rate",
+    "avgPrep": "Avg prep time",
+    "assignment": "Assignment",
     "picking": "Picking",
     "packing": "Packing",
-    "readyForRider": "Ready for rider",
-    "vendorsOpen": "{{open}}/{{total}} open",
-    "closed": "Closed",
-    "idlePickers": "{{count}} idle pickers",
-    "lateOrders": "{{count}} late orders",
-    "pfPending": "{{count}} PF pending",
-    "dataUnavailable": "Live data unavailable",
-    "live": "Live",
-    "offline": "Offline"
+    "pfr": "PFR",
+    "chartTitle": "Orders timing by hour",
+    "completed": "Completed",
+    "chartLabel": "Average assignment, picking and packing time per hour, with completed orders"
+  },
+  "team": {
+    "title": "Picker team",
+    "nonZero_one": "{{count}} with a non-zero fail rate",
+    "nonZero_other": "{{count}} with a non-zero fail rate",
+    "columns": {
+      "picker": "Picker",
+      "prep": "Prep",
+      "avgAssignmentSeconds": "Assign",
+      "avgPickingSeconds": "Pick",
+      "avgPackingSeconds": "Pack",
+      "pfr": "PFR",
+      "failRate": "Fail rate",
+      "ordersCount": "Orders"
+    },
+    "sortBy": "Sort by {{column}}"
   },
   "state": {
     "loading": "Loading…",
     "error": "Couldn't load this data. It shows up again as soon as the connection is back."
-  },
-  "floor": {
-    "filter": { "all": "All", "attention": "Needs attention", "unassigned": "Unassigned", "idle": "Idle" },
-    "late": "{{minutes}}m late",
-    "pfPending": "PF pending",
-    "items_one": "{{count}} item",
-    "items_other": "{{count}} items",
-    "waiting": "waiting {{minutes}}m",
-    "status": { "picking": "Picking", "packing": "Packing", "offline": "Offline", "idleFor": "Idle {{minutes}}m" },
-    "perf": "{{orders}} orders · {{failRate}} fail rate",
-    "summary": "{{orders}} open orders · {{working}} of {{onShift}} pickers working · {{perPicker}} orders per working picker",
-    "section": { "unassigned": "Unassigned orders · {{count}}", "pickers": "Pickers · {{count}}" },
-    "empty": {
-      "closed": "The store is closed. Orders and pickers show up here when it opens.",
-      "attention": "Nothing needs attention. Every open order is inside its promise time.",
-      "unassigned": "No unassigned orders.",
-      "idle": "No idle pickers.",
-      "noOrders": "No open orders right now."
-    }
-  },
-  "stage": { "assignedIn": "Assigned in", "pickedIn": "Picked in", "packedIn": "Packed in" },
-  "shiftMetrics": {
-    "successfulOrders": "Successful orders",
-    "ofReceived": "{{share}} of {{received}} received",
-    "issueRate": "Order issues",
-    "prepTime": "Prep time",
-    "shareOfPrep": "{{share}}% of prep time",
-    "pfr": "PFR",
-    "updated": "Updated {{minutes}}m ago"
-  },
-  "ordersTiming": {
-    "completed": "Completed orders",
-    "range": { "last6h": "Last 6h", "last12h": "Last 12h", "last24h": "Last 24h" },
-    "style": { "bars": "Bars", "pie": "Pie" }
-  },
-  "pickerTeam": {
-    "columns": { "picker": "Picker", "prep": "Prep time", "pfr": "PFR", "failRate": "Fail rate", "orders": "Orders" },
-    "ordersShare": "{{count}} · {{share}}%",
-    "sortedDesc": "Sorted by {{column}}, high to low",
-    "sortedAsc": "Sorted by {{column}}, low to high",
-    "aboveThreshold": "{{count}} above the 2% fail-rate threshold"
-  },
-  "placeholder": { "previewData": "Preview data · Slice 2, not live yet" },
-  "skuAlerts": { "soh": "{{soh}} on hand · threshold {{threshold}}", "empty": "No SKU alerts right now." },
-  "pickerAlerts": {
-    "empty": "No picker alerts right now.",
-    "type": { "idle": "Idle too long", "noCheckIn": "No Pelican check-in", "failRate": "Fail-rate spike", "slowPicking": "Slow picking" },
-    "detail": {
-      "idle": "Idle {{value}}m · threshold {{threshold}}m",
-      "noCheckIn": "No login {{value}}m into the shift",
-      "failRate": "{{value}}% over the last 10 orders · threshold {{threshold}}%",
-      "slowPicking": "{{value}}% slower than the shift average"
-    }
-  },
-  "alerts": { "severity": { "warning": "Low", "error": "Critical" } },
-  "grid": {
-    "span": { "1": "S", "2": "M", "3": "L" },
-    "spanLabel": { "1": "Small, 1 column", "2": "Medium, 2 columns", "3": "Large, 3 columns" },
-    "dragHandle": "Drag to move {{box}}"
   }
 }

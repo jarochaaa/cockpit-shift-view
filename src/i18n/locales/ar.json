@@ -1,87 +1,89 @@
 {
-  "box": {
-    "floor": { "label": "الطلبات وجامعو الطلبات" },
-    "shift_metrics": { "label": "مقاييس الوردية" },
-    "orders_timing": { "label": "توقيت الطلبات" },
-    "picker_team": { "label": "فريق جامعي الطلبات" },
-    "sku_alerts": { "label": "تنبيهات SKU" },
-    "picker_alerts": { "label": "تنبيهات جامعي الطلبات" }
+  "header": {
+    "product": "Cockpit",
+    "backToStores": "العودة إلى المتاجر",
+    "country": "الإمارات العربية المتحدة",
+    "help": "المساعدة",
+    "account": "الحساب",
+    "vendorsOpen": "{{open}} / {{total}} مفتوح",
+    "closed": "مغلق"
   },
-  "chrome": {
-    "product": "Store Management Cockpit",
-    "unassigned": "غير مُسند",
-    "picking": "قيد الجمع",
-    "packing": "قيد التغليف",
-    "readyForRider": "جاهز للمندوب",
-    "vendorsOpen": "{{open}}/{{total}} مفتوح",
-    "closed": "مغلق",
-    "idlePickers": "{{count}} جامعين غير نشطين",
-    "lateOrders": "{{count}} طلبات متأخرة",
-    "pfPending": "{{count}} PF قيد الانتظار",
-    "dataUnavailable": "البيانات المباشرة غير متاحة",
+  "now": {
     "live": "مباشر",
-    "offline": "غير متصل"
+    "offline": "غير متصل",
+    "loading": "جارٍ التحميل…",
+    "dataUnavailable": "البيانات المباشرة غير متاحة",
+    "stage": {
+      "unassigned": "غير مُسند",
+      "picking": "قيد الجمع",
+      "packing": "قيد التغليف",
+      "readyForRider": "جاهز للمندوب"
+    },
+    "lateOrders_zero": "{{count}} طلبات متأخرة",
+    "lateOrders_one": "طلب متأخر واحد",
+    "lateOrders_two": "طلبان متأخران",
+    "lateOrders_few": "{{count}} طلبات متأخرة",
+    "lateOrders_many": "{{count}} طلبًا متأخرًا",
+    "lateOrders_other": "{{count}} طلب متأخر",
+    "nothingLate": "لا شيء متأخر",
+    "storeClosed": "المتجر مغلق",
+    "team": "{{working}} يعملون · {{idle}} غير نشطين",
+    "lateTitle": "طلبات متأخرة",
+    "workingTitle": "يعملون الآن",
+    "notAssigned": "غير مُسند",
+    "late": "متأخر {{minutes}}د",
+    "items_zero": "{{count}} عناصر",
+    "items_one": "عنصر واحد",
+    "items_two": "عنصران",
+    "items_few": "{{count}} عناصر",
+    "items_many": "{{count}} عنصرًا",
+    "items_other": "{{count}} عنصر",
+    "inStage": "{{stage}} · {{items}}",
+    "minutes": "{{minutes}}د",
+    "noWorking": "لا يوجد جامع يعمل على طلب الآن."
+  },
+  "shift": {
+    "title": "أداء الوردية",
+    "timeWindow": "الفترة الزمنية",
+    "range": {
+      "1h": "آخر ساعة",
+      "6h": "آخر 6 س",
+      "12h": "آخر 12 س",
+      "24h": "آخر 24 س"
+    },
+    "successfulOrders": "طلبات ناجحة",
+    "failRate": "معدل فشل {{rate}}",
+    "avgPrep": "متوسط وقت التحضير",
+    "assignment": "الإسناد",
+    "picking": "الجمع",
+    "packing": "التغليف",
+    "pfr": "PFR",
+    "chartTitle": "توقيت الطلبات بالساعة",
+    "completed": "مكتملة",
+    "chartLabel": "متوسط وقت الإسناد والجمع والتغليف لكل ساعة، مع الطلبات المكتملة"
+  },
+  "team": {
+    "title": "فريق الجامعين",
+    "nonZero_zero": "{{count}} بمعدل فشل أعلى من صفر",
+    "nonZero_one": "{{count}} بمعدل فشل أعلى من صفر",
+    "nonZero_two": "{{count}} بمعدل فشل أعلى من صفر",
+    "nonZero_few": "{{count}} بمعدل فشل أعلى من صفر",
+    "nonZero_many": "{{count}} بمعدل فشل أعلى من صفر",
+    "nonZero_other": "{{count}} بمعدل فشل أعلى من صفر",
+    "columns": {
+      "picker": "الجامع",
+      "prep": "التحضير",
+      "avgAssignmentSeconds": "الإسناد",
+      "avgPickingSeconds": "الجمع",
+      "avgPackingSeconds": "التغليف",
+      "pfr": "PFR",
+      "failRate": "معدل الفشل",
+      "ordersCount": "الطلبات"
+    },
+    "sortBy": "ترتيب حسب {{column}}"
   },
   "state": {
     "loading": "جارٍ التحميل…",
     "error": "تعذّر تحميل هذه البيانات. ستظهر مجددًا فور عودة الاتصال."
-  },
-  "floor": {
-    "filter": { "all": "الكل", "attention": "يحتاج انتباهًا", "unassigned": "غير مُسند", "idle": "غير نشط" },
-    "late": "متأخر {{minutes}}د",
-    "pfPending": "PF قيد الانتظار",
-    "items": "{{count}} عناصر",
-    "waiting": "بالانتظار {{minutes}}د",
-    "status": { "picking": "قيد الجمع", "packing": "قيد التغليف", "offline": "غير متصل", "idleFor": "غير نشط {{minutes}}د" },
-    "perf": "{{orders}} طلبًا · معدل الفشل {{failRate}}",
-    "summary": "{{orders}} طلبات مفتوحة · {{working}} من {{onShift}} جامعين يعملون · {{perPicker}} طلب لكل جامع نشط",
-    "section": { "unassigned": "طلبات غير مُسندة · {{count}}", "pickers": "جامعو الطلبات · {{count}}" },
-    "empty": {
-      "closed": "المتجر مغلق. تظهر الطلبات وجامعو الطلبات هنا عند الافتتاح.",
-      "attention": "لا شيء يحتاج انتباهًا. كل الطلبات المفتوحة ضمن الوقت الموعود.",
-      "unassigned": "لا توجد طلبات غير مُسندة.",
-      "idle": "لا يوجد جامعون غير نشطين.",
-      "noOrders": "لا توجد طلبات مفتوحة الآن."
-    }
-  },
-  "stage": { "assignedIn": "الإسناد خلال", "pickedIn": "الجمع خلال", "packedIn": "التغليف خلال" },
-  "shiftMetrics": {
-    "successfulOrders": "طلبات ناجحة",
-    "ofReceived": "{{share}} من {{received}} مستلمة",
-    "issueRate": "طلبات بها مشكلات",
-    "prepTime": "وقت التحضير",
-    "shareOfPrep": "{{share}}% من وقت التحضير",
-    "pfr": "PFR",
-    "updated": "حُدّث قبل {{minutes}}د"
-  },
-  "ordersTiming": {
-    "completed": "طلبات مكتملة",
-    "range": { "last6h": "آخر 6 س", "last12h": "آخر 12 س", "last24h": "آخر 24 س" },
-    "style": { "bars": "أعمدة", "pie": "دائري" }
-  },
-  "pickerTeam": {
-    "columns": { "picker": "الجامع", "prep": "التحضير", "pfr": "PFR", "failRate": "معدل الفشل", "orders": "الطلبات" },
-    "ordersShare": "{{count}} · {{share}}%",
-    "sortedDesc": "مرتّب حسب {{column}}، من الأعلى إلى الأدنى",
-    "sortedAsc": "مرتّب حسب {{column}}، من الأدنى إلى الأعلى",
-    "aboveThreshold": "{{count}} فوق حد معدل الفشل 2%"
-  },
-  "placeholder": { "previewData": "بيانات تجريبية · Slice 2، ليست مباشرة بعد" },
-  "skuAlerts": { "soh": "{{soh}} في المخزون · الحد {{threshold}}", "empty": "لا توجد تنبيهات SKU الآن." },
-  "pickerAlerts": {
-    "empty": "لا توجد تنبيهات لجامعي الطلبات الآن.",
-    "type": { "idle": "غير نشط لفترة طويلة", "noCheckIn": "لا تسجيل دخول في Pelican", "failRate": "ارتفاع معدل الفشل", "slowPicking": "جمع بطيء" },
-    "detail": {
-      "idle": "غير نشط {{value}}د · الحد {{threshold}}د",
-      "noCheckIn": "لا تسجيل دخول بعد {{value}}د من الوردية",
-      "failRate": "{{value}}% في آخر 10 طلبات · الحد {{threshold}}%",
-      "slowPicking": "أبطأ بنسبة {{value}}% من متوسط الوردية"
-    }
-  },
-  "alerts": { "severity": { "warning": "منخفضة", "error": "حرجة" } },
-  "grid": {
-    "span": { "1": "S", "2": "M", "3": "L" },
-    "spanLabel": { "1": "صغير، عمود واحد", "2": "متوسط، عمودان", "3": "كبير، 3 أعمدة" },
-    "dragHandle": "اسحب لنقل {{box}}"
   }
 }

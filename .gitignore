@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Design source export (real names and screenshots, never committed) and local tooling
+design/
+.claude/

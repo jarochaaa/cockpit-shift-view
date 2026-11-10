@@ -1,11 +1,9 @@
 import type {
   FloorSnapshot,
   OrderTimingBucket,
-  PickerAlertRow,
   PickerTeamRow,
   Scenario,
   ShiftMetrics,
-  SkuAlertRow,
   Store,
 } from './types';
 
@@ -130,24 +128,6 @@ export function orderTimingFor(scenario: Scenario): OrderTimingBucket[] {
     };
   });
 }
-
-// Preview content — see the note on SkuAlertRow/PickerAlertRow in types.ts.
-export const MOCK_SKU_ALERTS: SkuAlertRow[] = [
-  { sku: 'SKU-10234', name: 'Fresh Milk 1L', soh: 2, threshold: 10, severity: 'error' },
-  { sku: 'SKU-10877', name: 'Basmati Rice 5kg', soh: 4, threshold: 15, severity: 'error' },
-  { sku: 'SKU-11290', name: 'Free-range Eggs 12pk', soh: 6, threshold: 20, severity: 'warning' },
-  { sku: 'SKU-11304', name: 'Greek Yoghurt 500g', soh: 3, threshold: 12, severity: 'error' },
-  { sku: 'SKU-11477', name: 'Chicken Breast 1kg', soh: 5, threshold: 18, severity: 'warning' },
-  { sku: 'SKU-11602', name: 'Sourdough Loaf', soh: 1, threshold: 8, severity: 'error' },
-];
-
-export const MOCK_PICKER_ALERTS: PickerAlertRow[] = [
-  { pickerId: 'p09', displayName: pickerName(9), alertType: 'noCheckIn', value: 96, threshold: 0, severity: 'error' },
-  { pickerId: 'p03', displayName: pickerName(3), alertType: 'idle', value: 53, threshold: 30, severity: 'warning' },
-  { pickerId: 'p04', displayName: pickerName(4), alertType: 'idle', value: 31, threshold: 30, severity: 'warning' },
-  { pickerId: 'p11', displayName: pickerName(11), alertType: 'failRate', value: 5.88, threshold: 3, severity: 'error' },
-  { pickerId: 'p06', displayName: pickerName(6), alertType: 'slowPicking', value: 46, threshold: 25, severity: 'warning' },
-];
 
 function minutesAgo(minutes: number) {
   return new Date(Date.now() - minutes * 60_000).toISOString();

@@ -1,5 +1,5 @@
-import type { FloorSnapshot, OrderTimingBucket, PickerAlertRow, PickerTeamRow, Scenario, ShiftMetrics, SkuAlertRow, Store } from './types';
-import { MOCK_PICKER_ALERTS, MOCK_PICKER_TEAM, MOCK_SHIFT_METRICS, MOCK_SKU_ALERTS, MOCK_STORE, floorFor, orderTimingFor } from './mockData';
+import type { FloorSnapshot, OrderTimingBucket, PickerTeamRow, Scenario, ShiftMetrics, Store } from './types';
+import { MOCK_PICKER_TEAM, MOCK_SHIFT_METRICS, MOCK_STORE, floorFor, orderTimingFor } from './mockData';
 
 // Every export here is async and shaped like a Postgres query result, so
 // swapping to real Supabase calls (see schema.sql's views) means changing
@@ -32,12 +32,4 @@ export function fetchOrderTiming(scenario: Scenario): Promise<OrderTimingBucket[
 
 export function fetchPickerTeam(scenario: Scenario): Promise<PickerTeamRow[]> {
   return respond(scenario, MOCK_PICKER_TEAM);
-}
-
-export function fetchSkuAlerts(scenario: Scenario): Promise<SkuAlertRow[]> {
-  return respond(scenario, scenario === 'quiet' || scenario === 'closed' ? [] : MOCK_SKU_ALERTS);
-}
-
-export function fetchPickerAlerts(scenario: Scenario): Promise<PickerAlertRow[]> {
-  return respond(scenario, scenario === 'quiet' || scenario === 'closed' ? [] : MOCK_PICKER_ALERTS);
 }
