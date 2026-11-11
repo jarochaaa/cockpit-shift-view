@@ -290,3 +290,31 @@
 .cockpit--v2 .v2-more.cp-button,
 .cockpit--v2 .v2-list__time,
 .cockpit--v2 .v2-section-header__note { color: var(--cp-text-color-tertiary); }
+
+/* Store Management Cockpit sections inside the Cape Version: same components, Cape default skin (blue, Roboto). */
+.cockpit--v2 .v2-subpage { padding-top: 40px; }
+.cockpit--v2 .lg-page { padding: 0 0 24px; }
+.cockpit--v2 .lg-h1 { font-size: var(--cp-font-size-3xlarge); line-height: 1.33; }
+.cockpit--v2 .lg-dd[open] .lg-dd__trigger,
+.cockpit--v2 .lg-dd__trigger--active,
+.cockpit--v2 .lg-chip--on,
+.cockpit--v2 .lg-search:focus-within { border-color: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-chip--on,
+.cockpit--v2 .lg-dd__item:hover,
+.cockpit--v2 .lg-dd__item.is-selected,
+.cockpit--v2 .lg-pager__page { background: var(--cp-feedback-color-branded-low); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-dd__item.is-selected { box-shadow: inset 2px 0 0 var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-seg--on,
+.cockpit--v2 .lg-toggle button.is-on,
+.cockpit--v2 .lg-btn--apply:not(:disabled) { background: var(--cp-action-color-branded-primary-enabled); border-color: var(--cp-action-color-branded-primary-enabled); color: #fff; }
+.cockpit--v2 .lg-btn--outline { border-color: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-wh__card p { color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-wh__card:hover { border-color: var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-table,
+.cockpit--v2 .lg-kpi,
+.cockpit--v2 .lg-empty-box,
+.cockpit--v2 .lg-card { border-radius: var(--cp-base-border-radius-large); }
+.cockpit--v2 .lg-input,
+.cockpit--v2 .lg-dd__trigger,
+.cockpit--v2 .lg-search input,
+.cockpit--v2 .lg-input--date input { font-family: inherit; }

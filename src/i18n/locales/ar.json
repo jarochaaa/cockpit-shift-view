@@ -49,7 +49,8 @@
       "1h": "آخر ساعة",
       "6h": "آخر 6 س",
       "12h": "آخر 12 س",
-      "24h": "آخر 24 س"
+      "24h": "آخر 24 س",
+      "today": "اليوم"
     },
     "successfulOrders": "طلبات ناجحة",
     "failRate": "معدل فشل {{rate}}",
@@ -122,5 +123,231 @@
     "prepByStage": "وقت التحضير حسب المرحلة",
     "avgPrep": "المتوسط {{value}}",
     "pickerTeam": "فريق الجامعين ({{count}})"
+  },
+  "sec": {
+    "nav": {
+      "overview": "نظرة عامة",
+      "orders": "الطلبات",
+      "orderHistory": "سجل الطلبات",
+      "cancellations": "الإلغاءات",
+      "issues": "مشكلات الطلبات",
+      "feedback": "شارك ملاحظاتك",
+      "collapse": "طي القائمة",
+      "beta": "تجريبي",
+      "main": "Store Management Cockpit"
+    },
+    "top": {
+      "product": "QC Store Management Cockpit",
+      "country": "البحرين",
+      "help": "المساعدة",
+      "staging": "بيئة الاختبار",
+      "notifications": "الإشعارات",
+      "account": "الحساب"
+    },
+    "crumb": {
+      "root": "Store Management Cockpit",
+      "label": "مسار التنقل"
+    },
+    "live": "مباشر · حُدّث {{time}}",
+    "offline": "غير متصل",
+    "loading": "جارٍ التحميل…",
+    "unavailable": "البيانات المباشرة غير متاحة",
+    "stage": {
+      "unassigned": "غير مُسند",
+      "picking": "قيد الجمع",
+      "packing": "قيد التغليف",
+      "readyForRider": "جاهز للمندوب"
+    },
+    "overview": {
+      "needsAttention": "يحتاج إلى انتباه",
+      "nothingNeeds": "لا شيء يحتاج إلى انتباه — كل الطلبات المفتوحة ضمن الوقت الموعود.",
+      "people": "الأشخاص الآن",
+      "working": "{{working}} من {{total}} يعملون",
+      "noPickers": "لا يوجد نشاط للجامعين الآن.",
+      "closed": "المتجر مغلق. ستظهر الطلبات والجامعون هنا عند الافتتاح.",
+      "shift": "أداء الوردية",
+      "viewHistory": "عرض سجل الطلبات ←",
+      "successful": "طلبات ناجحة",
+      "avgPrep": "متوسط وقت التحضير",
+      "assignment": "الإسناد",
+      "picking": "الجمع",
+      "packing": "التغليف",
+      "avgDispatch": "متوسط وقت الإرسال",
+      "pfr": "معدل التنفيذ الجزئي",
+      "failRate": "معدل الفشل",
+      "na": "غير متاح",
+      "timePerOrder": "الوقت لكل طلب، بالساعة",
+      "noHistory": "لا توجد بيانات تاريخية لهذه الفترة.",
+      "pickerTeam": "فريق الجامعين",
+      "noPickerData": "لا توجد بيانات للجامعين لهذه الفترة.",
+      "late": "متأخر {{minutes}}د",
+      "pf": "PF قيد الانتظار",
+      "notAssigned": "غير مُسند",
+      "inStage": "{{stage}} · {{items}}",
+      "holds": "#{{order}} · {{minutes}}m",
+      "idleFor": "غير نشط {{minutes}}د",
+      "status": {
+        "picking": "قيد الجمع",
+        "packing": "قيد التغليف",
+        "idle": "غير نشط",
+        "offline": "غير متصل"
+      }
+    },
+    "range": {
+      "today": "اليوم",
+      "1h": "آخر ساعة",
+      "6h": "آخر 6 س",
+      "12h": "آخر 12 س",
+      "24h": "آخر 24 س",
+      "label": "الفترة الزمنية"
+    },
+    "history": {
+      "title": "سجل الطلبات",
+      "stage": "المرحلة",
+      "fulfillment": "التنفيذ",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "orderId": "رقم الطلب",
+      "customer": "العميل",
+      "apply": "تطبيق",
+      "clear": "مسح",
+      "col": {
+        "order": "رقم الطلب",
+        "short": "الرمز المختصر",
+        "stage": "المرحلة",
+        "pickup": "الوقت حتى الاستلام",
+        "received": "وقت الاستلام",
+        "customer": "العميل",
+        "picker": "الجامع",
+        "amount": "المبلغ",
+        "cancelledAt": "وقت الإلغاء",
+        "actions": "الإجراءات"
+      },
+      "stages": {
+        "all": "كل المراحل",
+        "pending_assignment": "بانتظار الإسناد",
+        "on_hold": "معلّق",
+        "picking": "قيد الجمع",
+        "packaging": "قيد التغليف",
+        "ready_for_pickup": "جاهز للاستلام",
+        "awaiting_approval": "بانتظار الموافقة",
+        "successful": "ناجح",
+        "cancelled": "ملغى"
+      },
+      "fulfill": {
+        "all": "الكل",
+        "full": "كامل",
+        "partial": "جزئي"
+      },
+      "noOrders": "لم يتم العثور على طلبات.",
+      "noResults": "لا توجد نتائج",
+      "showing": "{{from}}–{{to}} من {{total}}",
+      "pickupIn": "خلال {{minutes}}د",
+      "pickupLate": "متأخر {{minutes}}د",
+      "rowsPerPage": "صفوف لكل صفحة",
+      "prev": "الصفحة السابقة",
+      "next": "الصفحة التالية",
+      "more": "إجراءات أخرى للطلب #{{order}}"
+    },
+    "cancel": {
+      "title": "الإلغاءات",
+      "pending_return": "بانتظار الإرجاع · {{count}}",
+      "settled": "تمت التسوية · {{count}}",
+      "all": "كل الملغاة · {{count}}",
+      "emptyTitle": "لا شيء بانتظار الإرجاع",
+      "emptyBody": "تظهر الطلبات الملغاة هنا فور حاجة مخزونها إلى الإرجاع. لا شيء لفعله الآن.",
+      "emptySettled": "لا توجد إلغاءات تمت تسويتها بعد",
+      "emptyAll": "لا توجد طلبات ملغاة اليوم",
+      "col": {
+        "order": "رقم الطلب",
+        "cancelledAt": "وقت الإلغاء",
+        "reason": "السبب",
+        "items": "العناصر",
+        "picker": "الجامع",
+        "status": "الحالة"
+      },
+      "returnStock": "إرجاع إلى المخزون",
+      "settledTag": "تمت التسوية",
+      "pendingTag": "بانتظار الإرجاع",
+      "returned": "تم إرجاع المخزون"
+    },
+    "issues": {
+      "title": "مشكلات الطلبات",
+      "updated": "حُدّث قبل {{minutes}} د",
+      "kpiOrders": "طلبات بها مشكلات",
+      "kpiMoney": "المبالغ المستردة والتعويضات",
+      "kpiInStore": "على الأرجح في المتجر",
+      "ofTotal": "من {{total}}",
+      "kpiTop": "العنصر الأكثر",
+      "topCount": "{{count}} مشكلات",
+      "tab": {
+        "new": "جديدة",
+        "reviewed": "تمت مراجعتها",
+        "all": "الكل"
+      },
+      "groupBy": "تجميع حسب",
+      "order": "الطلب",
+      "picker": "الجامع",
+      "rangeToday": "اليوم",
+      "range7d": "آخر 7 أيام",
+      "signal": {
+        "all": "كل الإشارات",
+        "complaint": "شكوى",
+        "refund": "استرداد",
+        "compensation": "تعويض",
+        "review": "تقييم"
+      },
+      "reason": {
+        "all": "كل الأسباب",
+        "missing": "مفقود",
+        "quality": "الجودة أو التلف",
+        "wrong_item": "عنصر خاطئ",
+        "expired": "منتهي الصلاحية",
+        "late": "متأخر",
+        "other": "أخرى",
+        "unmapped": "غير مصنّف"
+      },
+      "cause": {
+        "all": "كل الأسباب المحتملة",
+        "in_store": "في المتجر",
+        "delivery": "التوصيل",
+        "customer_preference": "تفضيل العميل",
+        "unclear": "غير واضح"
+      },
+      "allPickers": "كل الجامعين",
+      "apply": "تطبيق",
+      "emptyToday": "لا توجد مشكلات طلبات اليوم",
+      "emptyWeek": "لا توجد مشكلات طلبات في آخر 7 أيام",
+      "emptyFiltered": "لا توجد مشكلات تطابق هذه الفلاتر",
+      "yesterday_one": "أمس: مشكلة واحدة.",
+      "yesterday_other": "أمس: {{count}} مشكلات.",
+      "markReviewed": "تحديد كمُراجَع",
+      "reviewedTag": "تمت المراجعة",
+      "issueCount_one": "مشكلة واحدة",
+      "issueCount_other": "{{count}} مشكلات",
+      "noPicker": "بدون جامع",
+      "yesterday_zero": "أمس: {{count}} مشكلات.",
+      "issueCount_zero": "{{count}} مشكلات",
+      "yesterday_two": "أمس: {{count}} مشكلات.",
+      "issueCount_two": "{{count}} مشكلات",
+      "yesterday_few": "أمس: {{count}} مشكلات.",
+      "issueCount_few": "{{count}} مشكلات",
+      "yesterday_many": "أمس: {{count}} مشكلات.",
+      "issueCount_many": "{{count}} مشكلات"
+    },
+    "wh": {
+      "title": "المستودعات",
+      "search": "بحث",
+      "noResults": "لا توجد مستودعات تطابق بحثك",
+      "type": {
+        "WAREHOUSE_TYPE_DMART": "WAREHOUSE_TYPE_DMART"
+      }
+    },
+    "items_one": "عنصر واحد",
+    "items_other": "{{count}} عنصر",
+    "items_zero": "{{count}} عناصر",
+    "items_two": "عنصران",
+    "items_few": "{{count}} عناصر",
+    "items_many": "{{count}} عنصرًا"
   }
 }

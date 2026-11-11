@@ -41,7 +41,8 @@
       "1h": "Last 1h",
       "6h": "Last 6h",
       "12h": "Last 12h",
-      "24h": "Last 24h"
+      "24h": "Last 24h",
+      "today": "Today"
     },
     "successfulOrders": "Successful orders",
     "failRate": "{{rate}} fail rate",
@@ -110,5 +111,219 @@
     "prepByStage": "Prep time by stage",
     "avgPrep": "Avg {{value}}",
     "pickerTeam": "Picker team ({{count}})"
+  },
+  "sec": {
+    "nav": {
+      "overview": "Overview",
+      "orders": "Orders",
+      "orderHistory": "Order history",
+      "cancellations": "Cancellations",
+      "issues": "Order issues",
+      "feedback": "Share your feedback",
+      "collapse": "Collapse menu",
+      "beta": "Beta",
+      "main": "Store Management Cockpit"
+    },
+    "top": {
+      "product": "QC Store Management Cockpit",
+      "country": "Bahrain",
+      "help": "Get Help",
+      "staging": "Staging",
+      "notifications": "Notifications",
+      "account": "Account"
+    },
+    "crumb": {
+      "root": "Store Management Cockpit",
+      "label": "Breadcrumb"
+    },
+    "live": "Live · updated {{time}}",
+    "offline": "Offline",
+    "loading": "Loading…",
+    "unavailable": "Live data unavailable",
+    "stage": {
+      "unassigned": "Unassigned",
+      "picking": "Picking",
+      "packing": "Packing",
+      "readyForRider": "Ready for Rider"
+    },
+    "overview": {
+      "needsAttention": "Needs attention",
+      "nothingNeeds": "Nothing needs attention — every open order is inside its promise time.",
+      "people": "People right now",
+      "working": "{{working}} of {{total}} working",
+      "noPickers": "No picker activity available right now.",
+      "closed": "The store is closed. Orders and pickers show up here when it opens.",
+      "shift": "Shift performance",
+      "viewHistory": "View order history →",
+      "successful": "Successful orders",
+      "avgPrep": "Avg prep time",
+      "assignment": "Assignment",
+      "picking": "Picking",
+      "packing": "Packing",
+      "avgDispatch": "Avg dispatch time",
+      "pfr": "Partial fulfillment rate",
+      "failRate": "Fail rate",
+      "na": "N/A",
+      "timePerOrder": "Time per order, by hour",
+      "noHistory": "No historical data available for this time range.",
+      "pickerTeam": "Picker team",
+      "noPickerData": "No picker data available for this time range.",
+      "late": "{{minutes}}m late",
+      "pf": "PF pending",
+      "notAssigned": "Not assigned",
+      "inStage": "{{stage}} · {{items}}",
+      "holds": "#{{order}} · {{minutes}}m",
+      "idleFor": "Idle {{minutes}}m",
+      "status": {
+        "picking": "Picking",
+        "packing": "Packing",
+        "idle": "Idle",
+        "offline": "Offline"
+      }
+    },
+    "range": {
+      "today": "Today",
+      "1h": "Last 1h",
+      "6h": "Last 6h",
+      "12h": "Last 12h",
+      "24h": "Last 24h",
+      "label": "Time range"
+    },
+    "history": {
+      "title": "Order history",
+      "stage": "Stage",
+      "fulfillment": "Fulfillment",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "orderId": "Order ID",
+      "customer": "Customer",
+      "apply": "Apply",
+      "clear": "Clear",
+      "col": {
+        "order": "Order #",
+        "short": "Short code",
+        "stage": "Stage",
+        "pickup": "Time to pickup",
+        "received": "Received",
+        "customer": "Customer",
+        "picker": "Picker",
+        "amount": "Amount",
+        "cancelledAt": "Cancelled at",
+        "actions": "Actions"
+      },
+      "stages": {
+        "all": "All stages",
+        "pending_assignment": "Pending Assignment",
+        "on_hold": "On Hold",
+        "picking": "Picking",
+        "packaging": "Packaging",
+        "ready_for_pickup": "Ready for Pickup",
+        "awaiting_approval": "Awaiting Approval",
+        "successful": "Successful",
+        "cancelled": "Cancelled"
+      },
+      "fulfill": {
+        "all": "All",
+        "full": "Full",
+        "partial": "Partial"
+      },
+      "noOrders": "No orders found.",
+      "noResults": "No results",
+      "showing": "{{from}}–{{to}} of {{total}}",
+      "pickupIn": "in {{minutes}}m",
+      "pickupLate": "{{minutes}}m late",
+      "rowsPerPage": "Rows per page",
+      "prev": "Previous page",
+      "next": "Next page",
+      "more": "More actions for #{{order}}"
+    },
+    "cancel": {
+      "title": "Cancellations",
+      "pending_return": "Pending return · {{count}}",
+      "settled": "Settled · {{count}}",
+      "all": "All cancelled · {{count}}",
+      "emptyTitle": "Nothing waiting to be returned",
+      "emptyBody": "Cancelled orders show up here the moment their stock needs putting back. Nothing to do right now.",
+      "emptySettled": "No settled cancellations yet",
+      "emptyAll": "No cancelled orders today",
+      "col": {
+        "order": "Order #",
+        "cancelledAt": "Cancelled at",
+        "reason": "Reason",
+        "items": "Items",
+        "picker": "Picker",
+        "status": "Status"
+      },
+      "returnStock": "Return to stock",
+      "settledTag": "Settled",
+      "pendingTag": "Pending return",
+      "returned": "Stock returned"
+    },
+    "issues": {
+      "title": "Order issues",
+      "updated": "Updated {{minutes}} min ago",
+      "kpiOrders": "Orders with issues",
+      "kpiMoney": "Refunds & compensation",
+      "kpiInStore": "Likely in-store",
+      "ofTotal": "of {{total}}",
+      "kpiTop": "Top item",
+      "topCount": "{{count}} issues",
+      "tab": {
+        "new": "New",
+        "reviewed": "Reviewed",
+        "all": "All"
+      },
+      "groupBy": "Group by",
+      "order": "Order",
+      "picker": "Picker",
+      "rangeToday": "Today",
+      "range7d": "Last 7 days",
+      "signal": {
+        "all": "All signals",
+        "complaint": "Complaint",
+        "refund": "Refund",
+        "compensation": "Compensation",
+        "review": "Review"
+      },
+      "reason": {
+        "all": "All reasons",
+        "missing": "Missing",
+        "quality": "Quality or damage",
+        "wrong_item": "Wrong item",
+        "expired": "Expired",
+        "late": "Late",
+        "other": "Other",
+        "unmapped": "Unmapped"
+      },
+      "cause": {
+        "all": "All likely causes",
+        "in_store": "In-store",
+        "delivery": "Delivery",
+        "customer_preference": "Customer preference",
+        "unclear": "Unclear"
+      },
+      "allPickers": "All pickers",
+      "apply": "Apply",
+      "emptyToday": "No order issues today",
+      "emptyWeek": "No order issues in the last 7 days",
+      "emptyFiltered": "No issues match these filters",
+      "yesterday_one": "Yesterday: {{count}} issue.",
+      "yesterday_other": "Yesterday: {{count}} issues.",
+      "markReviewed": "Mark reviewed",
+      "reviewedTag": "Reviewed",
+      "issueCount_one": "{{count}} issue",
+      "issueCount_other": "{{count}} issues",
+      "noPicker": "No picker"
+    },
+    "wh": {
+      "title": "Warehouses",
+      "search": "Search",
+      "noResults": "No warehouses match your search",
+      "type": {
+        "WAREHOUSE_TYPE_DMART": "WAREHOUSE_TYPE_DMART"
+      }
+    },
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
   }
 }

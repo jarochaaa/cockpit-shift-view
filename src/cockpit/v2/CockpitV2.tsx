@@ -5,20 +5,11 @@ import helpCircle from '../../assets/v2/help-circle.svg';
 import listCart from '../../assets/v2/list-cart.svg';
 import listChevron from '../../assets/v2/list-chevron.svg';
 import listPerson from '../../assets/v2/list-person.svg';
-import navBottle from '../../assets/v2/nav-bottle.svg';
-import navBox from '../../assets/v2/nav-box.svg';
 import navCalendar from '../../assets/v2/nav-calendar.svg';
 import navCart from '../../assets/v2/nav-cart.svg';
 import navDashboard from '../../assets/v2/nav-dashboard.svg';
-import navDial from '../../assets/v2/nav-dial.svg';
-import navDownload from '../../assets/v2/nav-download.svg';
 import navHistory from '../../assets/v2/nav-history.svg';
-import navInbound from '../../assets/v2/nav-inbound.svg';
-import navOutbound from '../../assets/v2/nav-outbound.svg';
-import navPickers from '../../assets/v2/nav-pickers.svg';
-import navPutaway from '../../assets/v2/nav-putaway.svg';
 import navStores from '../../assets/v2/nav-stores.svg';
-import navTasks from '../../assets/v2/nav-tasks.svg';
 import notifications from '../../assets/v2/notifications.svg';
 import sectionChevron from '../../assets/v2/section-chevron.svg';
 import statusDot from '../../assets/v2/status-dot.svg';
@@ -29,9 +20,11 @@ import { List, ListItem, ListItemText } from '../../cape/List';
 import { Select } from '../../cape/Select';
 import { formatPercent, formatSeconds } from '../../domain/format';
 import { fetchFloor, fetchOrderTiming, fetchPickerTeam, fetchShiftMetrics, fetchStore } from '../../domain/mockApi';
+import { warehouseName } from '../../domain/mockData';
 import { RTL_LOCALES } from '../../i18n';
 import { RANGES, RANGE_HOURS } from '../../state';
-import type { Action, State, TimingRange } from '../../state';
+import type { Action, Page, State, TimingRange } from '../../state';
+import { Cancellations, Issues, Orders, Warehouses } from '../legacy/CockpitLegacy';
 import { BoxState } from '../BoxState';
 import { deriveLive } from '../live';
 import { PickerTeamTable } from '../ShiftBoard';
@@ -48,27 +41,24 @@ function Icon({ src, className }: { src: string; className?: string }) {
   );
 }
 
-type NavItem = { key: string; icon: string; badge?: number };
+type NavItem = { key: string; icon: string; page: Page };
+// Same sections as the Store Management Cockpit, in the DMarts Portal sidenav.
 const NAV: { section?: string; items: NavItem[] }[] = [
-  { items: [{ key: 'overview', icon: navDashboard }] },
-  { section: 'orders', items: [{ key: 'ordersDashboard', icon: navCart, badge: 52 }, { key: 'pendingApproval', icon: navHistory, badge: 3 }] },
-  { section: 'inventory', items: [{ key: 'inventoryManagement', icon: navBottle }, { key: 'stockAdjustment', icon: navBox, badge: 3 }, { key: 'expiry', icon: navCalendar }] },
+  { items: [{ key: 'overview', icon: navDashboard, page: 'overview' }] },
   {
-    section: 'storeActivities',
+    section: 'orders',
     items: [
-      { key: 'cycleCount', icon: navDial },
-      { key: 'poReceiving', icon: navDownload, badge: 1 },
-      { key: 'inbound', icon: navInbound },
-      { key: 'outbound', icon: navOutbound },
-      { key: 'putaway', icon: navPutaway },
-      { key: 'tasks', icon: navTasks },
+      { key: 'orderHistory', icon: navHistory, page: 'orders' },
+      { key: 'cancellations', icon: navCart, page: 'cancellations' },
+      { key: 'issues', icon: navCalendar, page: 'issues' },
     ],
   },
-  { section: 'settings', items: [{ key: 'pickers', icon: navPickers }, { key: 'stores', icon: navStores }] },
+  { section: 'settings', items: [{ key: 'stores', icon: navStores, page: 'warehouses' }] },
 ];
 
-function Sidenav() {
+function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
   const { t } = useTranslation();
+  const label = (key: string) => (key === 'stores' || key === 'settings' ? t(`v2.nav.${key}`) : t(`sec.nav.${key}`));
   return (
     <nav className="v2-sidenav" aria-label={t('v2.nav.main')}>
       <div className="v2-sidenav__brand" dir="ltr">
@@ -78,14 +68,22 @@ function Sidenav() {
       <div className="v2-sidenav__sections">
         {NAV.map((group, i) => (
           <div key={group.section ?? i} className="v2-sidenav__section">
-            {group.section && <div className="v2-sidenav__header">{t(`v2.nav.${group.section}`)}</div>}
+            {group.section && <div className="v2-sidenav__header">{label(group.section)}</div>}
             {group.items.map((item) => {
-              const active = item.key === 'overview';
+              const active = item.page === page;
               return (
-                <a key={item.key} href="#" className={`v2-sidenav__item${active ? ' is-active' : ''}`} aria-current={active ? 'page' : undefined} onClick={(e) => e.preventDefault()}>
+                <a
+                  key={item.key}
+                  href="#"
+                  className={`v2-sidenav__item${active ? ' is-active' : ''}`}
+                  aria-current={active ? 'page' : undefined}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onGo(item.page);
+                  }}
+                >
                   <Icon src={item.icon} />
-                  <span className="v2-sidenav__label">{t(`v2.nav.${item.key}`)}</span>
-                  {item.badge != null && <Indicator status="branded">{item.badge}</Indicator>}
+                  <span className="v2-sidenav__label">{label(item.key)}</span>
                 </a>
               );
             })}
@@ -146,15 +144,24 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
   const timing = useMock(fetchOrderTiming, s.scenario);
   const team = useMock(fetchPickerTeam, s.scenario);
   const live = deriveLive(store, floor);
-  const name = store.status === 'ready' ? store.data.name : 'QA_001_Test_Store';
+  const name = warehouseName(s.warehouseId);
   const open = store.status === 'ready' && store.data.status === 'open';
   const dash = (n: number) => (live.ready ? n : '–');
   const items = (n: number) => t('now.items', { count: n });
 
   return (
     <div className="cockpit cockpit--v2" data-theme="cape-light-b2b" dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang}>
-      <Sidenav />
+      <Sidenav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />
       <main className="v2-main">
+        {s.page !== 'overview' ? (
+          <div className="v2-subpage">
+            {s.page === 'warehouses' && <Warehouses s={s} dispatch={dispatch} />}
+            {s.page === 'orders' && <Orders s={s} dispatch={dispatch} />}
+            {s.page === 'cancellations' && <Cancellations s={s} dispatch={dispatch} />}
+            {s.page === 'issues' && <Issues s={s} dispatch={dispatch} />}
+          </div>
+        ) : (
+        <>
         <header className="v2-page-header">
           <h1 className="v2-page-header__title">{name}</h1>
           <div className="v2-page-header__actions">
@@ -323,6 +330,8 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
             )}
           </BoxState>
         </section>
+        </>
+        )}
       </main>
     </div>
   );

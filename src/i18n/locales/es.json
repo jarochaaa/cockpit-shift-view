@@ -41,7 +41,8 @@
       "1h": "Última 1h",
       "6h": "Últimas 6h",
       "12h": "Últimas 12h",
-      "24h": "Últimas 24h"
+      "24h": "Últimas 24h",
+      "today": "Hoy"
     },
     "successfulOrders": "Órdenes exitosas",
     "failRate": "{{rate}} de fail rate",
@@ -110,5 +111,219 @@
     "prepByStage": "Tiempo de preparación por etapa",
     "avgPrep": "Promedio {{value}}",
     "pickerTeam": "Equipo de pickers ({{count}})"
+  },
+  "sec": {
+    "nav": {
+      "overview": "Resumen",
+      "orders": "Órdenes",
+      "orderHistory": "Historial de órdenes",
+      "cancellations": "Cancelaciones",
+      "issues": "Problemas de órdenes",
+      "feedback": "Comparte tu feedback",
+      "collapse": "Contraer menú",
+      "beta": "Beta",
+      "main": "Store Management Cockpit"
+    },
+    "top": {
+      "product": "QC Store Management Cockpit",
+      "country": "Baréin",
+      "help": "Ayuda",
+      "staging": "Staging",
+      "notifications": "Notificaciones",
+      "account": "Cuenta"
+    },
+    "crumb": {
+      "root": "Store Management Cockpit",
+      "label": "Ruta de navegación"
+    },
+    "live": "En vivo · actualizado {{time}}",
+    "offline": "Sin conexión",
+    "loading": "Cargando…",
+    "unavailable": "Datos en vivo no disponibles",
+    "stage": {
+      "unassigned": "Sin asignar",
+      "picking": "En picking",
+      "packing": "En packing",
+      "readyForRider": "Listas para rider"
+    },
+    "overview": {
+      "needsAttention": "Requiere atención",
+      "nothingNeeds": "Nada requiere atención: todas las órdenes abiertas están dentro de su tiempo prometido.",
+      "people": "Personas ahora",
+      "working": "{{working}} de {{total}} trabajando",
+      "noPickers": "No hay actividad de pickers en este momento.",
+      "closed": "La tienda está cerrada. Las órdenes y los pickers aparecen aquí cuando abra.",
+      "shift": "Desempeño del turno",
+      "viewHistory": "Ver historial de órdenes →",
+      "successful": "Órdenes exitosas",
+      "avgPrep": "Tiempo promedio de preparación",
+      "assignment": "Asignación",
+      "picking": "Picking",
+      "packing": "Packing",
+      "avgDispatch": "Tiempo promedio de despacho",
+      "pfr": "Tasa de fulfillment parcial",
+      "failRate": "Fail rate",
+      "na": "N/D",
+      "timePerOrder": "Tiempo por orden, por hora",
+      "noHistory": "No hay datos históricos para este rango de tiempo.",
+      "pickerTeam": "Equipo de pickers",
+      "noPickerData": "No hay datos de pickers para este rango de tiempo.",
+      "late": "{{minutes}}m tarde",
+      "pf": "PF pendiente",
+      "notAssigned": "Sin asignar",
+      "inStage": "{{stage}} · {{items}}",
+      "holds": "#{{order}} · {{minutes}}m",
+      "idleFor": "Inactivo {{minutes}}m",
+      "status": {
+        "picking": "En picking",
+        "packing": "En packing",
+        "idle": "Inactivo",
+        "offline": "Desconectado"
+      }
+    },
+    "range": {
+      "today": "Hoy",
+      "1h": "Última 1h",
+      "6h": "Últimas 6h",
+      "12h": "Últimas 12h",
+      "24h": "Últimas 24h",
+      "label": "Rango de tiempo"
+    },
+    "history": {
+      "title": "Historial de órdenes",
+      "stage": "Etapa",
+      "fulfillment": "Fulfillment",
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "orderId": "ID de orden",
+      "customer": "Cliente",
+      "apply": "Aplicar",
+      "clear": "Limpiar",
+      "col": {
+        "order": "Orden #",
+        "short": "Código corto",
+        "stage": "Etapa",
+        "pickup": "Tiempo para pickup",
+        "received": "Recibida",
+        "customer": "Cliente",
+        "picker": "Picker",
+        "amount": "Monto",
+        "cancelledAt": "Cancelada a las",
+        "actions": "Acciones"
+      },
+      "stages": {
+        "all": "Todas las etapas",
+        "pending_assignment": "Pendiente de asignación",
+        "on_hold": "En espera",
+        "picking": "Picking",
+        "packaging": "Packaging",
+        "ready_for_pickup": "Lista para pickup",
+        "awaiting_approval": "Esperando aprobación",
+        "successful": "Exitosa",
+        "cancelled": "Cancelada"
+      },
+      "fulfill": {
+        "all": "Todas",
+        "full": "Completo",
+        "partial": "Parcial"
+      },
+      "noOrders": "No se encontraron órdenes.",
+      "noResults": "Sin resultados",
+      "showing": "{{from}}–{{to}} de {{total}}",
+      "pickupIn": "en {{minutes}}m",
+      "pickupLate": "{{minutes}}m tarde",
+      "rowsPerPage": "Filas por página",
+      "prev": "Página anterior",
+      "next": "Página siguiente",
+      "more": "Más acciones para #{{order}}"
+    },
+    "cancel": {
+      "title": "Cancelaciones",
+      "pending_return": "Pendientes de devolver · {{count}}",
+      "settled": "Resueltas · {{count}}",
+      "all": "Todas las canceladas · {{count}}",
+      "emptyTitle": "Nada pendiente de devolver",
+      "emptyBody": "Las órdenes canceladas aparecen aquí apenas su stock necesita volver al estante. Nada que hacer por ahora.",
+      "emptySettled": "Todavía no hay cancelaciones resueltas",
+      "emptyAll": "No hay órdenes canceladas hoy",
+      "col": {
+        "order": "Orden #",
+        "cancelledAt": "Cancelada a las",
+        "reason": "Motivo",
+        "items": "Ítems",
+        "picker": "Picker",
+        "status": "Estado"
+      },
+      "returnStock": "Devolver al stock",
+      "settledTag": "Resuelta",
+      "pendingTag": "Pendiente de devolver",
+      "returned": "Stock devuelto"
+    },
+    "issues": {
+      "title": "Problemas de órdenes",
+      "updated": "Actualizado hace {{minutes}} min",
+      "kpiOrders": "Órdenes con problemas",
+      "kpiMoney": "Reembolsos y compensaciones",
+      "kpiInStore": "Probablemente en tienda",
+      "ofTotal": "de {{total}}",
+      "kpiTop": "Ítem principal",
+      "topCount": "{{count}} problemas",
+      "tab": {
+        "new": "Nuevos",
+        "reviewed": "Revisados",
+        "all": "Todos"
+      },
+      "groupBy": "Agrupar por",
+      "order": "Orden",
+      "picker": "Picker",
+      "rangeToday": "Hoy",
+      "range7d": "Últimos 7 días",
+      "signal": {
+        "all": "Todas las señales",
+        "complaint": "Queja",
+        "refund": "Reembolso",
+        "compensation": "Compensación",
+        "review": "Reseña"
+      },
+      "reason": {
+        "all": "Todos los motivos",
+        "missing": "Faltante",
+        "quality": "Calidad o daño",
+        "wrong_item": "Ítem equivocado",
+        "expired": "Vencido",
+        "late": "Tarde",
+        "other": "Otro",
+        "unmapped": "Sin mapear"
+      },
+      "cause": {
+        "all": "Todas las causas probables",
+        "in_store": "En tienda",
+        "delivery": "Delivery",
+        "customer_preference": "Preferencia del cliente",
+        "unclear": "No está claro"
+      },
+      "allPickers": "Todos los pickers",
+      "apply": "Aplicar",
+      "emptyToday": "No hay problemas de órdenes hoy",
+      "emptyWeek": "No hay problemas de órdenes en los últimos 7 días",
+      "emptyFiltered": "Ningún problema coincide con estos filtros",
+      "yesterday_one": "Ayer: {{count}} problema.",
+      "yesterday_other": "Ayer: {{count}} problemas.",
+      "markReviewed": "Marcar como revisado",
+      "reviewedTag": "Revisado",
+      "issueCount_one": "{{count}} problema",
+      "issueCount_other": "{{count}} problemas",
+      "noPicker": "Sin picker"
+    },
+    "wh": {
+      "title": "Almacenes",
+      "search": "Buscar",
+      "noResults": "Ningún almacén coincide con tu búsqueda",
+      "type": {
+        "WAREHOUSE_TYPE_DMART": "WAREHOUSE_TYPE_DMART"
+      }
+    },
+    "items_one": "{{count}} ítem",
+    "items_other": "{{count}} ítems"
   }
 }

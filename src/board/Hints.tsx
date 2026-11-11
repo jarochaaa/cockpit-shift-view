@@ -50,6 +50,11 @@ const HINTS: Record<string, Hint> = {
     look: ['Every card shows one shared error message; the now bar says live data is unavailable.'],
     tryThis: ['Ask whether they would trust the rest of the screen in this state.'],
   },
+  SM10: { title: 'Warehouse list', look: ['Every store the user can open, with search. Click a card to open its overview.'], tryThis: ['Search for "002".'] },
+  SM11: { title: 'Order history', look: ['Stage and fulfillment filters, order ID and customer search, rows per page and pages.'], tryThis: ['Filter by Cancelled.', 'Search order 67890 and press Apply.'], data: ['Customer names are placeholders.'] },
+  SM12: { title: 'Cancellations', look: ['Pending return · Settled · All cancelled. Each pending order has Return to stock.'], tryThis: ['Return one order and watch it move to Settled.'] },
+  SM13: { title: 'Order issues', look: ['Four KPIs, New / Reviewed / All, group by Order or Picker, filters behind Apply.'], tryThis: ['Group by Picker.', 'Mark an issue reviewed.'] },
+  SM14: { title: 'No data yet · as in staging', look: ['Every section in its empty state, exactly as staging shows it today.'], tryThis: ['Walk through all four sections in the sidebar.'] },
   SM9: {
     title: 'Custom combination',
     look: ['A combination the tester built, e.g. a different sort or time window on top of a shift state.'],
@@ -93,7 +98,7 @@ export function Hints({ s, code }: { s: State; code: string }) {
           ))}
         </div>
       )}
-      {s.version === 2 && <p className="tester-notes__note">Version 2: same content as Version 1, in the DMarts Portal layout on the default Cape theme. The now bar becomes the Live orders tiles; Late orders and Working now are the two lists.</p>}
+      <p className="tester-notes__note">{s.version === 'legacy' ? 'Legacy Version: the Store Management Cockpit as it ships in staging, talabat theme. Use the sidebar to move between Overview, Order history, Cancellations and Order issues.' : 'Cape Version: the same content in the DMarts Portal layout, on the default Cape theme.'}</p>
       {s.lang !== 'en' && <p className="tester-notes__note">The Cockpit is in {s.lang === 'es' ? 'Spanish' : 'Arabic'}; these hints stay in English.</p>}
       <details className="edge" open={code === 'SM1'}>
         <summary>Edge cases · how to recreate them</summary>

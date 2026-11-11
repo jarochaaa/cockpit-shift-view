@@ -1,5 +1,10 @@
 import type {
+  CancellationRow,
   FloorSnapshot,
+  HistoryStage,
+  OrderHistoryRow,
+  OrderIssue,
+  Warehouse,
   OrderTimingBucket,
   PickerTeamRow,
   Scenario,
@@ -78,6 +83,7 @@ const FLOOR_CLOSED: FloorSnapshot = {
 export function floorFor(scenario: Scenario): FloorSnapshot {
   if (scenario === 'spike') return FLOOR_SPIKE;
   if (scenario === 'quiet') return FLOOR_QUIET;
+  if (scenario === 'empty') return { readyForRider: 0, orders: [], pickers: [] };
   if (scenario === 'closed') return FLOOR_CLOSED;
   return FLOOR_NORMAL;
 }
@@ -129,6 +135,81 @@ export function orderTimingFor(scenario: Scenario): OrderTimingBucket[] {
   });
 }
 
+// ---- Store Management Cockpit sections. Placeholder names only (no PII), BHD amounts. ----
+
+export const MOCK_WAREHOUSES: Warehouse[] = [
+  { id: 'wh-qa-001', name: 'QA_001_Test_Store', type: 'WAREHOUSE_TYPE_DMART' },
+  { id: 'wh-qa-002', name: 'QA_002_Live_Vendor_Test', type: 'WAREHOUSE_TYPE_DMART' },
+  { id: 'wh-qa-003', name: 'QA_003_Test_5-1', type: 'WAREHOUSE_TYPE_DMART' },
+  { id: 'wh-qa-004', name: 'QA_004_Ticket_Test', type: 'WAREHOUSE_TYPE_DMART' },
+];
+
+const customer = (n: number) => `Customer ${String(n).padStart(2, '0')}`;
+const short = (n: number) => `${['K', 'M', 'R', 'T', 'W'][n % 5]}${(4200 + n * 37) % 9000}`;
+
+// Open orders come from the live floor; the rest of the day is finished work.
+function historyFor(floor: FloorSnapshot): OrderHistoryRow[] {
+  const open: OrderHistoryRow[] = floor.orders.map((o, i) => ({
+    orderId: o.externalOrderId,
+    shortCode: short(i),
+    stage: (o.stage === 'unassigned' ? 'pending_assignment' : o.stage === 'packing' ? (o.pfPending ? 'awaiting_approval' : 'packaging') : 'picking') as HistoryStage,
+    fulfillment: o.pfPending ? 'partial' : 'full',
+    timeToPickupMinutes: o.lateByMinutes != null ? -o.lateByMinutes : 12 - o.minutesInStage,
+    receivedAt: minutesAgo(o.minutesInStage + 4),
+    customer: customer(i + 1),
+    picker: o.pickerId ? floor.pickers.find((p) => p.pickerId === o.pickerId)?.displayName ?? null : null,
+    amount: 4.25 + i * 3.1,
+    cancelledAt: null,
+  }));
+  const done: OrderHistoryRow[] = Array.from({ length: 34 }, (_, i) => {
+    const cancelled = i % 11 === 4;
+    const ready = i < 3;
+    return {
+      orderId: String(67880 - i),
+      shortCode: short(i + 10),
+      stage: cancelled ? 'cancelled' : ready ? 'ready_for_pickup' : 'successful',
+      fulfillment: i % 7 === 3 ? 'partial' : 'full',
+      timeToPickupMinutes: ready ? 4 - i : null,
+      receivedAt: minutesAgo(18 + i * 21),
+      customer: customer(i + 20),
+      picker: `Picker ${String((i % 11) + 1).padStart(2, '0')}`,
+      amount: 2.5 + ((i * 7) % 23) + 0.75,
+      cancelledAt: cancelled ? minutesAgo(10 + i * 21) : null,
+    };
+  });
+  return [...open, ...done];
+}
+
+export function orderHistoryFor(scenario: Scenario): OrderHistoryRow[] {
+  return scenario === 'quiet' || scenario === 'empty' ? [] : historyFor(floorFor(scenario));
+}
+
+const CANCELLATIONS: CancellationRow[] = [
+  { orderId: '67876', shortCode: 'R4533', cancelledAt: minutesAgo(26), reason: 'Customer cancelled', items: 6, picker: 'Picker 04', status: 'pending_return' },
+  { orderId: '67869', shortCode: 'K4422', cancelledAt: minutesAgo(52), reason: 'Item unavailable', items: 3, picker: 'Picker 02', status: 'pending_return' },
+  { orderId: '67858', shortCode: 'W4718', cancelledAt: minutesAgo(118), reason: 'Rider not assigned', items: 9, picker: 'Picker 07', status: 'pending_return' },
+  { orderId: '67847', shortCode: 'M4310', cancelledAt: minutesAgo(205), reason: 'Customer cancelled', items: 2, picker: 'Picker 01', status: 'settled' },
+  { orderId: '67836', shortCode: 'T4629', cancelledAt: minutesAgo(340), reason: 'Payment failed', items: 4, picker: null, status: 'settled' },
+];
+
+export function cancellationsFor(scenario: Scenario): CancellationRow[] {
+  return scenario === 'quiet' || scenario === 'empty' || scenario === 'closed' ? [] : CANCELLATIONS;
+}
+
+const ISSUES: OrderIssue[] = [
+  { id: 'i1', orderId: '67881', shortCode: 'K4199', signal: 'complaint', reason: 'missing', cause: 'in_store', item: 'Fresh Milk 1L', picker: 'Picker 03', amount: 0.85, reviewed: false, daysAgo: 0, at: minutesAgo(35) },
+  { id: 'i2', orderId: '67874', shortCode: 'M4291', signal: 'refund', reason: 'quality', cause: 'in_store', item: 'Free-range Eggs 12pk', picker: 'Picker 06', amount: 1.9, reviewed: false, daysAgo: 0, at: minutesAgo(80) },
+  { id: 'i3', orderId: '67870', shortCode: 'R4411', signal: 'compensation', reason: 'late', cause: 'delivery', item: 'Sourdough Loaf', picker: 'Picker 02', amount: 1.0, reviewed: false, daysAgo: 0, at: minutesAgo(140) },
+  { id: 'i4', orderId: '67862', shortCode: 'T4502', signal: 'complaint', reason: 'wrong_item', cause: 'in_store', item: 'Greek Yoghurt 500g', picker: 'Picker 03', amount: 1.25, reviewed: true, daysAgo: 0, at: minutesAgo(210) },
+  { id: 'i5', orderId: '67851', shortCode: 'W4633', signal: 'review', reason: 'other', cause: 'customer_preference', item: 'Basmati Rice 5kg', picker: 'Picker 11', amount: null, reviewed: false, daysAgo: 0, at: minutesAgo(260) },
+  { id: 'i6', orderId: '67844', shortCode: 'K4380', signal: 'refund', reason: 'expired', cause: 'in_store', item: 'Fresh Milk 1L', picker: 'Picker 06', amount: 0.85, reviewed: true, daysAgo: 1, at: minutesAgo(1500) },
+  { id: 'i7', orderId: '67833', shortCode: 'M4264', signal: 'complaint', reason: 'unmapped', cause: 'unclear', item: 'Chicken Breast 1kg', picker: null, amount: null, reviewed: false, daysAgo: 2, at: minutesAgo(3000) },
+];
+
+export function orderIssuesFor(scenario: Scenario): OrderIssue[] {
+  return scenario === 'quiet' || scenario === 'empty' || scenario === 'closed' ? [] : ISSUES;
+}
+
 function minutesAgo(minutes: number) {
   return new Date(Date.now() - minutes * 60_000).toISOString();
 }
@@ -136,3 +217,5 @@ function minutesAgo(minutes: number) {
 function hourAgo(hours: number) {
   return new Date(Date.now() - hours * 3_600_000).toISOString();
 }
+
+export const warehouseName = (id: string) => MOCK_WAREHOUSES.find((w) => w.id === id)?.name ?? MOCK_STORE.name;

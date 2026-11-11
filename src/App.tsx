@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
 import { Hints } from './board/Hints';
 import { Navigator } from './board/Navigator';
-import { Cockpit } from './cockpit/Cockpit';
+import { CockpitLegacy } from './cockpit/legacy/CockpitLegacy';
 import { CockpitV2 } from './cockpit/v2/CockpitV2';
 import i18n from './i18n';
 import { codeFor, initialState, reducer } from './state';
@@ -38,7 +38,7 @@ export default function App() {
                 User: <b>Store Manager</b>
               </span>
               <span className="board__tag">Shift View</span>
-              <span className="board__tag">Version {s.version}</span>
+              <span className="board__tag">{s.version === 'cape' ? 'Cape Version' : 'Legacy Version'}</span>
               <span className="board__tag board__tag--view">
                 View <b>{code}</b>
               </span>
@@ -46,14 +46,14 @@ export default function App() {
           </header>
           <div className="board__row">
             <div className="product">
-              {s.version === 2 ? <CockpitV2 s={s} dispatch={dispatch} /> : <Cockpit s={s} dispatch={dispatch} />}
+              {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
             </div>
             <div className="side">
               <div className="view-tag">
                 View <b>{code}</b>
               </div>
-              <button type="button" className="version-switch" onClick={() => dispatch({ type: 'version', version: s.version === 1 ? 2 : 1 })}>
-                Switch to Version {s.version === 1 ? 2 : 1}
+              <button type="button" className="version-switch" onClick={() => dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' })}>
+                Switch to {s.version === 'cape' ? 'Legacy Version' : 'Cape Version'}
               </button>
               <div className="lang-switch" role="group" aria-label="App language">
                 <span>App language</span>

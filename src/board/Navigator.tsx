@@ -4,16 +4,20 @@ import { PRESETS } from '../state';
 type Row = { title: string; hint: string; presets: string[] };
 
 const USE_CASES: Row[] = [
-  { title: 'USE CASE 1 · Read the live state in one glance', hint: 'Now bar → Late orders → Working now', presets: ['default'] },
-  { title: 'USE CASE 2 · Find who needs a conversation', hint: 'Picker team, sortable by any column', presets: ['default', 'team-sorted'] },
-  { title: 'USE CASE 3 · Spot slow hours', hint: 'Orders timing by hour, last 1, 6, 12 or 24h', presets: ['default', 'range-6h'] },
+  { title: 'USE CASE 1 · Read the live state in one glance', hint: 'Stage counts → Needs attention → People right now', presets: ['default'] },
+  { title: 'USE CASE 2 · Find who needs a conversation', hint: 'Picker team, sortable by any column', presets: ['team-sorted'] },
+  { title: 'USE CASE 3 · Pick a warehouse', hint: 'Warehouse list with search', presets: ['warehouses'] },
+  { title: 'USE CASE 4 · Look up an order', hint: 'Order history: filters, rows per page, pages', presets: ['orders'] },
+  { title: 'USE CASE 5 · Put cancelled stock back', hint: 'Cancellations: pending return → Return to stock', presets: ['cancellations'] },
+  { title: 'USE CASE 6 · Review order issues', hint: 'KPIs, New / Reviewed, group by picker', presets: ['issues'] },
 ];
 
 const EDGE_CASES: Row[] = [
-  { title: 'EDGE CASE 1 · Late-order spike', hint: 'Many late orders, unassigned work waiting', presets: ['spike'] },
-  { title: 'EDGE CASE 2 · Idle store', hint: 'Both lists collapse into one line', presets: ['quiet'] },
-  { title: 'EDGE CASE 3 · Store closed', hint: 'No live orders, everyone offline', presets: ['closed'] },
-  { title: 'EDGE CASE 4 · Mock API delay or error', hint: 'Skeletons, then the shared error message', presets: ['slow', 'error'] },
+  { title: 'EDGE CASE 1 · No data yet', hint: 'Every empty state, as staging shows it today', presets: ['empty'] },
+  { title: 'EDGE CASE 2 · Late-order spike', hint: 'Many late orders, unassigned work waiting', presets: ['spike'] },
+  { title: 'EDGE CASE 3 · Idle store', hint: 'Nothing late, pickers waiting', presets: ['quiet'] },
+  { title: 'EDGE CASE 4 · Store closed', hint: 'No live orders, everyone offline', presets: ['closed'] },
+  { title: 'EDGE CASE 5 · Mock API delay or error', hint: 'Skeletons, then the shared error message', presets: ['slow', 'error'] },
 ];
 
 const byId = (id: string) => PRESETS.find((p) => p.id === id)!;
