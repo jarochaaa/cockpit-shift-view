@@ -107,7 +107,7 @@
       "tasks": "إدارة المهام",
       "settings": "الإعدادات",
       "pickers": "الجامعون",
-      "stores": "المتاجر والمستودعات"
+      "stores": "المتاجر"
     },
     "open": "مفتوح",
     "closed": "مغلق",
@@ -336,9 +336,9 @@
       "issueCount_many": "{{count}} مشكلات"
     },
     "wh": {
-      "title": "المستودعات",
+      "title": "المتاجر",
       "search": "بحث",
-      "noResults": "لا توجد مستودعات تطابق بحثك",
+      "noResults": "لا توجد متاجر تطابق بحثك",
       "type": {
         "WAREHOUSE_TYPE_DMART": "WAREHOUSE_TYPE_DMART"
       }

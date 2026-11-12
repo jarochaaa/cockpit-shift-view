@@ -24,6 +24,7 @@ import { warehouseName } from '../../domain/mockData';
 import { RTL_LOCALES } from '../../i18n';
 import { RANGES, RANGE_HOURS } from '../../state';
 import type { Action, Page, State, TimingRange } from '../../state';
+import { CapeIcon } from '../legacy/icons';
 import { Cancellations, Issues, Orders, Warehouses } from '../legacy/CockpitLegacy';
 import { BoxState } from '../BoxState';
 import { deriveLive } from '../live';
@@ -44,7 +45,12 @@ function Icon({ src, className }: { src: string; className?: string }) {
 type NavItem = { key: string; icon: string; page: Page };
 // Same sections as the Store Management Cockpit, in the DMarts Portal sidenav.
 const NAV: { section?: string; items: NavItem[] }[] = [
-  { items: [{ key: 'overview', icon: navDashboard, page: 'overview' }] },
+  {
+    items: [
+      { key: 'overview', icon: navDashboard, page: 'overview' },
+      { key: 'stores', icon: navStores, page: 'warehouses' },
+    ],
+  },
   {
     section: 'orders',
     items: [
@@ -53,7 +59,6 @@ const NAV: { section?: string; items: NavItem[] }[] = [
       { key: 'issues', icon: navCalendar, page: 'issues' },
     ],
   },
-  { section: 'settings', items: [{ key: 'stores', icon: navStores, page: 'warehouses' }] },
 ];
 
 function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
@@ -163,6 +168,16 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
         ) : (
         <>
         <header className="v2-page-header">
+          <Button
+            variant="secondary"
+            status="inverse"
+            size="medium"
+            className="v2-pill v2-pill--icon v2-back v2-flip"
+            aria-label={t('header.backToStores')}
+            title={t('header.backToStores')}
+            startIcon={<CapeIcon name="chevronLeft" />}
+            onClick={() => dispatch({ type: 'page', page: 'warehouses' })}
+          />
           <h1 className="v2-page-header__title">{name}</h1>
           <div className="v2-page-header__actions">
             <Button variant="secondary" status="inverse" size="medium" className="v2-pill" startIcon={open ? <Icon src={statusDot} /> : <Indicator status="subtle" size="large" />}>

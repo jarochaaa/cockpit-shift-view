@@ -95,7 +95,7 @@
       "tasks": "Task management",
       "settings": "Settings",
       "pickers": "Pickers",
-      "stores": "Stores & warehouses"
+      "stores": "Stores"
     },
     "open": "Open",
     "closed": "Closed",
@@ -316,9 +316,9 @@
       "noPicker": "No picker"
     },
     "wh": {
-      "title": "Warehouses",
+      "title": "Stores",
       "search": "Search",
-      "noResults": "No warehouses match your search",
+      "noResults": "No stores match your search",
       "type": {
         "WAREHOUSE_TYPE_DMART": "WAREHOUSE_TYPE_DMART"
       }

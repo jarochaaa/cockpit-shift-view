@@ -95,7 +95,7 @@
       "tasks": "Gestión de tareas",
       "settings": "Configuración",
       "pickers": "Pickers",
-      "stores": "Tiendas y almacenes"
+      "stores": "Tiendas"
     },
     "open": "Abierta",
     "closed": "Cerrada",
@@ -316,9 +316,9 @@
       "noPicker": "Sin picker"
     },
     "wh": {
-      "title": "Almacenes",
+      "title": "Tiendas",
       "search": "Buscar",
-      "noResults": "Ningún almacén coincide con tu búsqueda",
+      "noResults": "Ninguna tienda coincide con tu búsqueda",
       "type": {
         "WAREHOUSE_TYPE_DMART": "WAREHOUSE_TYPE_DMART"
       }

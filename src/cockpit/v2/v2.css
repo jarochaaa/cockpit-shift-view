@@ -318,3 +318,7 @@
 .cockpit--v2 .lg-dd__trigger,
 .cockpit--v2 .lg-search input,
 .cockpit--v2 .lg-input--date input { font-family: inherit; }
+
+/* Back to Stores, next to the store title. */
+.v2-back.cp-button { flex: none; margin-inline-end: calc(var(--cp-spacing-large) * -0.5); }
+.cockpit--v2[dir='rtl'] .v2-back svg { transform: scaleX(-1); }
