@@ -289,3 +289,10 @@
   .lg-attn__row, .lg-issue { flex-wrap: wrap; }
 }
 .lg-table td.lg-late { color: #d62d0b; font-weight: 600; }
+
+/* Back to Stores, next to the store name on the store detail. */
+.lg-crumb-row:has(.lg-back) { display: flex; align-items: center; gap: 10px; }
+.lg-back { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border: 1px solid #e5e5e7; border-radius: 50%; background: #fff; color: #141415; cursor: pointer; }
+.lg-back:hover { border-color: #f55905; color: #d64c00; }
+.lg-back:focus-visible { outline: 2px solid #f55905; outline-offset: 2px; }
+.cockpit--legacy[dir='rtl'] .lg-back svg { transform: scaleX(-1); }

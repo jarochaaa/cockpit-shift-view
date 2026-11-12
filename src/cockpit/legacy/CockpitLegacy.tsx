@@ -92,6 +92,7 @@ function Sidebar({ s, dispatch, collapsed, onCollapse }: P & { collapsed: boolea
       </div>
       <ol className="lg-nav__list">
         <li>{link('overview', 'dashboard', t('sec.nav.overview'))}</li>
+        <li>{link('warehouses', 'store', t('v2.nav.stores'))}</li>
         <li className="lg-nav__section">
           {!collapsed && <span className="lg-nav__section-title">{t('sec.nav.orders')}</span>}
           <ol className="lg-nav__list">
@@ -661,6 +662,11 @@ export function CockpitLegacy({ s, dispatch }: P) {
           ) : (
             <>
               <div className="lg-crumb-row">
+                {s.page === 'overview' && (
+                  <button type="button" className="lg-back" aria-label={t('header.backToStores')} title={t('header.backToStores')} onClick={() => dispatch({ type: 'page', page: 'warehouses' })}>
+                    <CapeIcon name="chevronLeft" size={20} />
+                  </button>
+                )}
                 <Crumbs s={s} dispatch={dispatch} store={name} page={pageTitle[s.page]} />
               </div>
               {s.page === 'overview' && <Overview s={s} dispatch={dispatch} floor={floor} store={store} />}
