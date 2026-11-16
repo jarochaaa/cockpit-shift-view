@@ -1,0 +1,87 @@
+src/state.ts
+  s_a211b7c4e58be4::t_e9103b0e920f25 1-134
+src/cockpit/BoxState.tsx
+  s_a211b7c4e58be4::t_2ed2395a05dbd8 1-35
+src/grid/BoxHeader.tsx
+  s_a211b7c4e58be4::t_7d2c3ed3c9a0fa 18,23,27-30,37,51-56
+src/boxes/ShiftMetricsBox.tsx
+  s_a211b7c4e58be4::t_248c9debbd8d44 3-4,6,9,12,15-16,21-23,25,27-46
+src/boxes/OrdersTimingBox.tsx
+  s_a211b7c4e58be4::t_ca61e1d4f81631 1,3-5,7-8,12-15,18-21,23-26,28-38,41-46,51,56-57,64,68,70-78,84-87
+  s_a211b7c4e58be4::t_ca0e3f3681445f 88
+src/board/Navigator.tsx
+  s_a211b7c4e58be4::t_be4b3ce832f2bf 1-87
+src/main.tsx
+  s_a211b7c4e58be4::t_36de09f5d82ea4 5
+src/domain/types.ts
+  s_a211b7c4e58be4::t_e7ced1f7fcf9e0 20-22,24-26,29-34,37,41-49,54,108-109,113-115
+src/hooks/useMediaQuery.ts
+  s_a211b7c4e58be4::t_7d2c3ed3c9a0fa 1-12
+src/domain/boxCatalog.ts
+  s_a211b7c4e58be4::t_2ed2395a05dbd8 10-11
+src/boxes/PickerAlertsBox.tsx
+  s_a211b7c4e58be4::t_d2e98119227027 4-5,7,9,11,13-45
+src/domain/mockApi.ts
+  s_a211b7c4e58be4::t_38623df30eafed 1-2,6-7,9,11-14,17-18,21-22,25-26,29-30,33-34,37-38,41-42
+src/grid/Box.tsx
+  s_a211b7c4e58be4::t_7d2c3ed3c9a0fa 16,20,22,52
+src/i18n/locales/es.json
+  s_a211b7c4e58be4::t_1b060c120569e9 1-88
+src/board/board.css
+  s_a211b7c4e58be4::t_dcda7bccdb102b 1-421
+src/domain/format.ts
+  s_a211b7c4e58be4::t_248c9debbd8d44 6-7
+src/boxes/FloorBox.tsx
+  s_a211b7c4e58be4::t_62b1a186cbeeee 1-78,80-186
+  s_a211b7c4e58be4::t_eaa71e35ce6915 79
+src/i18n/index.ts
+  s_a211b7c4e58be4::t_1b060c120569e9 3,5,7-8,11
+src/i18n/locales/en.json
+  s_a211b7c4e58be4::t_1b060c120569e9 3-8,11,15,17,19-23,25-27,29-46,48,51-54,59-61,64-68,70-79,82,84-86
+src/components/Chrome.tsx
+  s_a211b7c4e58be4::t_ca61e1d4f81631 5-7,9-11,13-14,16-19,21-24,30-31,33-40,43-46,50-51,56-59,62,64
+  s_a211b7c4e58be4::t_01a76821d42df5 52
+src/cape/cape.css
+  s_a211b7c4e58be4::t_36de09f5d82ea4 2,127
+src/cockpit/useMock.ts
+  s_a211b7c4e58be4::t_2ed2395a05dbd8 1-6,8,10-23
+  s_a211b7c4e58be4::t_248c9debbd8d44 7,9
+src/index.css
+  s_a211b7c4e58be4::t_01060f820244e3 11,14-28,31,58,75-78,80,88-91,108-109,144-145,151,154-161,167,172-175,180,186,215-238,244,247,249,251,253-255,259-264,268-269,272-313,316-317,320,326-365,389-392,417-421,423-425,432,435-440,442-446
+index.html
+  s_a211b7c4e58be4::t_36de09f5d82ea4 5-8,11
+  s_a211b7c4e58be4::t_dcda7bccdb102b 2
+src/boxes/PickerTeamBox.tsx
+  s_a211b7c4e58be4::t_d2e98119227027 6-7,10-11,19-25,28-29,31,34-102
+src/i18n/locales/ar.json
+  s_a211b7c4e58be4::t_1b060c120569e9 1-87
+src/domain/mockData.ts
+  s_a211b7c4e58be4::t_b9c336d33b4c4f 2,6,12-14,17-18,24-47,49-66,68-85,89,94,98-106,108-115,119-133,145-149
+src/boxes/SkuAlertsBox.tsx
+  s_a211b7c4e58be4::t_d2e98119227027 4-5,7,9,11,13-45
+src/cockpit/Cockpit.tsx
+  s_a211b7c4e58be4::t_7d2c3ed3c9a0fa 1-111
+src/board/Hints.tsx
+  s_a211b7c4e58be4::t_a8cb26ae24f4f0 1-33,35-57,59-139
+  s_a211b7c4e58be4::t_dfec51d75eb857 34,58
+src/App.tsx
+  s_a211b7c4e58be4::t_92a2263e573b9b 1-7,9-13,15-18,20-23,26-67
+src/cape/tokens/cape-light.css
+  s_a211b7c4e58be4::t_ed6f41990fdb19 5,12,23-25,27-29,81,85,89-91,106-107,121,133-134,136,171,173,175,179,188-189,193-194,197-198,223-227,285-286,291,298,300,302-303,313-314,319-322,334-335,340-341,344-346,348-359,362-363,365-373,376-377,379-398,401-402,404-412,415-416,418-425
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "5f1b6e67c4c1f5af915c0829d9fdd1a7e49139d4",
+  "prompts": {},
+  "sessions": {
+    "s_a211b7c4e58be4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6e150d97-8212-4593-b8af-54a2ad65cc0d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}

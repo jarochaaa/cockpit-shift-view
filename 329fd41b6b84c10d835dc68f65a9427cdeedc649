@@ -1,0 +1,21 @@
+src/cockpit/v2/CockpitV2.tsx
+  s_5aa85af76a47b0::t_97a0141b4db24e 24-28,112-113,115-120,123,129,139-148,187-198,200,203-211,213-227,229,231-234,236-242,244-252,254-255,257-261,263-319,321-338,340,342,345,347-349,351-355
+src/cockpit/v2/v2.css
+  s_5aa85af76a47b0::t_97a0141b4db24e 325-344
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "329fd41b6b84c10d835dc68f65a9427cdeedc649",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
