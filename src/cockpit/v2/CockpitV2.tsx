@@ -7,6 +7,8 @@ import navCart from '../../assets/v2/nav-cart.svg';
 import navDashboard from '../../assets/v2/nav-dashboard.svg';
 import navHistory from '../../assets/v2/nav-history.svg';
 import navStores from '../../assets/v2/nav-stores.svg';
+import listCart from '../../assets/v2/list-cart.svg';
+import listPerson from '../../assets/v2/list-person.svg';
 import notifications from '../../assets/v2/notifications.svg';
 import statusDot from '../../assets/v2/status-dot.svg';
 import { Avatar } from '../../cape/Avatar';
@@ -21,11 +23,7 @@ import { RTL_LOCALES } from '../../i18n';
 import { RANGES, RANGE_HOURS } from '../../state';
 import type { Action, Page, State, TimingRange } from '../../state';
 import { CapeIcon } from '../legacy/icons';
-import type { IconName } from '../legacy/icons';
 import { nowClock } from '../sections';
-import { Card } from '../../cape/Card';
-import { Divider } from '../../cape/Divider';
-import { Tag } from '../../cape/Tag';
 import { Cancellations, Issues, Orders, Warehouses } from '../legacy/CockpitLegacy';
 import { BoxState } from '../BoxState';
 import { deriveLive } from '../live';
@@ -110,17 +108,23 @@ function SectionHeader({ title, action }: { title: string; action?: ReactNode })
 }
 
 type StageKey = 'unassigned' | 'picking' | 'packing' | 'readyForRider';
-const STAGE_TONE: Record<StageKey, 'warning' | 'info' | 'success'> = { unassigned: 'warning', picking: 'warning', packing: 'info', readyForRider: 'success' };
 
-/** Empty or closed state, the same message the Legacy Version shows, in a Cape card. */
-function Empty({ icon, text, bare }: { icon?: IconName; text: string; bare?: boolean }) {
-  const body = (
-    <div className="v2-empty">
-      {icon && <CapeIcon name={icon} size={32} />}
-      <p>{text}</p>
+function Stat({ value, unit, label }: { value: ReactNode; unit?: string; label: string }) {
+  return (
+    <div className="v2-stat">
+      <span className="v2-stat__value">
+        {value}
+        {unit && <span className="v2-stat__unit">{unit}</span>}
+      </span>
+      <span className="v2-stat__label">{label}</span>
     </div>
   );
-  return bare ? body : <Card className="v2-card">{body}</Card>;
+}
+
+/** "1.9m" → value + unit, styled like the Figma tiles (24px number, 20px unit). */
+function split(v: string) {
+  const m = v.match(/^([\d.,]+)\s*(.*)$/);
+  return m ? { value: m[1], unit: m[2] || undefined } : { value: v };
 }
 
 
@@ -184,80 +188,82 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
           </div>
         </header>
 
-        <div className="v2-live-row">
-          <span className={`v2-live${live.live ? ' v2-live--on' : ''}`}>
-            <Indicator status={live.live ? 'error' : 'neutral'} size="small" />
-            {live.failed ? t('sec.unavailable') : live.loading ? t('sec.loading') : live.closed ? t('sec.offline') : t('sec.live', { time: nowClock(i18n.language) })}
-          </span>
-          <div className="v2-stages">
+        <section className="v2-section">
+          <div className="v2-section-header">
+            {live.failed ? (
+              <span className="v2-section-header__note v2-text--danger">{t('sec.unavailable')}</span>
+            ) : (
+              <span className={`v2-live${live.live ? ' v2-live--on' : ''}`}>
+                <Indicator status={live.live ? 'error' : 'neutral'} size="small" />
+                {live.loading ? t('sec.loading') : live.closed ? t('sec.offline') : t('sec.live', { time: nowClock(i18n.language) })}
+              </span>
+            )}
+          </div>
+          <div className="v2-stats">
             {stages.map(([k, n]) => (
-              <Tag key={k} status={live.ready && n > 0 ? STAGE_TONE[k] : 'neutral'} className="v2-stage">
-                <b>{dash(n)}</b>
-                {t(`sec.stage.${k}`)}
-              </Tag>
+              <Stat key={k} value={dash(n)} label={t(`sec.stage.${k}`)} />
             ))}
           </div>
-        </div>
+        </section>
 
         <div className="v2-columns">
-          <section className="v2-section">
-            <SectionHeader title={t('sec.overview.needsAttention')} />
-            {live.failed ? (
-              <Empty text={t('state.error')} />
-            ) : !f ? (
-              <div className="box-skeleton" />
-            ) : live.closed ? (
-              <Empty icon="checkCircle" text={t('sec.overview.closed')} />
-            ) : attention.length ? (
+          <div className="v2-column">
+            <section className="v2-section">
+              <SectionHeader title={t('sec.overview.needsAttention')} />
               <List className="v2-list">
-                {attention.map((o) => (
-                  <ListItem
-                    key={o.orderId}
-                    secondaryAction={
-                      <>
-                        <span className="v2-list__time">{live.pickerName(o.pickerId) ?? t('sec.overview.notAssigned')}</span>
-                        {o.lateByMinutes != null ? (
-                          <Tag size="small" status="error">{t('sec.overview.late', { minutes: o.lateByMinutes })}</Tag>
+                {f && !live.failed && !live.closed && attention.length > 0 ? (
+                  attention.map((o) => (
+                    <ListItem
+                      key={o.orderId}
+                      secondaryAction={
+                        o.lateByMinutes != null ? (
+                          <span className="v2-list__value v2-text--danger">{t('sec.overview.late', { minutes: o.lateByMinutes })}</span>
                         ) : (
-                          <Tag size="small" status="warning">{t('sec.overview.pf')}</Tag>
-                        )}
-                      </>
-                    }
-                  >
-                    <ListItemText primaryText={`#${o.externalOrderId}`} secondaryText={t('sec.overview.inStage', { stage: t(`sec.stage.${o.stage}`), items: t('sec.items', { count: o.items }) })} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Empty icon="checkCircle" text={t('sec.overview.nothingNeeds')} />
-            )}
-          </section>
-
-          <section className="v2-section">
-            <SectionHeader title={t('sec.overview.people')} action={<span className="v2-section-header__note">{t('sec.overview.working', { working: live.working.length, total: onShift.length })}</span>} />
-            {live.failed ? (
-              <Empty text={t('state.error')} />
-            ) : !f ? (
-              <div className="box-skeleton" />
-            ) : onShift.length ? (
-              <List className="v2-list">
-                {onShift.map((p) => {
-                  const o = pickerOrder.get(p.pickerId);
-                  return (
-                    <ListItem key={p.pickerId} secondaryAction={o && <span className="v2-list__time">{t('sec.overview.holds', { order: o.externalOrderId, minutes: o.minutesInStage })}</span>}>
-                      <Avatar size="small" initials={p.displayName.replace('Picker ', 'P')} />
-                      <ListItemText primaryText={p.displayName} />
-                      <Tag size="small" status={p.status === 'idle' ? 'warning' : p.status === 'offline' ? 'neutral' : 'success'}>
-                        {p.status === 'idle' ? t('sec.overview.idleFor', { minutes: p.minutesInStatus }) : t(`sec.overview.status.${p.status}`)}
-                      </Tag>
+                          <span className="v2-list__value v2-text--warning">{t('sec.overview.pf')}</span>
+                        )
+                      }
+                    >
+                      <Icon src={listCart} />
+                      <ListItemText
+                        primaryText={`#${o.externalOrderId}`}
+                        secondaryText={`${t('sec.overview.inStage', { stage: t(`sec.stage.${o.stage}`), items: t('sec.items', { count: o.items }) })} · ${live.pickerName(o.pickerId) ?? t('sec.overview.notAssigned')}`}
+                      />
                     </ListItem>
-                  );
-                })}
+                  ))
+                ) : (
+                  <ListItem>
+                    <ListItemText primaryText={live.failed ? t('state.error') : !f ? t('state.loading') : live.closed ? t('sec.overview.closed') : t('sec.overview.nothingNeeds')} />
+                  </ListItem>
+                )}
               </List>
-            ) : (
-              <Empty icon="group" text={t('sec.overview.noPickers')} />
-            )}
-          </section>
+            </section>
+          </div>
+
+          <div className="v2-column">
+            <section className="v2-section">
+              <SectionHeader title={t('sec.overview.people')} action={<span className="v2-section-header__note">{t('sec.overview.working', { working: live.working.length, total: onShift.length })}</span>} />
+              <List className="v2-list">
+                {f && !live.failed && onShift.length > 0 ? (
+                  onShift.map((p) => {
+                    const o = pickerOrder.get(p.pickerId);
+                    return (
+                      <ListItem key={p.pickerId} secondaryAction={o && <span className="v2-list__time">{t('sec.overview.holds', { order: o.externalOrderId, minutes: o.minutesInStage })}</span>}>
+                        <Icon src={listPerson} />
+                        <ListItemText
+                          primaryText={p.displayName}
+                          secondaryText={<span className={p.status === 'idle' ? 'v2-text--warning' : undefined}>{p.status === 'idle' ? t('sec.overview.idleFor', { minutes: p.minutesInStatus }) : t(`sec.overview.status.${p.status}`)}</span>}
+                        />
+                      </ListItem>
+                    );
+                  })
+                ) : (
+                  <ListItem>
+                    <ListItemText primaryText={live.failed ? t('state.error') : !f ? t('state.loading') : t('sec.overview.noPickers')} />
+                  </ListItem>
+                )}
+              </List>
+            </section>
+          </div>
         </div>
 
         <section className="v2-section">
@@ -265,7 +271,7 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
             title={t('sec.overview.shift')}
             action={
               <div className="v2-shift-actions">
-                <Button variant="tertiary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
+                <Button variant="tertiary" status="inverse" size="xsmall" className="v2-more" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
                   {t('sec.overview.viewHistory')}
                 </Button>
                 <Select
@@ -278,81 +284,67 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
               </div>
             }
           />
-          <div className="v2-shift-grid">
-            <Card className="v2-card v2-kv">
-              <BoxState state={metrics} lines={7}>
+          <div className="v2-columns">
+            <div className="v2-column">
+              <BoxState state={metrics} lines={4}>
                 {(m) => {
                   const sec = (v: number) => (v === 0 ? '0s' : formatSeconds(v));
                   return (
                     <>
-                      <div className="v2-kv__row">
-                        <span>{t('sec.overview.successful')}</span>
-                        <b className="v2-kv__hero">{m.successfulOrders}</b>
+                      <div className="v2-stats v2-stats--spaced">
+                        <Stat value={m.successfulOrders} label={t('sec.overview.successful')} />
                       </div>
-                      <Divider />
-                      <div className="v2-kv__row">
-                        <span>{t('sec.overview.avgPrep')}</span>
-                        <b>{sec(m.avgAssignmentSeconds + m.avgPickingSeconds + m.avgPackingSeconds)}</b>
+                      <SectionHeader
+                        title={t('sec.overview.avgPrep')}
+                        action={<span className="v2-section-header__note">{sec(m.avgAssignmentSeconds + m.avgPickingSeconds + m.avgPackingSeconds)}</span>}
+                      />
+                      <div className="v2-stats v2-stats--spaced">
+                        <Stat {...split(sec(m.avgAssignmentSeconds))} label={t('sec.overview.assignment')} />
+                        <Stat {...split(sec(m.avgPickingSeconds))} label={t('sec.overview.picking')} />
+                        <Stat {...split(sec(m.avgPackingSeconds))} label={t('sec.overview.packing')} />
                       </div>
-                      {(['assignment', 'picking', 'packing'] as const).map((k) => (
-                        <div key={k} className="v2-kv__row v2-kv__row--sub">
-                          <span>{t(`sec.overview.${k}`)}</span>
-                          <span>{sec(k === 'assignment' ? m.avgAssignmentSeconds : k === 'picking' ? m.avgPickingSeconds : m.avgPackingSeconds)}</span>
-                        </div>
-                      ))}
-                      <Divider />
-                      <div className="v2-kv__row">
-                        <span>{t('sec.overview.avgDispatch')}</span>
-                        <b>{m.successfulOrders ? '6.4m' : t('sec.overview.na')}</b>
-                      </div>
-                      <Divider />
-                      <div className="v2-kv__row">
-                        <span>{t('sec.overview.pfr')}</span>
-                        <b>{formatPercent(m.pfr)}</b>
-                      </div>
-                      <div className="v2-kv__row">
-                        <span>{t('sec.overview.failRate')}</span>
-                        <b>{formatPercent(m.issueRate)}</b>
+                      <div className="v2-stats">
+                        <Stat {...split(m.successfulOrders ? '6.4m' : t('sec.overview.na'))} label={t('sec.overview.avgDispatch')} />
+                        <Stat {...split(formatPercent(m.pfr))} label={t('sec.overview.pfr')} />
+                        <Stat {...split(formatPercent(m.issueRate))} label={t('sec.overview.failRate')} />
                       </div>
                     </>
                   );
                 }}
               </BoxState>
-            </Card>
-            <Card className="v2-card">
-              <h3 className="v2-card__title">{t('sec.overview.timePerOrder')}</h3>
-              <BoxState state={timing} lines={6}>
-                {(b) =>
-                  b.length ? (
-                    <>
-                      <ul className="legend v2-legend">
-                        <li><span className="legend__swatch legend__swatch--assign" />{t('sec.overview.assignment')}</li>
-                        <li><span className="legend__swatch legend__swatch--pick" />{t('sec.overview.picking')}</li>
-                        <li><span className="legend__swatch legend__swatch--pack" />{t('sec.overview.packing')}</li>
-                      </ul>
-                      <TimingChart buckets={b.slice(-RANGE_HOURS[s.range])} />
-                    </>
-                  ) : (
-                    <Empty icon="lineChart" text={t('sec.overview.noHistory')} bare />
-                  )
-                }
-              </BoxState>
-            </Card>
+            </div>
+            <div className="v2-column">
+              <div className="v2-card">
+                <h3 className="v2-card__title">{t('sec.overview.timePerOrder')}</h3>
+                <BoxState state={timing} lines={5}>
+                  {(b) =>
+                    b.length ? (
+                      <>
+                        <ul className="legend v2-legend">
+                          <li><span className="legend__swatch legend__swatch--assign" />{t('sec.overview.assignment')}</li>
+                          <li><span className="legend__swatch legend__swatch--pick" />{t('sec.overview.picking')}</li>
+                          <li><span className="legend__swatch legend__swatch--pack" />{t('sec.overview.packing')}</li>
+                        </ul>
+                        <TimingChart buckets={b.slice(-RANGE_HOURS[s.range])} />
+                      </>
+                    ) : (
+                      <p className="v2-empty">{t('sec.overview.noHistory')}</p>
+                    )
+                  }
+                </BoxState>
+              </div>
+            </div>
           </div>
         </section>
 
         <section className="v2-section">
           <SectionHeader title={t('sec.overview.pickerTeam')} />
           <BoxState state={team} lines={6}>
-            {(rows) =>
-              rows.length ? (
-                <Card className="v2-card v2-card--table">
-                  <PickerTeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} floor={floor} />
-                </Card>
-              ) : (
-                <Empty icon="group" text={t('sec.overview.noPickerData')} />
-              )
-            }
+            {(rows) => (
+              <div className="v2-card v2-card--table">
+                {rows.length ? <PickerTeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} floor={floor} /> : <p className="v2-empty">{t('sec.overview.noPickerData')}</p>}
+              </div>
+            )}
           </BoxState>
         </section>
         </>
