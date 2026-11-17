@@ -296,3 +296,9 @@
 .lg-back:hover { border-color: #f55905; color: #d64c00; }
 .lg-back:focus-visible { outline: 2px solid #f55905; outline-offset: 2px; }
 .cockpit--legacy[dir='rtl'] .lg-back svg { transform: scaleX(-1); }
+
+/* Collapsed rail: center every icon in the 72px column. */
+.lg-nav--collapsed .lg-nav__link { justify-content: center; }
+.lg-nav--collapsed .lg-nav__list > li { padding: 0 12px; }
+.lg-nav--collapsed .lg-nav__list .lg-nav__list > li { padding: 0; }
+.lg-nav--collapsed .lg-nav__collapse { align-self: center; }

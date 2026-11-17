@@ -33,8 +33,8 @@
   height: 114px;
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 40px 32px 32px;
+  gap: var(--cp-spacing-xsmall);
+  padding: var(--cp-spacing-5xlarge) var(--cp-spacing-3xlarge) var(--cp-spacing-3xlarge);
 }
 .v2-sidenav__dmarts {
   font-family: var(--cp-font-family-roboto-ltr);
@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--cp-spacing-large);
-  padding-bottom: 32px;
+  padding-bottom: var(--cp-spacing-3xlarge);
 }
 .v2-sidenav__section {
   display: flex;
@@ -56,7 +56,7 @@
   gap: var(--cp-spacing-xsmall);
 }
 .v2-sidenav__header {
-  padding: 0 32px;
+  padding: 0 var(--cp-spacing-3xlarge);
   font-size: var(--cp-font-size-small);
   font-weight: var(--cp-font-weight-medium);
   line-height: 1.45;
@@ -67,7 +67,7 @@
   display: flex;
   align-items: center;
   gap: var(--cp-spacing-large);
-  padding: var(--cp-spacing-small) 32px;
+  padding: var(--cp-spacing-small) var(--cp-spacing-3xlarge);
   color: var(--cp-text-color-primary);
   text-decoration: none;
 }
@@ -100,13 +100,13 @@
 .v2-main {
   flex: 1;
   min-width: 0;
-  padding: 0 40px 8px;
+  padding: 0 var(--cp-spacing-5xlarge) var(--cp-spacing-small);
 }
 .v2-page-header {
   display: flex;
   align-items: center;
   gap: var(--cp-spacing-large);
-  padding: 40px 0 24px;
+  padding: var(--cp-spacing-5xlarge) 0 var(--cp-spacing-2xlarge);
 }
 .v2-page-header__title {
   flex: 1;
@@ -127,8 +127,8 @@
 }
 .v2-pill.cp-button {
   min-height: 48px;
-  padding: 0 20px 0 14px;
-  gap: 8px;
+  padding: 0 var(--cp-spacing-xlarge) 0 var(--cp-spacing-medium);
+  gap: var(--cp-spacing-small);
   border-color: var(--cp-border-color-normal);
   border-radius: var(--cp-action-border-radius-pill);
   font-size: var(--cp-font-size-medium);
@@ -148,7 +148,7 @@
 .v2-section {
   display: flex;
   flex-direction: column;
-  padding-bottom: 32px;
+  padding-bottom: var(--cp-spacing-3xlarge);
 }
 .v2-section-header {
   display: flex;
@@ -156,7 +156,7 @@
   justify-content: space-between;
   gap: var(--cp-spacing-large);
   min-height: 46px;
-  padding-bottom: 16px;
+  padding-bottom: var(--cp-spacing-large);
 }
 .v2-section-header__title {
   margin: 0;
@@ -184,7 +184,7 @@
 .v2-live {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--cp-spacing-small);
   font-size: var(--cp-font-size-small);
   font-weight: var(--cp-font-weight-semi-bold);
   color: var(--cp-text-color-tertiary);
@@ -207,7 +207,7 @@
   min-width: 120px;
   display: flex;
   flex-direction: column;
-  padding: 12px 24px 12px 20px;
+  padding: var(--cp-spacing-medium) var(--cp-spacing-xlarge);
   border: 1px solid var(--cp-border-color-normal);
   border-radius: var(--cp-base-border-radius-large);
   background: var(--cp-base-color-flat);
@@ -236,18 +236,18 @@
 .v2-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 32px;
+  column-gap: var(--cp-spacing-3xlarge);
 }
 .v2-column { min-width: 0; }
 
 /* Lists in a bordered card (Cape List) */
 .v2-list.cp-list {
-  padding: 2px 0;
+  padding: var(--cp-spacing-tiny) 0;
   border: 1px solid var(--cp-border-color-normal);
   border-radius: var(--cp-base-border-radius-large);
   background: var(--cp-base-color-flat);
 }
-.v2-list .cp-list-item { padding: 12px 16px; }
+.v2-list .cp-list-item { padding: var(--cp-spacing-medium) var(--cp-spacing-large); }
 .v2-list__value {
   font-size: var(--cp-font-size-small);
   font-weight: var(--cp-font-weight-bold);
@@ -268,20 +268,20 @@
   border-radius: var(--cp-base-border-radius-large);
   background: var(--cp-base-color-flat);
 }
-.v2-legend { margin-bottom: 12px; }
-.v2-card--table { padding: 4px 8px 8px; }
+.v2-legend { margin-bottom: var(--cp-spacing-medium); }
+.v2-card--table { padding: var(--cp-spacing-xsmall) var(--cp-spacing-small) var(--cp-spacing-small); }
 .cockpit--v2 .team-table th { background: var(--cp-base-color-flat); }
 
 @container cockpit (max-width: 900px) {
   .v2-sidenav { display: none; }
-  .v2-main { padding: 0 16px 8px; }
-  .v2-page-header { flex-wrap: wrap; padding-top: 24px; }
+  .v2-main { padding: 0 var(--cp-spacing-large) var(--cp-spacing-small); }
+  .v2-page-header { flex-wrap: wrap; padding-top: var(--cp-spacing-2xlarge); }
   .v2-page-header__title { font-size: var(--cp-font-size-2xlarge); }
   .v2-columns { grid-template-columns: 1fr; }
   .v2-stat { min-width: 140px; }
 }
 @container cockpit (max-width: 480px) {
-  .v2-pill.cp-button { padding: 0 14px 0 10px; }
+  .v2-pill.cp-button { padding: 0 var(--cp-spacing-medium) 0 var(--cp-spacing-small); }
   .v2-page-header__actions { width: 100%; }
 }
 
@@ -292,8 +292,8 @@
 .cockpit--v2 .v2-section-header__note { color: var(--cp-text-color-tertiary); }
 
 /* Store Management Cockpit sections inside the Cape Version: same components, Cape default skin (blue, Roboto). */
-.cockpit--v2 .v2-subpage { padding-top: 40px; }
-.cockpit--v2 .lg-page { padding: 0 0 24px; }
+.cockpit--v2 .v2-subpage { padding-top: var(--cp-spacing-5xlarge); }
+.cockpit--v2 .lg-page { padding: 0 0 var(--cp-spacing-2xlarge); }
 .cockpit--v2 .lg-h1 { font-size: var(--cp-font-size-3xlarge); line-height: 1.33; }
 .cockpit--v2 .lg-dd[open] .lg-dd__trigger,
 .cockpit--v2 .lg-dd__trigger--active,
@@ -326,6 +326,61 @@
 /* Store dashboard: Legacy content in the Cape layout. */
 .v2-text--warning { color: var(--cp-text-color-warning); }
 .v2-shift-actions { display: flex; align-items: center; gap: var(--cp-spacing-large); }
-.v2-card__title { margin: 0 0 12px; font-size: var(--cp-font-size-medium); font-weight: var(--cp-font-weight-semi-bold); color: var(--cp-text-color-primary); }
-.v2-empty { margin: 0; padding: 32px 16px; text-align: center; font-size: var(--cp-font-size-small); color: var(--cp-text-color-tertiary); }
-.v2-stats--spaced { margin-bottom: 32px; }
+.v2-card__title { margin: 0 0 var(--cp-spacing-medium); font-size: var(--cp-font-size-medium); font-weight: var(--cp-font-weight-semi-bold); color: var(--cp-text-color-primary); }
+.v2-empty { margin: 0; padding: var(--cp-spacing-3xlarge) var(--cp-spacing-large); text-align: center; font-size: var(--cp-font-size-small); color: var(--cp-text-color-tertiary); }
+.v2-stats--spaced { margin-bottom: var(--cp-spacing-3xlarge); }
+
+/* Live stage tiles: Legacy stage colors on the border only. */
+.v2-stat--unassigned { --v2-stage: var(--cp-text-color-danger); }
+.v2-stat--picking { --v2-stage: var(--cp-text-color-info); }
+.v2-stat--packing { --v2-stage: var(--cp-text-color-branded); }
+.v2-stat--readyForRider { --v2-stage: var(--cp-text-color-success); }
+.v2-stat[class*='v2-stat--'] { border-color: var(--v2-stage); }
+.v2-stat[class*='v2-stat--'] .v2-stat__value, .v2-stat[class*='v2-stat--'] .v2-stat__label { color: var(--v2-stage); }
+
+/* Needs attention + People right now share one box, so uneven list lengths leave no gaps. */
+.v2-combo { margin-bottom: var(--cp-spacing-3xlarge); border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-base-border-radius-large); background: var(--cp-base-color-flat); column-gap: 0; }
+.v2-combo .v2-column + .v2-column { border-inline-start: 1px solid var(--cp-border-color-normal); }
+.v2-combo .v2-section { padding: var(--cp-spacing-large) 0 var(--cp-spacing-small); }
+.v2-combo .v2-section-header { padding: 0 var(--cp-spacing-large) var(--cp-spacing-small); }
+.v2-combo .v2-list.cp-list { border: 0; border-radius: 0; }
+@container cockpit (max-width: 900px) { .v2-combo .v2-column + .v2-column { border-inline-start: 0; border-top: 1px solid var(--cp-border-color-normal); } }
+
+/* Chart on Cape's default chart scale (branded). */
+.cockpit--v2 .timing-chart__seg--assign, .cockpit--v2 .legend__swatch--assign { background: var(--cp-chart-color-branded-highest); }
+.cockpit--v2 .timing-chart__seg--pick, .cockpit--v2 .legend__swatch--pick { background: var(--cp-chart-color-branded-high); }
+.cockpit--v2 .timing-chart__seg--pack, .cockpit--v2 .legend__swatch--pack { background: var(--cp-chart-color-branded-medium); }
+
+/* Shift performance: KPI grid (equal tiles, equal gaps) + chart in one box. */
+.v2-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: var(--cp-spacing-small); }
+.v2-kpis--one { grid-template-columns: minmax(0, 1fr); margin-bottom: var(--cp-spacing-2xlarge); }
+.v2-kpis .v2-stat { min-width: 0; }
+.v2-kpis .v2-stat__label { font-size: var(--cp-font-size-xsmall); font-weight: var(--cp-font-weight-regular); }
+.v2-combo--shift .v2-column { padding: var(--cp-spacing-large); }
+.v2-combo--shift .v2-section-header { padding: 0 0 var(--cp-spacing-small); }
+.v2-combo--shift .v2-chart { display: flex; flex-direction: column; height: 100%; }
+.v2-combo--shift .v2-chart .timing-chart { flex: 1; }
+
+/* Feedback Nov 17 */
+.v2-combo--shift .v2-column + .v2-column { border-inline-start: 0; border-top: 0; }
+.v2-list--scroll.cp-list { max-height: calc(6 * 65px); overflow-y: auto; }
+.v2-chart__head { display: flex; align-items: center; justify-content: space-between; gap: var(--cp-spacing-large); margin-bottom: var(--cp-spacing-medium); }
+.v2-chart__head .v2-card__title { margin: 0; }
+.cockpit--v2 .timing-chart__grid span:last-child { background: transparent; }
+.v2-combo--shift { margin-bottom: 0; }
+
+/* Collapsible sidenav: icons only, centered in a 72px rail (same as the Legacy Version). */
+.v2-sidenav { display: flex; flex-direction: column; transition: flex-basis 0.15s ease; }
+.v2-sidenav__sections { flex: 1; }
+.v2-sidenav__footer { display: flex; justify-content: flex-end; padding: var(--cp-spacing-medium) var(--cp-spacing-2xlarge); border-top: 1px solid var(--cp-border-color-normal); }
+.v2-sidenav__collapse { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: var(--cp-base-border-radius-medium, 8px); background: none; color: var(--cp-text-color-primary); cursor: pointer; }
+.v2-sidenav__collapse:hover { background: var(--cp-feedback-color-branded-low); }
+.v2-sidenav__collapse:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.v2-rot { transform: scaleX(-1); }
+.cockpit--v2[dir='rtl'] .v2-sidenav__collapse svg:not(.v2-rot) { transform: scaleX(-1); }
+.cockpit--v2[dir='rtl'] .v2-sidenav__collapse .v2-rot { transform: none; }
+.v2-sidenav--collapsed { flex-basis: 72px; }
+.v2-sidenav--collapsed .v2-sidenav__brand { justify-content: center; padding-inline: 0; }
+.v2-sidenav--collapsed .v2-sidenav__item { justify-content: center; padding-inline: 0; }
+.v2-sidenav__rule { width: 32px; margin: 0 auto; border: 0; border-top: 1px solid var(--cp-border-color-normal); }
+.v2-sidenav--collapsed .v2-sidenav__footer { justify-content: center; padding-inline: 0; }

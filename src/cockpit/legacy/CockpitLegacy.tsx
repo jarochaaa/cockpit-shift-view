@@ -79,7 +79,7 @@ function Sidebar({ s, dispatch, collapsed, onCollapse }: P & { collapsed: boolea
     dispatch({ type: 'page', page });
   };
   const link = (page: Page, icon: IconName, label: string) => (
-    <a href="#" className={`lg-nav__link${s.page === page ? ' is-active' : ''}`} aria-current={s.page === page ? 'page' : undefined} onClick={go(page)} title={collapsed ? label : undefined}>
+    <a href="#" className={`lg-nav__link${s.page === page ? ' is-active' : ''}`} aria-current={s.page === page ? 'page' : undefined} onClick={go(page)} data-tip={collapsed ? label : undefined} aria-label={collapsed ? label : undefined}>
       <CapeIcon name={icon} />
       {!collapsed && <span>{label}</span>}
     </a>

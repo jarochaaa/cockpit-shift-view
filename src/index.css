@@ -549,3 +549,18 @@ body {
   .topbar__sep { display: none; }
   .timing-chart__bars { gap: 2px; }
 }
+
+/* Tooltip for collapsed sidenav icons (Cape tooltip style: dark, small, beside the rail). */
+.lg-nav__link[data-tip], .v2-sidenav__item[data-tip] { position: relative; }
+.lg-nav__link[data-tip]::after, .v2-sidenav__item[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; top: 50%; inset-inline-start: calc(100% + 12px); z-index: 20;
+  transform: translateY(-50%);
+  padding: 6px 10px; border-radius: 6px;
+  background: #141415; color: #fff;
+  font-size: 12px; font-weight: 500; line-height: 18px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 0.12s ease;
+}
+.lg-nav__link[data-tip]:hover::after, .lg-nav__link[data-tip]:focus-visible::after,
+.v2-sidenav__item[data-tip]:hover::after, .v2-sidenav__item[data-tip]:focus-visible::after { opacity: 1; }
+.lg-nav--collapsed, .v2-sidenav--collapsed { overflow: visible; }

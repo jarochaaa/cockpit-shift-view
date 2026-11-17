@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Dispatch, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import portalLogo from '../../assets/v2/portal.svg';
@@ -7,7 +8,6 @@ import navCart from '../../assets/v2/nav-cart.svg';
 import navDashboard from '../../assets/v2/nav-dashboard.svg';
 import navHistory from '../../assets/v2/nav-history.svg';
 import navStores from '../../assets/v2/nav-stores.svg';
-import listCart from '../../assets/v2/list-cart.svg';
 import listPerson from '../../assets/v2/list-person.svg';
 import notifications from '../../assets/v2/notifications.svg';
 import statusDot from '../../assets/v2/status-dot.svg';
@@ -62,17 +62,18 @@ const NAV: { section?: string; items: NavItem[] }[] = [
 
 function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
   const { t } = useTranslation();
+  const [collapsed, setCollapsed] = useState(false);
   const label = (key: string) => (key === 'stores' || key === 'settings' ? t(`v2.nav.${key}`) : t(`sec.nav.${key}`));
   return (
-    <nav className="v2-sidenav" aria-label={t('v2.nav.main')}>
+    <nav className={`v2-sidenav${collapsed ? ' v2-sidenav--collapsed' : ''}`} aria-label={t('v2.nav.main')}>
       <div className="v2-sidenav__brand" dir="ltr">
-        <span className="v2-sidenav__dmarts">DMarts</span>
-        <img src={portalLogo} alt="Portal" width={65.8958} height={24} />
+        <span className="v2-sidenav__dmarts">{collapsed ? 'D' : 'DMarts'}</span>
+        {!collapsed && <img src={portalLogo} alt="Portal" width={65.8958} height={24} />}
       </div>
       <div className="v2-sidenav__sections">
         {NAV.map((group, i) => (
           <div key={group.section ?? i} className="v2-sidenav__section">
-            {group.section && <div className="v2-sidenav__header">{label(group.section)}</div>}
+            {group.section && (collapsed ? <hr className="v2-sidenav__rule" /> : <div className="v2-sidenav__header">{label(group.section)}</div>)}
             {group.items.map((item) => {
               const active = item.page === page;
               return (
@@ -81,18 +82,25 @@ function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
                   href="#"
                   className={`v2-sidenav__item${active ? ' is-active' : ''}`}
                   aria-current={active ? 'page' : undefined}
+                  data-tip={collapsed ? label(item.key) : undefined}
+                  aria-label={collapsed ? label(item.key) : undefined}
                   onClick={(e) => {
                     e.preventDefault();
                     onGo(item.page);
                   }}
                 >
                   <Icon src={item.icon} />
-                  <span className="v2-sidenav__label">{label(item.key)}</span>
+                  {!collapsed && <span className="v2-sidenav__label">{label(item.key)}</span>}
                 </a>
               );
             })}
           </div>
         ))}
+      </div>
+      <div className="v2-sidenav__footer">
+        <button type="button" className="v2-sidenav__collapse" aria-label={t('sec.nav.collapse')} aria-expanded={!collapsed} onClick={() => setCollapsed(!collapsed)}>
+          <CapeIcon name="doubleChevronLeft" size={20} className={collapsed ? 'v2-rot' : undefined} />
+        </button>
       </div>
     </nav>
   );
@@ -109,9 +117,9 @@ function SectionHeader({ title, action }: { title: string; action?: ReactNode })
 
 type StageKey = 'unassigned' | 'picking' | 'packing' | 'readyForRider';
 
-function Stat({ value, unit, label }: { value: ReactNode; unit?: string; label: string }) {
+function Stat({ value, unit, label, stage }: { value: ReactNode; unit?: string; label: string; stage?: StageKey }) {
   return (
-    <div className="v2-stat">
+    <div className={`v2-stat${stage ? ` v2-stat--${stage}` : ''}`}>
       <span className="v2-stat__value">
         {value}
         {unit && <span className="v2-stat__unit">{unit}</span>}
@@ -201,12 +209,12 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
           </div>
           <div className="v2-stats">
             {stages.map(([k, n]) => (
-              <Stat key={k} value={dash(n)} label={t(`sec.stage.${k}`)} />
+              <Stat key={k} value={dash(n)} label={t(`sec.stage.${k}`)} stage={live.ready && n > 0 ? k : undefined} />
             ))}
           </div>
         </section>
 
-        <div className="v2-columns">
+        <div className="v2-columns v2-combo">
           <div className="v2-column">
             <section className="v2-section">
               <SectionHeader title={t('sec.overview.needsAttention')} />
@@ -223,7 +231,6 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
                         )
                       }
                     >
-                      <Icon src={listCart} />
                       <ListItemText
                         primaryText={`#${o.externalOrderId}`}
                         secondaryText={`${t('sec.overview.inStage', { stage: t(`sec.stage.${o.stage}`), items: t('sec.items', { count: o.items }) })} · ${live.pickerName(o.pickerId) ?? t('sec.overview.notAssigned')}`}
@@ -242,7 +249,7 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
           <div className="v2-column">
             <section className="v2-section">
               <SectionHeader title={t('sec.overview.people')} action={<span className="v2-section-header__note">{t('sec.overview.working', { working: live.working.length, total: onShift.length })}</span>} />
-              <List className="v2-list">
+              <List className="v2-list v2-list--scroll">
                 {f && !live.failed && onShift.length > 0 ? (
                   onShift.map((p) => {
                     const o = pickerOrder.get(p.pickerId);
@@ -270,40 +277,29 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
           <SectionHeader
             title={t('sec.overview.shift')}
             action={
-              <div className="v2-shift-actions">
-                <Button variant="tertiary" status="inverse" size="xsmall" className="v2-more" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
-                  {t('sec.overview.viewHistory')}
-                </Button>
-                <Select
-                  className="v2-range"
-                  aria-label={t('sec.range.label')}
-                  value={s.range}
-                  onChange={(v) => dispatch({ type: 'range', range: v as TimingRange })}
-                  options={RANGES.map((r) => ({ value: r, label: t(`sec.range.${r}`) }))}
-                />
-              </div>
+              <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
+                {t('sec.overview.viewHistory').replace(/\s*[→←]\s*$/, '')}
+              </Button>
             }
           />
-          <div className="v2-columns">
+          <div className="v2-columns v2-combo v2-combo--shift">
             <div className="v2-column">
               <BoxState state={metrics} lines={4}>
                 {(m) => {
                   const sec = (v: number) => (v === 0 ? '0s' : formatSeconds(v));
                   return (
                     <>
-                      <div className="v2-stats v2-stats--spaced">
+                      <div className="v2-kpis v2-kpis--one">
                         <Stat value={m.successfulOrders} label={t('sec.overview.successful')} />
                       </div>
                       <SectionHeader
                         title={t('sec.overview.avgPrep')}
                         action={<span className="v2-section-header__note">{sec(m.avgAssignmentSeconds + m.avgPickingSeconds + m.avgPackingSeconds)}</span>}
                       />
-                      <div className="v2-stats v2-stats--spaced">
+                      <div className="v2-kpis">
                         <Stat {...split(sec(m.avgAssignmentSeconds))} label={t('sec.overview.assignment')} />
                         <Stat {...split(sec(m.avgPickingSeconds))} label={t('sec.overview.picking')} />
                         <Stat {...split(sec(m.avgPackingSeconds))} label={t('sec.overview.packing')} />
-                      </div>
-                      <div className="v2-stats">
                         <Stat {...split(m.successfulOrders ? '6.4m' : t('sec.overview.na'))} label={t('sec.overview.avgDispatch')} />
                         <Stat {...split(formatPercent(m.pfr))} label={t('sec.overview.pfr')} />
                         <Stat {...split(formatPercent(m.issueRate))} label={t('sec.overview.failRate')} />
@@ -314,8 +310,17 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
               </BoxState>
             </div>
             <div className="v2-column">
-              <div className="v2-card">
-                <h3 className="v2-card__title">{t('sec.overview.timePerOrder')}</h3>
+              <div className="v2-chart">
+                <div className="v2-chart__head">
+                  <h3 className="v2-card__title">{t('sec.overview.timePerOrder')}</h3>
+                  <Select
+                    className="v2-range"
+                    aria-label={t('sec.range.label')}
+                    value={s.range}
+                    onChange={(v) => dispatch({ type: 'range', range: v as TimingRange })}
+                    options={RANGES.map((r) => ({ value: r, label: t(`sec.range.${r}`) }))}
+                />
+                </div>
                 <BoxState state={timing} lines={5}>
                   {(b) =>
                     b.length ? (

@@ -4,8 +4,22 @@ import { Navigator } from './board/Navigator';
 import { CockpitLegacy } from './cockpit/legacy/CockpitLegacy';
 import { CockpitV2 } from './cockpit/v2/CockpitV2';
 import i18n from './i18n';
-import { codeFor, initialState, reducer } from './state';
-import type { Lang } from './state';
+import { PRESETS, codeFor, initialState, reducer } from './state';
+import type { Lang, State } from './state';
+
+/** Deep link: ?view=SM14&version=cape|legacy&lang=en|es|ar opens that preset directly (used by the Figma file). */
+function fromUrl(base: State): State {
+  const q = new URLSearchParams(window.location.search);
+  let s = base;
+  const version = q.get('version');
+  if (version === 'cape' || version === 'legacy') s = reducer(s, { type: 'version', version });
+  const lang = q.get('lang');
+  if (lang === 'en' || lang === 'es' || lang === 'ar') s = reducer(s, { type: 'lang', lang });
+  const view = q.get('view')?.toUpperCase();
+  const preset = PRESETS.find((p) => p.code === view);
+  if (preset) s = reducer(s, { type: 'jump', preset: preset.id });
+  return s;
+}
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: 'en', label: 'English' },
@@ -14,7 +28,7 @@ const LANGS: { id: Lang; label: string }[] = [
 ];
 
 export default function App() {
-  const [s, dispatch] = useReducer(reducer, initialState);
+  const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
   const [navOpen, setNavOpen] = useState(true);
   const code = codeFor(s);
 
@@ -22,6 +36,12 @@ export default function App() {
   useEffect(() => {
     void i18n.changeLanguage(s.lang);
   }, [s.lang]);
+
+  // Keep the address shareable: it always reflects the current view, version and language.
+  useEffect(() => {
+    const q = new URLSearchParams({ view: code, version: s.version, lang: s.lang });
+    window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}`);
+  }, [code, s.version, s.lang]);
 
   return (
     <div className="stage">
