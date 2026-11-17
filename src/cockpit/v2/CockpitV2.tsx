@@ -185,6 +185,14 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
           />
           <h1 className="v2-page-header__title">{name}</h1>
           <div className="v2-page-header__actions">
+            {live.failed ? (
+              <span className="v2-live v2-text--danger">{t('sec.unavailable')}</span>
+            ) : (
+              <span className={`v2-live${live.live ? ' v2-live--on' : ''}`}>
+                <Indicator status={live.live ? 'error' : 'neutral'} size="small" />
+                {live.loading ? t('sec.loading') : live.closed ? t('sec.offline') : t('sec.live', { time: nowClock(i18n.language) })}
+              </span>
+            )}
             <Button variant="secondary" status="inverse" size="medium" className="v2-pill" startIcon={open ? <Icon src={statusDot} /> : <Indicator status="subtle" size="large" />}>
               {open ? t('v2.open') : t('v2.closed')}
             </Button>
@@ -197,16 +205,6 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
         </header>
 
         <section className="v2-section">
-          <div className="v2-section-header">
-            {live.failed ? (
-              <span className="v2-section-header__note v2-text--danger">{t('sec.unavailable')}</span>
-            ) : (
-              <span className={`v2-live${live.live ? ' v2-live--on' : ''}`}>
-                <Indicator status={live.live ? 'error' : 'neutral'} size="small" />
-                {live.loading ? t('sec.loading') : live.closed ? t('sec.offline') : t('sec.live', { time: nowClock(i18n.language) })}
-              </span>
-            )}
-          </div>
           <div className="v2-stats">
             {stages.map(([k, n]) => (
               <Stat key={k} value={dash(n)} label={t(`sec.stage.${k}`)} stage={live.ready && n > 0 ? k : undefined} />
@@ -274,14 +272,6 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
         </div>
 
         <section className="v2-section">
-          <SectionHeader
-            title={t('sec.overview.shift')}
-            action={
-              <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
-                {t('sec.overview.viewHistory').replace(/\s*[→←]\s*$/, '')}
-              </Button>
-            }
-          />
           <div className="v2-columns v2-combo v2-combo--shift">
             <div className="v2-column">
               <BoxState state={metrics} lines={4}>

@@ -384,3 +384,11 @@
 .v2-sidenav--collapsed .v2-sidenav__item { justify-content: center; padding-inline: 0; }
 .v2-sidenav__rule { width: 32px; margin: 0 auto; border: 0; border-top: 1px solid var(--cp-border-color-normal); }
 .v2-sidenav--collapsed .v2-sidenav__footer { justify-content: center; padding-inline: 0; }
+
+/* Figma feedback Nov 17: smaller store title, Live in the header, tinted stage tiles (Picking = warning). */
+.v2-page-header__title { font-size: var(--cp-font-size-xlarge); line-height: 1.5; }
+.v2-page-header__actions .v2-live { margin-inline-end: var(--cp-spacing-small); }
+.v2-stat--unassigned { --v2-stage: var(--cp-text-color-danger); background: var(--cp-chart-color-danger-lowest); }
+.v2-stat--picking { --v2-stage: var(--cp-text-color-warning); background: var(--cp-chart-color-warning-lowest); }
+.v2-stat--packing { --v2-stage: var(--cp-text-color-branded); background: var(--cp-chart-color-branded-lowest); }
+.v2-stat--readyForRider { --v2-stage: var(--cp-text-color-success); background: var(--cp-chart-color-success-lowest); }
