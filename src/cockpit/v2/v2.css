@@ -392,3 +392,68 @@
 .v2-stat--picking { --v2-stage: var(--cp-text-color-warning); background: var(--cp-chart-color-warning-lowest); }
 .v2-stat--packing { --v2-stage: var(--cp-text-color-branded); background: var(--cp-chart-color-branded-lowest); }
 .v2-stat--readyForRider { --v2-stage: var(--cp-text-color-success); background: var(--cp-chart-color-success-lowest); }
+
+/* ---- Production content in the Cape skin (Nov 18) ---- */
+.cockpit--v2 { --pd-accent: var(--cp-action-color-branded-primary-enabled); }
+/* Live stage tiles are buttons that open the stage drawer; the idle pill sits after them. */
+.v2-stats--live { align-items: stretch; }
+.v2-stat--button { font: inherit; text-align: start; cursor: pointer; }
+.v2-stat--button:hover { border-color: var(--cp-border-color-high); }
+.v2-stat--button:focus-visible { outline: 2px solid var(--pd-accent); outline-offset: 2px; }
+.v2-idle { flex: 0 1 auto; display: flex; flex-direction: column; justify-content: center; padding: var(--cp-spacing-medium) var(--cp-spacing-xlarge); border: 1px solid var(--cp-text-color-danger); border-radius: var(--cp-base-border-radius-large); background: var(--cp-chart-color-danger-lowest); color: var(--cp-text-color-danger); }
+.v2-idle b { font-size: var(--cp-font-size-xlarge); font-weight: var(--cp-font-weight-bold); line-height: 1.33; }
+.v2-idle span { font-size: var(--cp-font-size-small); font-weight: var(--cp-font-weight-medium); }
+/* Needs attention rows open the order drawer */
+.v2-list__button { cursor: pointer; }
+.v2-list__button:hover { background: var(--cp-feedback-color-branded-low); }
+.v2-list__button:focus-visible { outline: 2px solid var(--pd-accent); outline-offset: -2px; }
+.v2-list__primary { display: inline-flex; align-items: center; gap: var(--cp-spacing-small); }
+.v2-chev { color: var(--cp-text-color-tertiary); }
+/* People right now */
+.v2-people-bar { padding: 0 var(--cp-spacing-large) var(--cp-spacing-small); }
+.cockpit--v2 .pd-progress { background: var(--cp-base-color-lightest); }
+.cockpit--v2 .pd-progress span { background: var(--cp-chart-color-success-medium); }
+.cockpit--v2 .pd-legend { color: var(--cp-text-color-secondary); margin: 0; }
+.cockpit--v2 .pd-dot--idle { background: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-dot--putaway, .cockpit--v2 .pd-dot--receiving { background: var(--cp-chart-color-success-medium); }
+.cockpit--v2 .pd-dot--picking, .cockpit--v2 .pd-dot--packing { background: var(--cp-text-color-success); }
+.v2-activity { color: var(--cp-text-color-tertiary); }
+.v2-activity--idle { color: var(--cp-text-color-danger); }
+.v2-activity--picking, .v2-activity--packing { color: var(--cp-text-color-success); }
+.v2-list__time--strong { color: var(--cp-text-color-primary) !important; font-weight: var(--cp-font-weight-semi-bold); }
+.v2-list .cp-avatar { flex: none; }
+/* Vendor switcher as a Cape pill */
+.cockpit--v2 .pd-vendors__btn { height: 48px; padding: 0 var(--cp-spacing-xlarge); border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-action-border-radius-pill); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); font-size: var(--cp-font-size-medium); gap: var(--cp-spacing-xsmall); }
+.cockpit--v2 .pd-vendors__btn--closed { color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-vendors__list { inset-inline-start: auto; inset-inline-end: 0; border-radius: var(--cp-base-border-radius-large); }
+.cockpit--v2 .pd-vendors__list li { font-size: var(--cp-font-size-small); color: var(--cp-text-color-primary); }
+/* Badges, links, buttons, table and drawer on Cape tokens */
+.cockpit--v2 .pd-badge--success { background: var(--cp-chart-color-success-lowest); color: var(--cp-text-color-success); }
+.cockpit--v2 .pd-badge--danger { background: var(--cp-chart-color-danger-lowest); color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-badge--warning { background: var(--cp-chart-color-warning-lowest); color: var(--cp-text-color-warning); }
+.cockpit--v2 .pd-badge--info { background: var(--cp-chart-color-info-lowest); color: var(--cp-text-color-info); }
+.cockpit--v2 .pd-badge--neutral { background: var(--cp-base-color-lightest); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-badge { border-radius: var(--cp-base-border-radius-small); }
+.cockpit--v2 .pd-order-link, .cockpit--v2 .pd-link, .cockpit--v2 .pd-btn--text { color: var(--cp-text-color-branded); }
+.cockpit--v2 .pd-btn { border-color: var(--cp-border-color-normal); border-radius: var(--cp-action-border-radius-pill); font-family: inherit; }
+.cockpit--v2 .pd-btn--primary { border-color: var(--pd-accent); background: var(--pd-accent); color: #fff; }
+.cockpit--v2 .pd-btn--primary:hover { background: var(--cp-action-color-branded-primary-hover, var(--pd-accent)); }
+.cockpit--v2 .pd-btn--text { border: 0; }
+.cockpit--v2 .pd-team { font-family: inherit; }
+.cockpit--v2 .pd-table-scroll { margin: 0; border: 0; }
+.cockpit--v2 .pd-team th { background: var(--cp-base-color-flat); border-color: var(--cp-border-color-normal); }
+.cockpit--v2 .pd-sort { color: var(--cp-text-color-primary); font-size: var(--cp-font-size-small); }
+.cockpit--v2 .pd-sort--on .lg-icon { color: var(--pd-accent); }
+.cockpit--v2 .pd-team td { font-size: var(--cp-font-size-small); color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-team__alert td:first-child { box-shadow: inset 3px 0 0 var(--cp-text-color-danger); }
+.cockpit--v2 .pd-ok { color: var(--cp-text-color-success); }
+.cockpit--v2 .pd-bad { color: var(--cp-text-color-danger) !important; }
+.cockpit--v2 .pd-drawer { font-family: var(--cp-font-family-roboto-ltr); border-radius: var(--cp-base-border-radius-large) 0 0 var(--cp-base-border-radius-large); }
+.cockpit--v2 .pd-drawer__head h2 { font-size: var(--cp-font-size-xlarge); }
+.cockpit--v2 .pd-stage-row:hover { border-color: var(--pd-accent); }
+.cockpit--v2 .pd-menu__list button:hover:not(:disabled) { background: var(--cp-feedback-color-branded-low); }
+.cockpit--v2 .pd-pager__num { font-family: inherit; }
+.cockpit--v2 .lg-nav__link.is-disabled { color: var(--cp-text-color-disabled); }
+.cockpit--v2 .timing-chart__seg--assign, .cockpit--v2 .legend__swatch--assign { background: var(--cp-chart-color-branded-highest); }
+.cockpit--v2 .timing-chart__seg--pick, .cockpit--v2 .legend__swatch--pick { background: var(--cp-chart-color-branded-high); }
+.cockpit--v2 .timing-chart__seg--pack, .cockpit--v2 .legend__swatch--pack { background: var(--cp-chart-color-branded-medium); }

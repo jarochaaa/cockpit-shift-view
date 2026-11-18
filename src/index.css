@@ -564,3 +564,37 @@ body {
 .lg-nav__link[data-tip]:hover::after, .lg-nav__link[data-tip]:focus-visible::after,
 .v2-sidenav__item[data-tip]:hover::after, .v2-sidenav__item[data-tip]:focus-visible::after { opacity: 1; }
 .lg-nav--collapsed, .v2-sidenav--collapsed { overflow: visible; }
+
+/* Production chart additions: right axis for completed orders, axis titles, line dots. */
+.timing-chart { position: relative; }
+.timing-chart__axis--right { text-align: start; width: 28px; }
+.timing-chart__title {
+  position: absolute;
+  top: 50%;
+  font-size: var(--cp-font-size-small);
+  color: var(--cp-text-color-secondary);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.timing-chart__title--left { inset-inline-start: -2px; transform: translate(-50%, -50%) rotate(-90deg); visibility: hidden; }
+.timing-chart__title--right { inset-inline-end: -42px; transform: translate(0, -50%) rotate(90deg); }
+.timing-chart__dots { position: absolute; inset: 0; pointer-events: none; }
+.timing-chart__dots span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--cp-chart-color-neutral-highest);
+}
+.timing-chart__labels span { flex: 1; text-align: center; overflow: visible; }
+.timing-chart:has(.timing-chart__title--right) { padding-inline-end: 24px; }
+.timing-legend { justify-content: center; margin-top: var(--cp-spacing-small); }
+.timing-chart__labels { position: relative; height: 24px; display: block; }
+.timing-chart__labels span { position: absolute; top: 6px; transform: translateX(-50%); flex: none; }
+[dir='rtl'] .timing-chart__labels span { transform: translateX(50%); }
+.timing-chart:has(.timing-chart__title--right) { padding-inline-end: 22px; }
+.timing-chart__title--right { inset-inline-end: 0; transform: translate(50%, -50%) rotate(90deg); }
+.timing-chart__title--right { transform: translateY(-50%); writing-mode: vertical-rl; inset-inline-end: 0; }
+.timing-chart__title--right { inset-inline-end: auto; right: 0; left: auto; }
+[dir='rtl'] .timing-chart__title--right { right: auto; left: 0; }

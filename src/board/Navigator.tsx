@@ -4,17 +4,16 @@ import { PRESETS } from '../state';
 type Row = { title: string; hint: string; presets: string[] };
 
 const USE_CASES: Row[] = [
-  { title: 'USE CASE 1 · Read the live state in one glance', hint: 'Stage counts → Needs attention → People right now', presets: ['default'] },
+  { title: 'USE CASE 1 · Read the live state in one glance', hint: 'Stage counts → Needs attention (returns) → People right now', presets: ['default'] },
   { title: 'USE CASE 2 · Find who needs a conversation', hint: 'Picker team, sortable by any column', presets: ['team-sorted'] },
-  { title: 'USE CASE 3 · Pick a warehouse', hint: 'Warehouse list with search', presets: ['warehouses'] },
+  { title: 'USE CASE 3 · Pick a warehouse', hint: 'Warehouses, search by name or ID', presets: ['warehouses'] },
   { title: 'USE CASE 4 · Look up an order', hint: 'Order history: filters, rows per page, pages', presets: ['orders'] },
-  { title: 'USE CASE 5 · Put cancelled stock back', hint: 'Cancellations: pending return → Return to stock', presets: ['cancellations'] },
-  { title: 'USE CASE 6 · Review order issues', hint: 'KPIs, New / Reviewed, group by picker', presets: ['issues'] },
+  { title: 'USE CASE 5 · Put cancelled stock back', hint: 'Needs attention or Cancellations → Return products', presets: ['cancellations'] },
 ];
 
 const EDGE_CASES: Row[] = [
-  { title: 'EDGE CASE 1 · No data yet', hint: 'Every empty state, as staging shows it today', presets: ['empty'] },
-  { title: 'EDGE CASE 2 · Late-order spike', hint: 'Many late orders, unassigned work waiting', presets: ['spike'] },
+  { title: 'EDGE CASE 1 · No data yet', hint: 'Every empty state', presets: ['empty'] },
+  { title: 'EDGE CASE 2 · Busy shift', hint: 'Late orders on top of the returns, work waiting in every stage', presets: ['spike'] },
   { title: 'EDGE CASE 3 · Idle store', hint: 'Nothing late, pickers waiting', presets: ['quiet'] },
   { title: 'EDGE CASE 4 · Store closed', hint: 'No live orders, everyone offline', presets: ['closed'] },
   { title: 'EDGE CASE 5 · Mock API delay or error', hint: 'Skeletons, then the shared error message', presets: ['slow', 'error'] },

@@ -1,23 +1,28 @@
-import type { HistoryStage, IssueCause, IssueReason, IssueSignal, Scenario } from './domain/types';
+import type { HistoryStage } from './domain/prod';
+import type { IssueCause, IssueReason, IssueSignal, Scenario } from './domain/types';
 
 export type Lang = 'en' | 'es' | 'ar';
 export type TimingRange = 'today' | '1h' | '6h' | '12h' | '24h';
 export const RANGES: TimingRange[] = ['today', '1h', '6h', '12h', '24h'];
 export const RANGE_HOURS: Record<TimingRange, number> = { today: 24, '1h': 1, '6h': 6, '12h': 12, '24h': 24 };
-export type TeamSortKey = 'prep' | 'avgAssignmentSeconds' | 'avgPickingSeconds' | 'avgPackingSeconds' | 'pfr' | 'failRate' | 'ordersCount';
+/** Picker team columns as production shows them; 'default' keeps the API order (no column sorted). */
+export type TeamSortKey = 'default' | 'name' | 'assignment' | 'picking' | 'pickingPerItem' | 'packing' | 'prep' | 'pfr' | 'failRate' | 'successful' | 'receivingPerSku';
 export type SortDir = 'asc' | 'desc';
-/** legacy = the Store Management Cockpit as it ships in staging (talabat); cape = DMarts Portal layout on the default Cape theme. */
+/** legacy = the Store Management Cockpit as it ships in production (talabat); cape = DMarts Portal layout on the default Cape theme. */
 export type Version = 'legacy' | 'cape';
 /** The plugin's routes: warehouse list, then one warehouse's overview, order history, cancellations and order issues. */
 export type Page = 'warehouses' | 'overview' | 'orders' | 'cancellations' | 'issues';
+export type HistoryDate = 'any' | '1h' | '4h' | 'today' | 'yesterday' | '7d';
 export type CancelTab = 'pending_return' | 'settled' | 'all';
 export type IssueTab = 'new' | 'reviewed' | 'all';
 
 export interface HistoryFilters {
   stage: HistoryStage | 'all';
   fulfillment: 'all' | 'full' | 'partial';
+  date: HistoryDate;
   orderId: string;
   customer: string;
+  picker: string;
   pageSize: 10 | 20 | 50 | 100;
   page: number;
 }
@@ -57,8 +62,8 @@ export type Action =
   | { type: 'issues'; patch: Partial<IssueFilters> }
   | { type: 'jump'; preset: string };
 
-const DEFAULT_SORT = { key: 'prep', dir: 'desc' } as const;
-const DEFAULT_HISTORY: HistoryFilters = { stage: 'all', fulfillment: 'all', orderId: '', customer: '', pageSize: 20, page: 1 };
+const DEFAULT_SORT = { key: 'default', dir: 'desc' } as const;
+const DEFAULT_HISTORY: HistoryFilters = { stage: 'all', fulfillment: 'all', date: 'any', orderId: '', customer: '', picker: '', pageSize: 20, page: 1 };
 const DEFAULT_ISSUES: IssueFilters = { tab: 'new', groupBy: 'order', range: 'today', signal: 'all', reason: 'all', cause: 'all', picker: 'all' };
 
 export const initialState: State = {
@@ -122,16 +127,15 @@ export const PRESETS: Preset[] = [
   { id: 'warehouses', code: 'SM10', group: 'Pages', label: 'Warehouse list', actions: [{ type: 'page', page: 'warehouses' }] },
   { id: 'orders', code: 'SM11', group: 'Pages', label: 'Order history', actions: [{ type: 'page', page: 'orders' }] },
   { id: 'cancellations', code: 'SM12', group: 'Pages', label: 'Cancellations', actions: [{ type: 'page', page: 'cancellations' }] },
-  { id: 'issues', code: 'SM13', group: 'Pages', label: 'Order issues', actions: [{ type: 'page', page: 'issues' }] },
-  { id: 'spike', code: 'SM4', group: 'Shift states', label: 'Late-order spike', actions: [{ type: 'scenario', scenario: 'spike' }] },
+  { id: 'spike', code: 'SM4', group: 'Shift states', label: 'Busy shift · late orders', actions: [{ type: 'scenario', scenario: 'spike' }] },
   { id: 'quiet', code: 'SM5', group: 'Shift states', label: 'Idle store · nothing late', actions: [{ type: 'scenario', scenario: 'quiet' }] },
-  { id: 'empty', code: 'SM14', group: 'Shift states', label: 'No data yet · as in staging', actions: [{ type: 'scenario', scenario: 'empty' }] },
+  { id: 'empty', code: 'SM14', group: 'Shift states', label: 'No data yet', actions: [{ type: 'scenario', scenario: 'empty' }] },
   { id: 'closed', code: 'SM6', group: 'Shift states', label: 'Store closed', actions: [{ type: 'scenario', scenario: 'closed' }] },
   { id: 'slow', code: 'SM7', group: 'Data', label: 'Slow API · loading', actions: [{ type: 'scenario', scenario: 'slow' }] },
   { id: 'error', code: 'SM8', group: 'Data', label: 'API error', actions: [{ type: 'scenario', scenario: 'error' }] },
 ];
 
-const PAGE_CODE: Record<Exclude<Page, 'overview'>, string> = { warehouses: 'SM10', orders: 'SM11', cancellations: 'SM12', issues: 'SM13' };
+const PAGE_CODE: Record<Exclude<Page, 'overview'>, string> = { warehouses: 'SM10', orders: 'SM11', cancellations: 'SM12', issues: 'SM9' };
 const SCENARIO_CODE: Partial<Record<Scenario, string>> = { spike: 'SM4', quiet: 'SM5', empty: 'SM14', closed: 'SM6', slow: 'SM7', error: 'SM8' };
 const same = (a: object, b: object) => JSON.stringify(a) === JSON.stringify(b);
 
