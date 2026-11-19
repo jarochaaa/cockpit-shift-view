@@ -4,7 +4,7 @@ import { Navigator } from './board/Navigator';
 import { CockpitLegacy } from './cockpit/legacy/CockpitLegacy';
 import { CockpitV2 } from './cockpit/v2/CockpitV2';
 import i18n from './i18n';
-import { PRESETS, codeFor, initialState, reducer } from './state';
+import { codeFor, presetsFor, initialState, reducer } from './state';
 import type { Lang, State } from './state';
 
 /** Deep link: ?view=SM14&version=cape|legacy&lang=en|es|ar opens that preset directly (used by the Figma file). */
@@ -16,7 +16,7 @@ function fromUrl(base: State): State {
   const lang = q.get('lang');
   if (lang === 'en' || lang === 'es' || lang === 'ar') s = reducer(s, { type: 'lang', lang });
   const view = q.get('view')?.toUpperCase();
-  const preset = PRESETS.find((p) => p.code === view);
+  const preset = presetsFor(s.version).find((p) => p.code === view);
   if (preset) s = reducer(s, { type: 'jump', preset: preset.id });
   return s;
 }
@@ -30,6 +30,7 @@ const LANGS: { id: Lang; label: string }[] = [
 export default function App() {
   const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
   const [navOpen, setNavOpen] = useState(true);
+  const [rationales, setRationales] = useState(true);
   const code = codeFor(s);
 
   // The language switch changes the Cockpit only; the board stays English.
@@ -45,7 +46,7 @@ export default function App() {
 
   return (
     <div className="stage">
-      <Navigator code={code} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })} />
+      <Navigator code={code} version={s.version} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })} />
 
       <div className="board" onScroll={(e) => e.currentTarget.scrollLeft > 8 && setNavOpen(false)}>
         <section className="board__web" aria-label="Store Management Cockpit">
@@ -55,9 +56,9 @@ export default function App() {
               <span className="board__tag">Web</span>
               <span className="board__tag">Desktop</span>
               <span className="board__tag board__tag--user">
-                User: <b>Store Manager</b>
+                User: <b>{s.page === 'monitoring' ? 'Area Manager' : 'Store Manager'}</b>
               </span>
-              <span className="board__tag">Shift View</span>
+              <span className="board__tag">{s.page === 'monitoring' ? 'Country Monitor' : 'Shift View'}</span>
               <span className="board__tag">{s.version === 'cape' ? 'Cape Version' : 'Legacy Version'}</span>
               <span className="board__tag board__tag--view">
                 View <b>{code}</b>
@@ -66,7 +67,7 @@ export default function App() {
           </header>
           <div className="board__row">
             <div className="product">
-              {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
+              {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
             </div>
             <div className="side">
               <div className="view-tag">
@@ -85,6 +86,19 @@ export default function App() {
                   ))}
                 </div>
               </div>
+              {s.version === 'cape' && s.page === 'monitoring' && (
+                <div className="lang-switch" role="group" aria-label="Rationales">
+                  <span>Rationales</span>
+                  <div className="lang-switch__opts">
+                    <button type="button" aria-pressed={rationales} onClick={() => setRationales(true)}>
+                      On
+                    </button>
+                    <button type="button" aria-pressed={!rationales} onClick={() => setRationales(false)}>
+                      Off
+                    </button>
+                  </div>
+                </div>
+              )}
               <Hints s={s} code={code} />
             </div>
           </div>

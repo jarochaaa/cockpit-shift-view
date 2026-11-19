@@ -1,0 +1,616 @@
+import { createContext, useContext, useLayoutEffect, useRef, useState } from 'react';
+import type { CSSProperties, Dispatch } from 'react';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { Avatar } from '../../cape/Avatar';
+import { Button } from '../../cape/Button';
+import { Indicator } from '../../cape/Indicator';
+import { Select } from '../../cape/Select';
+import { Tag } from '../../cape/Tag';
+import helpCircle from '../../assets/v2/help-circle.svg';
+import notifications from '../../assets/v2/notifications.svg';
+import { ALERTS, COUNTRIES, DONOR, ESCALATE_DAY, LEADER, PROMO, SECONDARY, STORES, SYSTEM_ISSUE, TARGET, aggregate, band, cell, coverage, deviation, instore, nextAction, prep, score } from '../../domain/monitoring';
+import type { Band, CountryId, RegionId, SignalKey, StoreRow, Zone } from '../../domain/monitoring';
+import type { Action } from '../../state';
+import { CapeIcon } from '../legacy/icons';
+import { Drawer } from '../prod/Drawers';
+import type { InfoKey } from './strings';
+import './strings';
+import { AttentionPanel } from './AttentionPanel';
+import './monitoring.css';
+
+const byId = (id: string) => STORES.find((s) => s.id === id)!;
+const SYSTEM_FIRST = SYSTEM_ISSUE[0];
+const REGIONS: RegionId[] = ['mena', 'latam', 'europe', 'apac'];
+const pct = (v: number, d = 1) => `${v.toFixed(d)}%`;
+const signed = (v: number) => `${v >= 0 ? '+' : '−'}${Math.abs(Math.round(v * 100))}%`;
+
+const RationalesOn = createContext(true);
+const POP_W = 300;
+
+/** Soft grey "i": why this data point is here, why in this position, why shown this way.
+ *  The popover is portalled and kept inside the viewport, so it never resizes or clips the layout. */
+export function Info({ k }: { k: InfoKey }) {
+  const { t, i18n } = useTranslation();
+  const on = useContext(RationalesOn);
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<CSSProperties>({});
+  const btn = useRef<HTMLButtonElement>(null);
+  useLayoutEffect(() => {
+    if (!open || !btn.current) return;
+    const r = btn.current.getBoundingClientRect();
+    const left = Math.max(8, Math.min(r.left - 8, window.innerWidth - POP_W - 8));
+    const below = r.bottom + 6;
+    setPos(below + 240 > window.innerHeight ? { left, bottom: window.innerHeight - r.top + 6 } : { left, top: below });
+  }, [open]);
+  if (!on) return null;
+  const [why, where, how] = t(`msm.r.${k}`, { returnObjects: true }) as string[];
+  return (
+    <span className="msm-info" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <button ref={btn} type="button" className="msm-info__btn" aria-label={t('msm.info.label')} aria-expanded={open} onClick={() => setOpen(!open)} onBlur={() => setOpen(false)}>
+        <CapeIcon name="info" size={16} />
+      </button>
+      {open &&
+        createPortal(
+          <span className="msm-info__pop" role="tooltip" dir={i18n.dir()} style={{ ...pos, width: POP_W }}>
+            <b>{t('msm.info.why')}</b>
+            <span>{why}</span>
+            <b>{t('msm.info.where')}</b>
+            <span>{where}</span>
+            <b>{t('msm.info.how')}</b>
+            <span>{how}</span>
+          </span>,
+          document.querySelector('.cockpit--v2') ?? document.body,
+        )}
+    </span>
+  );
+}
+
+const COLS: SignalKey[] = ['late', 'assign', 'unassigned', 'prep', 'pickers', 'instore', 'awt', 'pfr', 'fail', 'age'];
+
+type Status = 'all' | 'critical' | 'risk' | 'watch' | 'ok';
+const STATUSES: Status[] = ['all', 'critical', 'risk', 'watch', 'ok'];
+/** One colour language for status everywhere: chips, row bars, attention cards, tags. */
+const STATUS_TONE: Record<Exclude<Status, 'all'>, 'error' | 'warning' | 'info' | 'success'> = { critical: 'error', risk: 'warning', watch: 'info', ok: 'success' };
+const MIN_COLS: SignalKey[] = ['assign', 'prep', 'awt'];
+const TABLE_COLS: SignalKey[] = ['late', 'assign', 'pickers', 'prep', 'awt', 'pfr'];
+const statusOf = (s: StoreRow): Exclude<Status, 'all'> => {
+  const a = nextAction(s);
+  return a === 'borrow' || a === 'riders' || a === 'escalate' || a === 'jira' ? 'critical' : a === 'staff' ? 'risk' : a === 'watch' ? 'watch' : 'ok';
+};
+
+function useFmt() {
+  const { t } = useTranslation();
+  const min = (v: number) => t('msm.min', { v: v.toFixed(1) });
+  const value = (s: StoreRow, k: SignalKey): string => {
+    switch (k) {
+      case 'late':
+        return pct(s.late, 0);
+      case 'assign':
+        return min(s.assign);
+      case 'unassigned':
+        return String(s.unassigned);
+      case 'prep':
+        return min(prep(s));
+      case 'pickers':
+        return `${s.active}/${s.planned}`;
+      case 'instore':
+        return min(instore(s));
+      case 'awt':
+        return min(s.awt);
+      case 'pfr':
+        return pct(s.pfr);
+      case 'fail':
+        return pct(s.fail);
+      case 'age':
+        return t('msm.days', { n: s.age });
+    }
+  };
+  return { t, min, value };
+}
+
+/** "18 stores live" pill, same pattern as the store view's "3 / 4 open" dropdown. */
+function StoresLive({ stores }: { stores: StoreRow[] }) {
+  const { t } = useTranslation();
+  const ref = useRef<HTMLDetailsElement>(null);
+  const cities = [...new Set(stores.map((s) => s.zone))];
+  return (
+    <details ref={ref} className="pd-vendors msm-live-stores" onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && ref.current?.removeAttribute('open')}>
+      <summary className="pd-vendors__btn">
+        <span className="msm-dot-status msm-dot-status--success" />
+        {t('msm.storesLive', { n: stores.length })}
+        <CapeIcon name="chevronDown" size={16} />
+      </summary>
+      <ul className="pd-vendors__list" aria-label={t('msm.storesLiveList')}>
+        {cities.map((z) => (
+          <li key={z}>
+            <span>{t(`msm.zone.${z}`)}</span>
+            <span className="pd-badge pd-badge--success">{stores.filter((s) => s.zone === z).length}</span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+/** One attention card per market alert or store needing action, tinted like the store view's Needs attention. */
+type AttentionCard = { key: string; tone: 'error' | 'warning' | 'info' | 'success'; title: string; tag: string; meta: string; strong: string; drawerId?: string };
+
+/** Area manager view across many stores, in the Cape store-view layout (72:1672). Cape Version only. */
+export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action>; rationales: boolean }) {
+  const { t, min, value } = useFmt();
+  const unit = t('msm.min', { v: '' }).trim();
+  const [region, setRegion] = useState<RegionId>('mena');
+  const [country, setCountry] = useState<CountryId>('ae');
+  const [zone, setZone] = useState<Zone | 'all'>('all');
+  const [manager, setManager] = useState('all');
+  const [status, setStatus] = useState<Status>('all');
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [done, setDone] = useState<Set<string>>(new Set());
+
+
+  const market = COUNTRIES.find((c) => c.id === country)!;
+  const inCountry = STORES.filter((s) => s.country === country);
+  const managers = [...new Set(inCountry.filter((s) => zone === 'all' || s.zone === zone).map((s) => s.owner))];
+  const scoped = inCountry.filter((s) => (zone === 'all' || s.zone === zone) && (manager === 'all' || s.owner === manager)).sort((a, b) => score(b) - score(a));
+  const rows = status === 'all' ? scoped : scoped.filter((s) => statusOf(s) === status);
+  const C = aggregate(scoped);
+  const name = (id: string) => byId(id).name;
+  const ctx = { store: name('st-07'), donor: name(DONOR), leader: LEADER, v: C.late.toFixed(1) };
+  const openStore = (id: string) => dispatch({ type: 'page', page: 'overview', warehouseId: id });
+  const markDone = (id: string) => setDone(new Set(done).add(id));
+  const count = (st: Status) => (st === 'all' ? scoped.length : scoped.filter((s) => statusOf(s) === st).length);
+
+  // Market-wide alerts first (scenario alerts in the UAE, a computed one elsewhere), then every store needing action.
+  const marketCards: AttentionCard[] =
+    country === 'ae'
+      ? ALERTS.filter((a) => a.stores.length !== 1 && (a.key !== 'system' || a.stores.some((id) => scoped.some((s) => s.id === id)))).map((a) => ({
+          key: a.key,
+          tone: a.key === 'system' && done.has(SYSTEM_FIRST) ? 'success' : a.tone,
+          title: t(`msm.alert.${a.key}.title`, ctx),
+          tag: a.key === 'promo' ? 'Promo' : a.key === 'system' ? t('msm.act.jira') : t('msm.k.late'),
+          meta: t(`msm.alert.${a.key}.cause`, ctx),
+          strong: t('msm.ago', { n: a.minutesAgo }),
+          drawerId: a.key === 'system' ? SYSTEM_FIRST : undefined,
+        }))
+      : band(C.late, TARGET.late) === 'high'
+        ? [{ key: 'countryGen', tone: 'error', title: t('msm.alert.countryGen.title', ctx), tag: t('msm.k.late'), meta: t('msm.alert.countryGen.cause'), strong: t('msm.ago', { n: 5 }) }]
+        : [];
+  const storeCards: AttentionCard[] = scoped
+    .filter((s) => statusOf(s) === 'critical' || statusOf(s) === 'risk')
+    .map((s) => {
+      const a = nextAction(s);
+      const reds = COLS.filter((k) => k !== 'age' && cell(s, k) === 'high').slice(0, 3);
+      return {
+        key: s.id,
+        drawerId: s.id,
+        tone: done.has(s.id) ? 'success' : STATUS_TONE[statusOf(s)],
+        title: s.name,
+        tag: done.has(s.id) ? t('msm.done') : t(`msm.act.${a}`),
+        meta: (reds.length ? reds : COLS.filter((k) => cell(s, k) === 'mild').slice(0, 2)).map((k) => `${t(`msm.k.${k}`)} ${value(s, k)}`).join(' · '),
+        strong: s.age ? t('msm.daysLong', { n: s.age }) : t('msm.today'),
+      };
+    });
+  const attention = [...marketCards, ...storeCards];
+
+  const tile = (k: InfoKey & SignalKey, v: string, b: Band, target?: string) => (
+    <div className={`v2-stat msm-tile msm-tile--${b}`} key={k}>
+      <span className="v2-stat__value">{v}</span>
+      <span className="v2-stat__label msm-tile__label">
+        {t(`msm.k.${k}`)} <Info k={k} />
+      </span>
+      <span className="msm-tile__foot">
+        {t(`msm.band.${b}`)}
+        {target && ` · ${t('msm.target', { v: target })}`}
+      </span>
+    </div>
+  );
+
+  return (
+    <RationalesOn.Provider value={rationales}>
+      <div className="msm">
+        <header className="v2-page-header">
+          <h1 className="v2-page-header__title">{t('msm.title')}</h1>
+          <div className="v2-page-header__actions">
+            <span className="v2-live v2-live--on msm-live">
+              <Indicator status="error" size="small" />
+              {t('msm.live', { n: 2 })}
+              <Info k="live" />
+            </span>
+            <StoresLive stores={scoped} />
+            <Button variant="secondary" status="inverse" size="medium" className="v2-pill" startIcon={<img src={helpCircle} alt="" />}>
+              {t('v2.help')}
+            </Button>
+            <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-pill--icon" aria-label={t('v2.notifications')} startIcon={<img src={notifications} alt="" />} />
+            <Avatar size="large" initials="A" className="v2-avatar" />
+          </div>
+        </header>
+
+        <div className="msm-scope" role="group" aria-label={t('msm.scope.region')}>
+          <Select
+            className="msm-scope__select"
+            aria-label={t('msm.scope.region')}
+            value={region}
+            onChange={(v) => {
+              setRegion(v as RegionId);
+              setCountry(COUNTRIES.find((c) => c.region === v)!.id);
+              setZone('all');
+              setManager('all');
+              setStatus('all');
+            }}
+            options={REGIONS.map((rg) => ({ value: rg, label: `${t('msm.scope.region')}: ${t(`msm.region.${rg}`)}` }))}
+          />
+          <Select
+            className="msm-scope__select"
+            aria-label={t('msm.scope.country')}
+            value={country}
+            onChange={(v) => {
+              setCountry(v as CountryId);
+              setZone('all');
+              setManager('all');
+            }}
+            options={COUNTRIES.filter((c) => c.region === region).map((c) => ({ value: c.id, label: `${t('msm.scope.country')}: ${t(`msm.country.${c.id}`)}` }))}
+          />
+          <Select
+            className="msm-scope__select"
+            aria-label={t('msm.scope.zone')}
+            value={zone}
+            onChange={(v) => {
+              setZone(v as Zone | 'all');
+              setManager('all');
+            }}
+            options={[{ value: 'all', label: `${t('msm.scope.zone')}: ${t('msm.scope.all')}` }, ...market.zones.map((z) => ({ value: z, label: `${t('msm.scope.zone')}: ${t(`msm.zone.${z}`)}` }))]}
+          />
+          <Select
+            className="msm-scope__select"
+            aria-label={t('msm.scope.manager')}
+            value={manager}
+            onChange={setManager}
+            options={[{ value: 'all', label: `${t('msm.scope.manager')}: ${t('msm.scope.all')}` }, ...managers.map((m) => ({ value: m, label: m }))]}
+          />
+          <Info k="scope" />
+        </div>
+
+        {country === 'ae' && (
+          <div className="msm-promo">
+            <Tag size="small" status="info">
+              Promo
+            </Tag>
+            <span>{t('msm.promo', { name: PROMO.name, cashback: PROMO.cashback, window: PROMO.window, pct: SECONDARY.vsForecast })}</span>
+            <Info k="promo" />
+          </div>
+        )}
+
+        <div className="msm-layout">
+          <div className="msm-main">
+            <section className="v2-section msm-strip">
+              <div className="v2-section-header msm-head">
+                <h2 className="v2-section-header__title">
+                  {t('msm.liveNow')} <Info k="kpis" />
+                </h2>
+                <span className="v2-section-header__note">{t('msm.liveNote')}</span>
+              </div>
+              <div className="v2-stats">
+                {tile('late', pct(C.late), band(C.late, TARGET.late), pct(TARGET.late, 0))}
+                {tile('assign', min(C.assign), band(C.assign, TARGET.assign), min(TARGET.assign))}
+                {tile('unassigned', String(C.unassigned), band(C.unassigned, Math.max(1, scoped.length) * TARGET.unassigned))}
+                {tile('pickers', `${C.active}/${C.planned}`, C.active / Math.max(1, C.planned) < 0.9 ? 'mild' : 'meets')}
+              </div>
+            </section>
+
+            <section className="msm-card">
+              <div className="v2-section-header msm-head">
+                <h2 className="v2-section-header__title">
+                  {t('msm.countryPerf')} <Info k="instore" />
+                </h2>
+                <span className="v2-section-header__note">{t('msm.lastHour')} · {t('msm.weighted', { n: C.orders })}</span>
+              </div>
+              <div className="msm-grid">
+                {tile('instore', min(C.instore), band(C.instore, TARGET.instore), min(TARGET.instore))}
+                {tile('awt', min(C.awt), band(C.awt, TARGET.awt), min(TARGET.awt))}
+                {tile('pfr', pct(C.pfr), band(C.pfr, TARGET.pfr), pct(TARGET.pfr, 0))}
+                {tile('fail', pct(C.fail), band(C.fail, TARGET.fail), pct(TARGET.fail, 0))}
+              </div>
+              <div className="msm-secondary">
+                <span className="msm-secondary__title">
+                  {t('msm.secondary')} <Info k="secondary" />
+                </span>
+                <span>
+                  {t('msm.sec.nsfr')} <b>{pct(SECONDARY.nsfr)}</b>
+                </span>
+                <span>
+                  {t('msm.sec.basket')} <b>{market.currency} {market.basket.toLocaleString('en-US', { maximumFractionDigits: market.basket >= 1000 ? 0 : 2 })}</b>
+                </span>
+                <span>
+                  {t('msm.sec.refunds')} <b>{pct(SECONDARY.refunds)}</b>
+                </span>
+                {country === 'ae' && (
+                  <span>
+                    {t('msm.sec.forecast')} <b>+{SECONDARY.vsForecast}%</b>
+                  </span>
+                )}
+              </div>
+            </section>
+
+            <section className="msm-card">
+              <div className="v2-section-header msm-head">
+                <h2 className="v2-section-header__title">
+                  {t('msm.ranking')} <Info k="ranking" />
+                </h2>
+                <span className="v2-section-header__note">{t('msm.rankingNote', { n: count('critical') + count('risk') })}</span>
+              </div>
+              <div className="msm-status" role="tablist" aria-label={t('msm.col.action')}>
+                {STATUSES.map((st) => (
+                  <button key={st} type="button" role="tab" aria-selected={status === st} className={`msm-chip msm-chip--${st === 'all' ? 'all' : STATUS_TONE[st]}${status === st ? ' is-on' : ''}`} onClick={() => setStatus(st)}>
+                    {t(`msm.status.${st}`)}
+                    <span className="msm-chip__n">{count(st)}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="msm-table-wrap pd-table-scroll">
+                <table className="msm-table">
+                  <thead>
+                    <tr>
+                      <th>
+                        <span className="msm-th">
+                          {t('msm.col.store')} · {t('msm.col.deviation')} <Info k="deviation" /> <Info k="age" />
+                        </span>
+                      </th>
+                      {TABLE_COLS.map((k) => (
+                        <th key={k}>
+                          <span className="msm-th">
+                            {t(`msm.k.${k}`)}
+                            {MIN_COLS.includes(k) && ` (${unit})`} <Info k={k} />
+                          </span>
+                        </th>
+                      ))}
+                      <th>
+                        <span className="msm-th">
+                          {t('msm.col.action')} <Info k="action" />
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((s) => {
+                      const d = deviation(s);
+                      const a = nextAction(s);
+                      return (
+                        <tr
+                          key={s.id}
+                          className={`msm-row msm-row--${STATUS_TONE[statusOf(s)]}`}
+                          tabIndex={0}
+                          onClick={() => openStore(s.id)}
+                          onKeyDown={(e) => e.key === 'Enter' && openStore(s.id)}
+                        >
+                          <td>
+                            <span className="msm-store">
+                              <span className="msm-store__name">
+                                <span className={`msm-dot-status msm-dot-status--${STATUS_TONE[statusOf(s)]}`} title={t(`msm.status.${statusOf(s)}`)} />
+                                <b>{s.name}</b>
+                                {s.age > 0 && (
+                                  <Tag size="small" status={cell(s, 'age') === 'high' ? 'error' : cell(s, 'age') === 'mild' ? 'warning' : 'neutral'} title={t('msm.daysLong', { n: s.age })}>
+                                    {value(s, 'age')}
+                                  </Tag>
+                                )}
+                              </span>
+                              <span>
+                                {t(`msm.zone.${s.zone}`)} · {s.owner}
+                              </span>
+                              <span className={`msm-dev msm-dev--${d.tone}`} title={t('msm.vsCountry', { v: signed(d.country) })}>
+                                {t('msm.vsUsualSig', { v: signed(d.usual), signal: t(`msm.sig.${d.signal}`) })}
+                              </span>
+                            </span>
+                          </td>
+                          {TABLE_COLS.map((k) => {
+                            const c = cell(s, k);
+                            return (
+                              <td key={k} className={`msm-cell msm-cell--${k === 'pickers' && cell(s, 'unassigned') === 'high' ? 'high' : c}`}>
+                                {k === 'age' ? (
+                                  <Tag size="small" status={c === 'high' ? 'error' : c === 'mild' ? 'warning' : 'neutral'} title={t('msm.daysLong', { n: s.age })}>
+                                    {value(s, k)}
+                                  </Tag>
+                                ) : MIN_COLS.includes(k) ? (
+                                  (k === 'assign' ? s.assign : k === 'prep' ? prep(s) : s.awt).toFixed(1)
+                                ) : k === 'pickers' ? (
+                                  <span className="msm-two">
+                                    {value(s, k)}
+                                    <small className={`msm-cell--${cell(s, 'unassigned')}`}>
+                                      {t('msm.waiting', { n: s.unassigned })}
+                                    </small>
+                                  </span>
+                                ) : (
+                                  value(s, k)
+                                )}
+                              </td>
+                            );
+                          })}
+                          <td>
+                            {done.has(s.id) ? (
+                              <span className="msm-act msm-act--done" title={t('msm.done')}>
+                                <CapeIcon name="checkCircle" size={18} />
+                              </span>
+                            ) : (
+                              <Button
+                                size="small"
+                                variant="secondary"
+                                status="inverse"
+                                className="msm-solve"
+                                title={a === 'none' ? t('msm.review') : t(`msm.act.${a}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenId(s.id);
+                                }}
+                              >
+                                {statusOf(s) === 'ok' || statusOf(s) === 'watch' ? t('msm.review') : t('msm.solve')}
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {rows.length === 0 && (
+                      <tr>
+                        <td colSpan={TABLE_COLS.length + 2} className="msm-empty">
+                          {t('msm.noStores')}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <AttentionPanel
+            title={t('msm.attention')}
+            titleAddon={<Info k="alerts" />}
+            note={t('msm.alertsNote', { n: ESCALATE_DAY })}
+            empty={t('msm.noAttention')}
+            items={attention.map((c) => ({ ...c, onClick: c.drawerId ? () => setOpenId(c.drawerId!) : undefined }))}
+          />
+        </div>
+
+        {openId && <StoreDrawer s={byId(openId)} done={done.has(openId)} onDone={() => markDone(openId)} onClose={() => setOpenId(null)} onOpenStore={() => openStore(openId)} />}
+      </div>
+    </RationalesOn.Provider>
+  );
+}
+
+function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; done: boolean; onDone: () => void; onClose: () => void; onOpenStore: () => void }) {
+  const { t, min } = useFmt();
+  const a = nextAction(s);
+  const vars = { donor: byId(DONOR).name, leader: LEADER, store: s.name, owner: s.owner, n: s.age, v: s.awt.toFixed(0) };
+  void min;
+  return (
+    <Drawer
+      title={s.name}
+      onClose={onClose}
+      footer={
+        <>
+          <Button variant="tertiary" status="inverse" onClick={onClose}>
+            {t('msm.drawer.close')}
+          </Button>
+          <Button variant="secondary" status="inverse" onClick={onOpenStore}>
+            {t('msm.openStore')}
+          </Button>
+          {t(`msm.do.${a}`, vars) &&
+            (done ? (
+              <Tag status="success">{t('msm.done')}</Tag>
+            ) : (
+              <Button variant="primary" onClick={onDone}>
+                {t(`msm.do.${a}`, vars)}
+              </Button>
+            ))}
+        </>
+      }
+    >
+      <div className="msm-drawer__tags">
+        <Tag size="small" status="neutral">
+          {t(`msm.zone.${s.zone}`)}
+        </Tag>
+        <Tag size="small" status="neutral">
+          {s.owner}
+        </Tag>
+        {s.age >= ESCALATE_DAY && (
+          <Tag size="small" status="error">
+            {t('msm.escalated')} · {t('msm.daysLong', { n: s.age })}
+          </Tag>
+        )}
+        <Info k="drill" />
+      </div>
+
+      <section className={`msm-suggest msm-suggest--${done ? 'success' : STATUS_TONE[statusOf(s)]}`}>
+        <h3>{t('msm.drawer.suggested')}</h3>
+        <p>{t(`msm.actLong.${a}`, vars)}</p>
+        <div className="msm-suggest__contact">
+          <span>
+            {t('msm.drawer.contact')}: <b>{t(`msm.contact.${a}`, vars)}</b>
+          </span>
+          <Button size="small" variant="secondary" status="inverse">
+            {t('msm.drawer.call')}
+          </Button>
+        </div>
+      </section>
+
+      <section className="msm-dsec">
+        <div className="v2-section-header msm-head">
+          <h3 className="v2-section-header__title">{t('msm.liveNow')}</h3>
+        </div>
+        <div className="v2-stats">
+            <div className="v2-stat">
+              <span className={`v2-stat__value${cell(s, 'unassigned') === 'high' ? ' v2-stat__value--danger' : ''}`}>{s.unassigned}</span>
+              <span className="v2-stat__label">{t('msm.k.unassigned')}</span>
+            </div>
+            <div className="v2-stat">
+              <span className={`v2-stat__value${cell(s, 'late') === 'high' ? ' v2-stat__value--danger' : ''}`}>{pct(s.late, 0)}</span>
+              <span className="v2-stat__label">{t('msm.k.late')}</span>
+            </div>
+          {s.idle > 0 && (
+            <div className="v2-idle">
+              <b>{s.idle}</b>
+              <span>{t('msm.drawer.idle', { n: '' }).trim()}</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="msm-dsec">
+        <div className="v2-section-header msm-head">
+          <h3 className="v2-section-header__title">{t('msm.drawer.pickers')}</h3>
+          <span className="v2-section-header__note">{t('msm.drawer.pickersLine', { a: s.active, p: s.planned })}</span>
+        </div>
+        <div className="pd-progress" role="img" aria-label={t('msm.drawer.pickersLine', { a: s.active, p: s.planned })}>
+          <span style={{ width: `${Math.min(1, coverage(s)) * 100}%` }} />
+        </div>
+        <ul className="pd-legend">
+          <li>
+            <span className="pd-dot pd-dot--picking" />
+            {s.active} {t('msm.k.pickers').split('/')[0].trim()}
+          </li>
+          {s.planned > s.active && (
+            <li>
+              <span className="pd-dot pd-dot--idle" />
+              {s.planned - s.active} {t('msm.drawer.missing')}
+            </li>
+          )}
+        </ul>
+      </section>
+
+      <section className="msm-dsec">
+        <div className="v2-section-header msm-head">
+          <h3 className="v2-section-header__title">{t('msm.drawer.stages')}</h3>
+          <span className="v2-section-header__note">
+            {t('msm.k.prep')} {min(prep(s))} · {t('msm.drawer.estPickup', { v: s.estPickup })}
+          </span>
+        </div>
+        <div className="v2-kpis">
+            <div className="v2-stat">
+              <span className={`v2-stat__value${cell(s, 'assign') === 'high' ? ' v2-stat__value--danger' : ''}`}>{min(s.assign)}</span>
+              <span className="v2-stat__label">{t('msm.drawer.stage.assign')}</span>
+            </div>
+            <div className="v2-stat">
+              <span className={`v2-stat__value${false ? ' v2-stat__value--danger' : ''}`}>{min(s.pick)}</span>
+              <span className="v2-stat__label">{t('msm.drawer.stage.pick')}</span>
+            </div>
+            <div className="v2-stat">
+              <span className={`v2-stat__value${false ? ' v2-stat__value--danger' : ''}`}>{min(s.pack)}</span>
+              <span className="v2-stat__label">{t('msm.drawer.stage.pack')}</span>
+            </div>
+            <div className="v2-stat">
+              <span className={`v2-stat__value${cell(s, 'awt') === 'high' ? ' v2-stat__value--danger' : ''}`}>{min(s.awt)}</span>
+              <span className="v2-stat__label">{t('msm.drawer.stage.dispatch')}</span>
+            </div>
+            <div className="v2-stat">
+              <span className={`v2-stat__value${cell(s, 'pfr') === 'high' ? ' v2-stat__value--danger' : ''}`}>{pct(s.pfr)}</span>
+              <span className="v2-stat__label">{t('msm.k.pfr')}</span>
+            </div>
+            <div className="v2-stat">
+              <span className={`v2-stat__value${cell(s, 'fail') === 'high' ? ' v2-stat__value--danger' : ''}`}>{pct(s.fail)}</span>
+              <span className="v2-stat__label">{t('msm.k.fail')}</span>
+            </div>
+        </div>
+      </section>
+    </Drawer>
+  );
+}

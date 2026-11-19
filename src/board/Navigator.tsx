@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { PRESETS } from '../state';
+import { presetsFor } from '../state';
+import type { Version } from '../state';
 
 type Row = { title: string; hint: string; presets: string[] };
 
 const USE_CASES: Row[] = [
+  { title: 'USE CASE 0 · Triage many stores at once', hint: 'Country Monitor: KPI strip → store ranking → drill-in → alerts', presets: ['monitoring'] },
   { title: 'USE CASE 1 · Read the live state in one glance', hint: 'Stage counts → Needs attention (returns) → People right now', presets: ['default'] },
   { title: 'USE CASE 2 · Find who needs a conversation', hint: 'Picker team, sortable by any column', presets: ['team-sorted'] },
   { title: 'USE CASE 3 · Pick a warehouse', hint: 'Warehouses, search by name or ID', presets: ['warehouses'] },
@@ -19,9 +21,11 @@ const EDGE_CASES: Row[] = [
   { title: 'EDGE CASE 5 · Mock API delay or error', hint: 'Skeletons, then the shared error message', presets: ['slow', 'error'] },
 ];
 
-const byId = (id: string) => PRESETS.find((p) => p.id === id)!;
 
-export function Navigator({ code, onJump, open, onToggle }: { code: string; onJump: (id: string) => void; open: boolean; onToggle: () => void }) {
+export function Navigator({ code, version, onJump, open, onToggle }: { code: string; version: Version; onJump: (id: string) => void; open: boolean; onToggle: () => void }) {
+  const PRESETS = presetsFor(version);
+  const has = (id: string) => PRESETS.some((p) => p.id === id);
+  const byId = (id: string) => PRESETS.find((p) => p.id === id)!;
   const [groups, setGroups] = useState({ uc: true, ec: true, all: true });
 
   const rowButton = (id: string, key: string) => {
@@ -35,13 +39,13 @@ export function Navigator({ code, onJump, open, onToggle }: { code: string; onJu
   };
 
   const section = (rows: Row[]) =>
-    rows.map((u) => (
+    rows.filter((u) => u.presets.some(has)).map((u) => (
       <div key={u.title} style={{ display: 'contents' }}>
         <div className="proto-nav__uc">
           {u.title}
           <small>{u.hint}</small>
         </div>
-        {u.presets.map((id) => rowButton(id, `${u.title}-${id}`))}
+        {u.presets.filter(has).map((id) => rowButton(id, `${u.title}-${id}`))}
       </div>
     ));
 

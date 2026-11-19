@@ -218,4 +218,6 @@ function hourAgo(hours: number) {
   return new Date(Date.now() - hours * 3_600_000).toISOString();
 }
 
-export const warehouseName = (id: string) => MOCK_WAREHOUSES.find((w) => w.id === id)?.name ?? MOCK_STORE.name;
+import { STORES as MSM_STORES } from './monitoring';
+// Multi-Store Monitoring stores open the same store view; their name shows in its header.
+export const warehouseName = (id: string) => MOCK_WAREHOUSES.find((w) => w.id === id)?.name ?? MSM_STORES.find((s) => s.id === id)?.name ?? MOCK_STORE.name;

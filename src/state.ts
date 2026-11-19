@@ -11,7 +11,7 @@ export type SortDir = 'asc' | 'desc';
 /** legacy = the Store Management Cockpit as it ships in production (talabat); cape = DMarts Portal layout on the default Cape theme. */
 export type Version = 'legacy' | 'cape';
 /** The plugin's routes: warehouse list, then one warehouse's overview, order history, cancellations and order issues. */
-export type Page = 'warehouses' | 'overview' | 'orders' | 'cancellations' | 'issues';
+export type Page = 'monitoring' | 'warehouses' | 'overview' | 'orders' | 'cancellations' | 'issues';
 export type HistoryDate = 'any' | '1h' | '4h' | 'today' | 'yesterday' | '7d';
 export type CancelTab = 'pending_return' | 'settled' | 'all';
 export type IssueTab = 'new' | 'reviewed' | 'all';
@@ -67,13 +67,13 @@ const DEFAULT_HISTORY: HistoryFilters = { stage: 'all', fulfillment: 'all', date
 const DEFAULT_ISSUES: IssueFilters = { tab: 'new', groupBy: 'order', range: 'today', signal: 'all', reason: 'all', cause: 'all', picker: 'all' };
 
 export const initialState: State = {
-  page: 'overview',
+  page: 'monitoring',
   warehouseId: 'wh-qa-001',
   range: 'today',
   scenario: 'normal',
   sort: DEFAULT_SORT,
   lang: 'en',
-  version: 'legacy',
+  version: 'cape',
   history: DEFAULT_HISTORY,
   cancelTab: 'pending_return',
   issues: DEFAULT_ISSUES,
@@ -93,7 +93,8 @@ function apply(s: State, a: Action): State {
     case 'lang':
       return { ...s, lang: a.lang };
     case 'version':
-      return { ...s, version: a.version };
+      // Multi-Store Monitoring exists only in the Cape Version; Legacy falls back to its warehouse list.
+      return { ...s, version: a.version, page: a.version === 'legacy' && s.page === 'monitoring' ? 'overview' : s.page };
     case 'history':
       // Any filter change goes back to the first page of results.
       return { ...s, history: { ...s.history, page: 1, ...a.patch } };
@@ -105,7 +106,7 @@ function apply(s: State, a: Action): State {
       const preset = PRESETS.find((p) => p.id === a.preset);
       if (!preset) return s;
       // Presets are action replays through this same reducer; the language and the version survive the jump.
-      return preset.actions.reduce(apply, { ...initialState, lang: s.lang, version: s.version });
+      return preset.actions.reduce(apply, { ...initialState, page: 'overview', lang: s.lang, version: s.version });
     }
   }
 }
@@ -118,13 +119,21 @@ export interface Preset {
   group: string;
   label: string;
   actions: Action[];
+  /** Code in the Legacy Version when it differs (Legacy keeps its original numbering). */
+  legacyCode?: string;
+  capeOnly?: boolean;
+  legacyOnly?: boolean;
 }
+
+/** Presets available in a version, with the code that version shows. */
+export const presetsFor = (v: Version): Preset[] => PRESETS.filter((p) => (v === 'cape' ? !p.legacyOnly : !p.capeOnly)).map((p) => (v === 'legacy' && p.legacyCode ? { ...p, code: p.legacyCode } : p));
 
 export const PRESETS: Preset[] = [
   { id: 'default', code: 'SM1', group: 'Overview', label: 'Warehouse overview', actions: [] },
   { id: 'team-sorted', code: 'SM2', group: 'Overview', label: 'Picker team by fail rate', actions: [{ type: 'sort', key: 'failRate' }] },
   { id: 'range-6h', code: 'SM3', group: 'Overview', label: 'Shift performance · last 6h', actions: [{ type: 'range', range: '6h' }] },
-  { id: 'warehouses', code: 'SM10', group: 'Pages', label: 'Warehouse list', actions: [{ type: 'page', page: 'warehouses' }] },
+  { id: 'monitoring', code: 'SM10', group: 'Multi-store', label: 'Country Monitor · peak evening', actions: [{ type: 'page', page: 'monitoring' }], capeOnly: true },
+  { id: 'warehouses', code: 'SM13', legacyCode: 'SM10', group: 'Pages', label: 'Warehouse list', actions: [{ type: 'page', page: 'warehouses' }] },
   { id: 'orders', code: 'SM11', group: 'Pages', label: 'Order history', actions: [{ type: 'page', page: 'orders' }] },
   { id: 'cancellations', code: 'SM12', group: 'Pages', label: 'Cancellations', actions: [{ type: 'page', page: 'cancellations' }] },
   { id: 'spike', code: 'SM4', group: 'Shift states', label: 'Busy shift · late orders', actions: [{ type: 'scenario', scenario: 'spike' }] },
@@ -135,7 +144,7 @@ export const PRESETS: Preset[] = [
   { id: 'error', code: 'SM8', group: 'Data', label: 'API error', actions: [{ type: 'scenario', scenario: 'error' }] },
 ];
 
-const PAGE_CODE: Record<Exclude<Page, 'overview'>, string> = { warehouses: 'SM10', orders: 'SM11', cancellations: 'SM12', issues: 'SM9' };
+const PAGE_CODE: Record<Exclude<Page, 'overview'>, string> = { monitoring: 'SM10', warehouses: 'SM13', orders: 'SM11', cancellations: 'SM12', issues: 'SM9' };
 const SCENARIO_CODE: Partial<Record<Scenario, string>> = { spike: 'SM4', quiet: 'SM5', empty: 'SM14', closed: 'SM6', slow: 'SM7', error: 'SM8' };
 const same = (a: object, b: object) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -145,7 +154,7 @@ export function codeFor(s: State): string {
   const ranged = s.range !== initialState.range;
   const filtered = !same(s.history, DEFAULT_HISTORY) || s.cancelTab !== initialState.cancelTab || !same(s.issues, DEFAULT_ISSUES);
   const pristine = !sorted && !ranged && !filtered;
-  if (s.page !== 'overview') return s.scenario === 'normal' && pristine ? PAGE_CODE[s.page] : 'SM9';
+  if (s.page !== 'overview') return s.scenario === 'normal' && pristine ? (s.version === 'legacy' && s.page === 'warehouses' ? 'SM10' : PAGE_CODE[s.page]) : 'SM9';
   if (s.scenario !== 'normal') return pristine ? SCENARIO_CODE[s.scenario]! : 'SM9';
   if (filtered || (sorted && ranged)) return 'SM9';
   if (sorted) return s.sort.key === 'failRate' && s.sort.dir === 'desc' ? 'SM2' : 'SM9';

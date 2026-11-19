@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import portalLogo from '../../assets/v2/portal.svg';
 import helpCircle from '../../assets/v2/help-circle.svg';
 import navCart from '../../assets/v2/nav-cart.svg';
 import navDashboard from '../../assets/v2/nav-dashboard.svg';
-import navHistory from '../../assets/v2/nav-history.svg';
 import navStores from '../../assets/v2/nav-stores.svg';
+import navHistory from '../../assets/v2/nav-history.svg';
 import notifications from '../../assets/v2/notifications.svg';
 import { Avatar } from '../../cape/Avatar';
 import { Button } from '../../cape/Button';
@@ -15,7 +15,6 @@ import { List, ListItem, ListItemText } from '../../cape/List';
 import { Select } from '../../cape/Select';
 import { FAIL_ALERT, duration } from '../../domain/prod';
 import type { Activity } from '../../domain/prod';
-import { Tag } from '../../cape/Tag';
 import { warehouseName } from '../../domain/mockData';
 import { RTL_LOCALES } from '../../i18n';
 import { RANGES, RANGE_HOURS } from '../../state';
@@ -26,6 +25,8 @@ import { LIVE_STAGE_LABEL } from '../prod/Drawers';
 import { TeamTable } from '../prod/TeamTable';
 import { BoxState } from '../BoxState';
 import { TimingChart, TimingLegend } from '../TimingChart';
+import { Monitoring } from '../monitoring/Monitoring';
+import { AttentionPanel } from '../monitoring/AttentionPanel';
 import './v2.css';
 
 /** Icons keep their own width/height; the 24px slot only centers them, as in the Figma placeholder. */
@@ -42,7 +43,8 @@ type NavItem = { key: string; icon: string; page: Page };
 const NAV: { section?: string; items: NavItem[] }[] = [
   {
     items: [
-      { key: 'overview', icon: navDashboard, page: 'overview' },
+      // One Overview: it starts at Multi-Store Monitoring and drills into a store's view.
+      { key: 'overview', icon: navDashboard, page: 'monitoring' },
       { key: 'stores', icon: navStores, page: 'warehouses' },
     ],
   },
@@ -70,7 +72,7 @@ function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
           <div key={group.section ?? i} className="v2-sidenav__section">
             {group.section && (collapsed ? <hr className="v2-sidenav__rule" /> : <div className="v2-sidenav__header">{label(group.section)}</div>)}
             {group.items.map((item) => {
-              const active = item.page === page;
+              const active = item.page === page || (item.page === 'monitoring' && page === 'overview');
               return (
                 <a
                   key={item.key}
@@ -135,19 +137,26 @@ function split(v: string) {
 
 
 /** DMarts Portal layout (Cape default theme): the production content in Cape components. */
-export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action> }) {
+export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispatch: Dispatch<Action>; rationales?: boolean }) {
   const { t } = useTranslation();
   const o = useOverview(s);
   const name = warehouseName(s.warehouseId);
   const ready = o.stageOrders.status === 'ready';
   const legend = WORKING.map((a) => [a, o.ppl.filter((p) => p.activity === a).length] as const).filter(([, n]) => n > 0);
+  const frame = useRef<HTMLDivElement>(null);
+  // Opening another page or store always starts at the top.
+  useEffect(() => {
+    frame.current?.scrollTo({ top: 0 });
+  }, [s.page, s.warehouseId]);
   const err = "Couldn't load this data. It shows up again as soon as the connection is back.";
 
   return (
-    <div className="cockpit cockpit--v2" data-theme="cape-light-b2b" dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang}>
+    <div ref={frame} className="cockpit cockpit--v2" data-theme="cape-light-b2b" dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang}>
       <Sidenav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />
       <main className="v2-main">
-        {s.page !== 'overview' ? (
+        {s.page === 'monitoring' ? (
+          <Monitoring dispatch={dispatch} rationales={rationales} />
+        ) : s.page !== 'overview' ? (
           <div className="v2-subpage">
             {s.page === 'warehouses' && <Warehouses s={s} dispatch={dispatch} />}
             {(s.page === 'orders' || s.page === 'issues') && <Orders s={s} dispatch={dispatch} />}
@@ -164,7 +173,7 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
                 aria-label={t('header.backToStores')}
                 title={t('header.backToStores')}
                 startIcon={<CapeIcon name="chevronLeft" />}
-                onClick={() => dispatch({ type: 'page', page: 'warehouses' })}
+                onClick={() => dispatch({ type: 'page', page: 'monitoring' })}
               />
               <h1 className="v2-page-header__title">{name}</h1>
               <div className="v2-page-header__actions">
@@ -181,6 +190,8 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
               </div>
             </header>
 
+            <div className="msm-layout v2-store-layout">
+              <div className="msm-main">
             <section className="v2-section">
               <div className="v2-stats v2-stats--live">
                 {STAGES.map((k) => {
@@ -196,51 +207,7 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
               </div>
             </section>
 
-            <div className="v2-columns v2-combo">
-              <div className="v2-column">
-                <section className="v2-section">
-                  <SectionHeader title="Needs attention" action={o.attn.length > 0 ? <span className="v2-section-header__note">{o.attn.length} open</span> : undefined} />
-                  <List className="v2-list v2-list--scroll">
-                    {o.attention.status === 'ready' && o.attn.length > 0 ? (
-                      o.attn.map((a) => (
-                        <ListItem
-                          key={a.orderId}
-                          className="v2-list__button"
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => o.setOrderOpen(a.orderId)}
-                          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), o.setOrderOpen(a.orderId))}
-                          secondaryAction={
-                            <>
-                              <span className="v2-list__value v2-text--danger">{attentionTime(a)}</span>
-                              <CapeIcon name="chevronRight" size={16} className="v2-chev" />
-                            </>
-                          }
-                        >
-                          <ListItemText
-                            primaryText={
-                              <span className="v2-list__primary">
-                                #{a.orderId}
-                                <Tag status={a.kind === 'return' ? 'info' : 'error'} size="small">
-                                  {a.kind === 'return' ? 'Return' : 'Late'}
-                                </Tag>
-                              </span>
-                            }
-                            secondaryText={attentionMeta(a)}
-                          />
-                        </ListItem>
-                      ))
-                    ) : (
-                      <ListItem>
-                        <ListItemText primaryText={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'} />
-                      </ListItem>
-                    )}
-                  </List>
-                </section>
-              </div>
-
-              <div className="v2-column">
-                <section className="v2-section">
+                <section className="v2-section v2-card v2-people-card">
                   <SectionHeader title="People right now" action={o.people.status === 'ready' ? <span className="v2-section-header__note">{o.working} of {o.ppl.length} working</span> : undefined} />
                   {o.people.status === 'ready' && o.ppl.length > 0 && (
                     <div className="v2-people-bar">
@@ -272,9 +239,6 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
                     )}
                   </List>
                 </section>
-              </div>
-            </div>
-
             <section className="v2-section">
               <SectionHeader
                 title="Shift performance"
@@ -340,6 +304,25 @@ export function CockpitV2({ s, dispatch }: { s: State; dispatch: Dispatch<Action
                 {(rows) => <div className="v2-card v2-card--table">{rows.length ? <TeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} /> : <p className="v2-empty">No picker data available for this time range.</p>}</div>}
               </BoxState>
             </section>
+              </div>
+              <AttentionPanel
+                title="Needs attention"
+                empty={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'}
+                items={
+                  o.attention.status === 'ready'
+                    ? o.attn.map((a) => ({
+                        key: a.orderId,
+                        tone: a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error',
+                        title: `#${a.orderId}`,
+                        tag: a.kind === 'return' ? 'Return' : 'Late',
+                        meta: attentionMeta(a),
+                        strong: attentionTime(a),
+                        onClick: () => o.setOrderOpen(a.orderId),
+                      }))
+                    : []
+                }
+              />
+            </div>
             <OverviewDrawers o={o} s={s} />
           </>
         )}

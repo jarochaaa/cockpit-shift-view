@@ -50,7 +50,20 @@ const HINTS: Record<string, Hint> = {
     look: ['Every card shows one shared error message; the now bar says live data is unavailable.'],
     tryThis: ['Ask whether they would trust the rest of the screen in this state.'],
   },
-  SM10: { title: 'Warehouses', look: ['Every warehouse the user can open, searchable by name or ID. Order history and Cancellations stay disabled until one is opened.'], tryThis: ['Search for "002".'] },
+  SM13: { title: 'Warehouses', look: ['Every warehouse the user can open, searchable by name or ID. Order history and Cancellations stay disabled until one is opened.'], tryThis: ['Search for "002".'] },
+  SM10: {
+    title: 'Country Monitor · peak evening (Cape only)',
+    look: [
+      'Persona: Area Manager doing live triage; UAE has 18 stores in Dubai, Abu Dhabi and Sharjah, plus Kuwait, Bahrain, Egypt and Qatar; City/Country leads and Ops Excellence use the same screen.',
+      'KPI strip: country values weighted by order volume, coloured by attainment vs target. Assignment time and Late orders are red.',
+      'Menu: a single Overview starts here; opening any store goes to its store view (SM1).',
+      'Store ranking: worst first, by distance from each store\'s usual level and from the country average. Red/amber cells, deviation age chip, owner and next action.',
+      'Alerts feed: deviations with likely cause; day 4 off target escalates to the area manager\'s leader.',
+      'Every block, KPI and column has a grey "i" with why it is there, why there, and why shown that way.',
+    ],
+    tryThis: ['Open Dubai Marina (A) in Needs attention: 4 of 7 pickers, 12 unassigned; request pickers from Al Barsha (B).', 'Open Al Taawun (C): prep fine, AWT 14 min → ask logistics for riders.', 'Switch Country to Kuwait or Egypt, then filter a city and a status.', 'Collapse Needs attention; turn Rationales off next to the languages.', 'Hover any "i".', 'Click any table row to open that store (SM1).'],
+    data: ['Groceries Day (30% cashback) explains orders 22% above forecast.', 'Muwaileh, Deira, Al Reem and Al Khalidiyah show PFR rising together across cities → possible system issue.', 'Khalifa City (D) is 4 days off target and escalated.', 'Countries and cities are real MENA markets; stores and people are placeholders; basket in local currency.'],
+  },
   SM11: { title: 'Order history', look: ['Stage, Fulfillment and Date filters, exact Order ID / Customer / Picker search behind Apply, order drawer, ⋮ menu, rows per page and pages.'], tryThis: ['Filter by Cancelled.', 'Open the ⋮ menu: Cancel order is disabled with its reason.', 'Click an order number.'], data: ['Customer names are placeholders.'] },
   SM12: { title: 'Cancellations', look: ['Pending return · Settled · All cancelled. Reason shows who cancelled. Pending orders have Dismiss and Return.'], tryThis: ['Return one order and watch it move to Settled.'] },
   SM14: { title: 'No data yet', look: ['Every section in its empty state: no returns, no pickers, zero shift metrics, empty chart and team.'], tryThis: ['Walk through the three sections in the sidebar.'] },
@@ -70,7 +83,7 @@ const EDGE_RECIPES: { title: string; steps: string[] }[] = [
 
 /** Desktop-only side box: what to look at, what to try and what the data means in the current view. */
 export function Hints({ s, code }: { s: State; code: string }) {
-  const h = HINTS[code] ?? HINTS.SM1;
+  const h = HINTS[s.version === 'legacy' && code === 'SM10' ? 'SM13' : code] ?? HINTS.SM1;
   return (
     <aside className="tester-notes" aria-label="Facilitator hints">
       <div className="tester-notes__tag">Facilitator hints · view {code}</div>
