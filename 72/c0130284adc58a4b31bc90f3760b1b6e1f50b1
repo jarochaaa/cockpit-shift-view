@@ -1,0 +1,60 @@
+src/cockpit/v2/CockpitV2.tsx
+  s_5aa85af76a47b0::t_f4f1d32af0e26c 231
+  s_5aa85af76a47b0::t_b89431ad0d41b1 313-328
+src/board/iaData.ts
+  s_5aa85af76a47b0::t_7d209be112fc2b 1-55
+src/cockpit/monitoring/monitoring.css
+  s_5aa85af76a47b0::t_e0f698776d14e7 253
+  s_5aa85af76a47b0::t_f4f1d32af0e26c 279-281
+  s_5aa85af76a47b0::t_0ccd95fd25c8ea 282-284
+  s_5aa85af76a47b0::t_b89431ad0d41b1 285-295
+src/board/board.css
+  s_5aa85af76a47b0::t_eb3370fc59ec05 460-488
+  s_5aa85af76a47b0::t_b89431ad0d41b1 520-521
+  s_5aa85af76a47b0::t_ad9ecc137691f4 489-519
+  s_5aa85af76a47b0::t_5619d0b9fe01a2 122
+  s_5aa85af76a47b0::t_8a2ff3a01ad020 18,318,322-344
+  s_5aa85af76a47b0::t_0ccd95fd25c8ea 56-57,60-61,67,73-75
+src/cockpit/v2/v2.css
+  s_5aa85af76a47b0::t_0ccd95fd25c8ea 25-26
+src/board/IATable.tsx
+  s_5aa85af76a47b0::t_ad9ecc137691f4 1-90
+src/cockpit/monitoring/strings.ts
+  s_5aa85af76a47b0::t_108fad6f9c0935 467
+  s_5aa85af76a47b0::t_ccf3b393067b0c 37,215,381
+  s_5aa85af76a47b0::t_e0f698776d14e7 126-129,155-177,324-346
+  s_5aa85af76a47b0::t_e89bc2b9022bee 491
+  s_5aa85af76a47b0::t_b89431ad0d41b1 38,130,216,300,382
+src/board/Navigator.tsx
+  s_5aa85af76a47b0::t_8a2ff3a01ad020 25,53,90-91
+  s_5aa85af76a47b0::t_b89431ad0d41b1 57
+src/domain/monitoring.ts
+  s_5aa85af76a47b0::t_e0f698776d14e7 313-321
+src/App.tsx
+  s_5aa85af76a47b0::t_5619d0b9fe01a2 73-77
+  s_5aa85af76a47b0::t_8a2ff3a01ad020 60-61,64-66
+  s_5aa85af76a47b0::t_eb3370fc59ec05 36-37,39-44,59
+  s_5aa85af76a47b0::t_b89431ad0d41b1 62-63,71
+  s_5aa85af76a47b0::t_ad9ecc137691f4 1-2,38,88-90,122
+src/cockpit/monitoring/Monitoring.tsx
+  s_5aa85af76a47b0::t_f4f1d32af0e26c 12
+  s_5aa85af76a47b0::t_ccf3b393067b0c 290-292
+  s_5aa85af76a47b0::t_b89431ad0d41b1 156,165-166,362
+  s_5aa85af76a47b0::t_e0f698776d14e7 44,47,63-69,299
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "72c0130284adc58a4b31bc90f3760b1b6e1f50b1",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
