@@ -18,12 +18,13 @@
 .msm-sheet__head h2 { flex: 1; margin: 0; display: inline-flex; align-items: center; gap: var(--cp-spacing-xsmall); font-size: var(--cp-font-size-large); font-weight: var(--cp-font-weight-bold); color: var(--cp-text-color-danger); }
 .msm-sheet .msm-attention__note { padding-inline: var(--cp-spacing-large); }
 .msm-sheet__list { display: flex; align-items: stretch; gap: var(--cp-spacing-small); margin: 0; padding: var(--cp-spacing-medium) var(--cp-spacing-large) var(--cp-spacing-small); list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-.msm-sheet__list > li { flex: 0 0 min(280px, 78vw); scroll-snap-align: start; display: flex; }
+.msm-sheet__list > li { flex: 0 0 min(188px, 52vw); scroll-snap-align: start; display: flex; }
 .msm-sheet__list > li > .msm-acard { width: 100%; }
 
 /* Single column content */
 .cockpit--v2[data-mobile] .msm-layout { grid-template-columns: minmax(0, 1fr); }
-.cockpit--v2[data-mobile] .msm-scope { grid-template-columns: minmax(0, 1fr) auto; }
+.cockpit--v2[data-mobile] .msm-scope { grid-template-columns: minmax(0, 1fr); }
+.cockpit--v2[data-mobile] .msm-scope > .msm-info { justify-self: end; }
 .cockpit--v2[data-mobile] .msm-promo { flex-wrap: wrap; justify-content: flex-start; text-align: start; }
 .cockpit--v2[data-mobile] .v2-stats,
 .cockpit--v2[data-mobile] .v2-store-layout .v2-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -32,10 +33,6 @@
 .cockpit--v2[data-mobile] .v2-page-header__title { flex: 1 1 0; min-width: 0; font-size: var(--cp-font-size-large); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cockpit--v2[data-mobile] .v2-page-header__actions { width: 100%; flex-wrap: nowrap; gap: var(--cp-spacing-small); align-items: center; }
 .cockpit--v2[data-mobile] .v2-live { white-space: nowrap; }
-.cockpit--v2[data-mobile] .msm-status { overflow-x: auto; flex-wrap: nowrap; padding-bottom: var(--cp-spacing-xsmall); }
-.cockpit--v2[data-mobile] .msm-chip { flex: none; }
-.cockpit--v2[data-mobile] .msm-search { flex: 1 0 100%; margin-inline-start: 0; }
-.cockpit--v2[data-mobile] .msm-status { flex-wrap: wrap; overflow: visible; }
 
 /* Store ranking table becomes a list of rounded cards; the data sits in boxes on the lightest background */
 .cockpit--v2[data-mobile] .msm-table-wrap { overflow: visible; }
@@ -65,3 +62,41 @@
 .cockpit--v2[data-mobile] .msm-live-stores .pd-vendors__btn { padding-inline: var(--cp-spacing-medium); }
 .cockpit--v2[data-mobile] .v2-pill.is-on { background: var(--cp-feedback-color-branded-low); border-color: var(--cp-base-color-branded); }
 .cockpit--v2[data-mobile] .msm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* Sheet cards are tall and narrow so more of them fit in the horizontal scroll */
+.msm-sheet .msm-legend { padding-inline: var(--cp-spacing-large); margin-top: var(--cp-spacing-small); margin-bottom: 0; }
+.msm-sheet .msm-fchip::after { display: none; }
+.msm-sheet .msm-acard { position: relative; gap: var(--cp-spacing-small); }
+.msm-sheet__list { scroll-padding-inline: var(--cp-spacing-large); }
+
+/* Store ranking, phone: chips as icon + count, search in the same sticky row */
+.cockpit--v2[data-mobile] .msm-status { position: sticky; top: 0; z-index: 6; flex-wrap: nowrap; gap: var(--cp-spacing-xsmall); padding: var(--cp-spacing-small) var(--cp-spacing-medium); justify-content: flex-start; background: var(--cp-base-color-flat); }
+.cockpit--v2[data-mobile] .msm-chip { flex: none; padding-inline: var(--cp-spacing-small); gap: 4px; }
+.cockpit--v2[data-mobile] .msm-chip__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cockpit--v2[data-mobile] .msm-chip__icon { display: inline-flex; }
+.cockpit--v2[data-mobile] .msm-searchbox { flex: 1 1 0; min-width: 0; }
+
+/* Store cards on phones have no hover state */
+.cockpit--v2[data-mobile] .msm-table tbody tr.msm-row:hover { background: var(--cp-base-color-flat); }
+.cockpit--v2[data-mobile] .msm-table tbody tr.msm-row:hover td { background: transparent; }
+.cockpit--v2[data-mobile] .msm-table tbody tr.msm-row:hover td[data-label] { background: var(--cp-base-color-lowest); }
+
+/* Shift performance on phones: two KPI columns, chart inside the card, no clipped axis titles */
+.cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--cp-spacing-small); }
+.cockpit--v2[data-mobile] .v2-shiftcard .v2-stat { min-width: 0; min-height: 0; }
+.cockpit--v2[data-mobile] .v2-shiftcard .v2-chart { overflow: hidden; }
+.cockpit--v2[data-mobile] .timing-chart__title { display: none; }
+.cockpit--v2[data-mobile] .v2-shiftcard .v2-section-header { flex-wrap: wrap; gap: var(--cp-spacing-small); }
+.cockpit--v2[data-mobile] .v2-shift-actions { flex-wrap: wrap; }
+.cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis--one { grid-template-columns: minmax(0, 1fr); }
+
+/* Sheet cards: tag and time wrap, actions stack in the narrow card */
+.msm-sheet .msm-acard__head { flex-wrap: wrap; }
+.msm-sheet .msm-acard__actions { flex-direction: column; }
+.msm-sheet .msm-abtn { width: 100%; }
+
+/* Overview header on phones: title and live row share one line */
+.cockpit--v2[data-mobile] .msm .v2-page-header { flex-wrap: nowrap; align-items: center; }
+.cockpit--v2[data-mobile] .msm .v2-page-header__title { flex: 0 0 auto; }
+.cockpit--v2[data-mobile] .msm .v2-page-header__actions { width: auto; flex: 1 1 0; min-width: 0; justify-content: flex-end; gap: var(--cp-spacing-xsmall); }
+.cockpit--v2[data-mobile] .msm-live { flex: 0 1 auto; }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, Dispatch } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ import type { Action } from '../../state';
 import { CapeIcon } from '../legacy/icons';
 import { Drawer } from '../prod/Drawers';
 import { EditData } from './EditData';
+import { downloadCsv } from '../exportCsv';
 import { useLayoutPrefs } from './layout';
 import type { EditBlock } from './layout';
 import { useMobile } from '../v2/useMobile';
@@ -84,15 +85,17 @@ export function Info({ k }: { k: string }) {
 
 const COLS: SignalKey[] = ['late', 'assign', 'unassigned', 'prep', 'pickers', 'instore', 'awt', 'pfr', 'fail', 'age'];
 
-type Status = 'all' | 'critical' | 'risk' | 'watch' | 'ok';
-const STATUSES: Status[] = ['all', 'critical', 'risk', 'watch', 'ok'];
+/** Critical: act now. At risk: off its usual level or target, act or check soon. On track: nothing to do. */
+type Status = 'all' | 'critical' | 'risk' | 'ok';
+const STATUSES: Status[] = ['all', 'critical', 'risk', 'ok'];
 /** One colour language for status everywhere: chips, row bars, attention cards, tags. */
-const STATUS_TONE: Record<Exclude<Status, 'all'>, 'error' | 'warning' | 'info' | 'success'> = { critical: 'error', risk: 'warning', watch: 'info', ok: 'success' };
+const STATUS_TONE: Record<Exclude<Status, 'all'>, 'error' | 'warning' | 'info' | 'success'> = { critical: 'error', risk: 'warning', ok: 'success' };
+const STATUS_ICON: Record<Status, 'store' | 'flag' | 'trending' | 'checkCircle'> = { all: 'store', critical: 'flag', risk: 'trending', ok: 'checkCircle' };
 const EXTRA_BASE = ['nsfr', 'basket', 'refunds', 'forecast'];
 const MIN_COLS: SignalKey[] = ['assign', 'prep', 'awt', 'instore'];
 const statusOf = (s: StoreRow): Exclude<Status, 'all'> => {
   const a = nextAction(s);
-  return a === 'borrow' || a === 'riders' || a === 'escalate' || a === 'jira' ? 'critical' : a === 'staff' ? 'risk' : a === 'watch' ? 'watch' : 'ok';
+  return a === 'borrow' || a === 'riders' || a === 'escalate' || a === 'jira' ? 'critical' : a === 'staff' || a === 'watch' ? 'risk' : 'ok';
 };
 
 function useFmt() {
@@ -266,8 +269,31 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const edit = (block: EditBlock, title: string) => (
     <EditData block={block} title={title} selected={layout.get(block)} onChange={(keys) => layout.set(block, keys)} label={sigLabel} hint={sigHint} available={(k) => k !== 'forecast' || country === 'ae'} />
   );
+  const exportRanking = () =>
+    downloadCsv('stores-by-priority', [
+      ['Store', 'Zone', 'Status', ...cols.map(labelOf)],
+      ...rows.map((s) => [s.name, t(`msm.zone.${s.zone}`), t(`msm.status.${statusOf(s)}`), ...cols.map((k) => (METRIC[k] ? fmtM(METRIC[k], storeValue(METRIC[k], s)) : MIN_COLS.includes(k) ? (k === 'assign' ? s.assign : k === 'prep' ? prep(s) : k === 'instore' ? instore(s) : s.awt).toFixed(1) : value(s, k)))]),
+    ]);
   const mobile = useMobile();
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const statusRef = useRef<HTMLDivElement>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  // Filtering shortens the list; hold the table's height so the page does not shrink and throw the scroll back up.
+  const [holdH, setHoldH] = useState(0);
+  const hold = () => setHoldH((h) => Math.max(h, wrapRef.current?.offsetHeight ?? 0));
+  useEffect(() => setHoldH(0), [country, zone, region]);
+  // The sticky table header sits exactly under the chips row: measure it instead of guessing its height.
+  useLayoutEffect(() => {
+    const el = statusRef.current;
+    const card = el?.parentElement;
+    if (!el || !card) return;
+    const set = () => card.style.setProperty('--msm-chips-h', `${el.getBoundingClientRect().height}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [mobile]);
 
   return (
     <RationalesOn.Provider value={rationales}>
@@ -372,19 +398,39 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                 <h2 className="v2-section-header__title">
                   {t('msm.ranking')} <Info k="ranking" />
                 </h2>
-                <span className="v2-section-header__note">{t('msm.rankingNote', { n: count('critical') + count('risk') })}</span>
+                <button type="button" className="msm-edit msm-export" data-tip={t('msm.export')} aria-label={t('msm.export')} onClick={exportRanking}>
+                  <CapeIcon name="download" size={20} />
+                </button>
                 {edit('table', t('msm.ranking'))}
               </div>
-              <div className="msm-status" role="tablist" aria-label={t('msm.col.action')}>
-                {STATUSES.map((st) => (
-                  <button key={st} type="button" role="tab" aria-selected={status === st} className={`msm-chip msm-chip--${st === 'all' ? 'all' : STATUS_TONE[st]}${status === st ? ' is-on' : ''}`} onClick={() => setStatus(st)}>
-                    {t(`msm.status.${st}`)}
+              <div className="msm-status" ref={statusRef} role="tablist" aria-label={t('msm.col.action')}>
+                {STATUSES.filter(() => !(mobile && searchOpen)).map((st) => (
+                  <Fragment key={st}>
+                  {st === 'all' && !mobile && <span className="msm-need">{t('msm.rankingNote', { n: count('critical') + count('risk') })}</span>}
+                  <button type="button" role="tab" aria-selected={status === st} aria-label={t(`msm.status.${st}`)} title={t(`msm.status.${st}`)} className={`msm-chip msm-chip--${st === 'all' ? 'all' : STATUS_TONE[st]}${status === st ? ' is-on' : ''}`} onClick={() => (hold(), setStatus(st))}>
+                    <CapeIcon name={STATUS_ICON[st]} size={16} className="msm-chip__icon" />
+                    <span className="msm-chip__label">{t(`msm.status.${st}`)}</span>
                     <span className="msm-chip__n">{count(st)}</span>
                   </button>
+                  </Fragment>
                 ))}
-                <input type="search" className="msm-search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('msm.searchStores')} aria-label={t('msm.searchStores')} />
+                {mobile && !searchOpen ? (
+                  <button type="button" className="msm-search-btn" aria-label={t('msm.searchStores')} title={t('msm.searchStores')} onClick={() => setSearchOpen(true)}>
+                    <CapeIcon name="search" size={20} />
+                  </button>
+                ) : (
+                  <label className="msm-searchbox">
+                    <CapeIcon name="search" size={16} />
+                    <input type="search" className="msm-search" autoFocus={mobile} value={q} onChange={(e) => (hold(), setQ(e.target.value))} placeholder={t('msm.searchStores')} aria-label={t('msm.searchStores')} />
+                    {mobile && (
+                      <button type="button" className="msm-search-close" aria-label={t('msm.drawer.close')} onClick={() => (setQ(''), setSearchOpen(false))}>
+                        <CapeIcon name="close" size={16} />
+                      </button>
+                    )}
+                  </label>
+                )}
               </div>
-              <div className="msm-table-wrap pd-table-scroll">
+              <div className="msm-table-wrap pd-table-scroll" ref={wrapRef} style={holdH ? { minHeight: holdH } : undefined}>
                 <table className="msm-table">
                   <thead>
                     <tr>
@@ -488,7 +534,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                                   setOpenId(s.id);
                                 }}
                               >
-                                {statusOf(s) === 'ok' || statusOf(s) === 'watch' ? t('msm.review') : t('msm.solve')}
+                                {statusOf(s) === 'ok' ? t('msm.review') : t('msm.solve')}
                               </Button>
                             )}
                           </td>

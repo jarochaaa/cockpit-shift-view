@@ -12,13 +12,15 @@ import { CAT } from '../../domain/metrics';
 export function EditData({ block, title, selected, onChange, label, hint, available }: { block: EditBlock; title: string; selected: string[]; onChange: (keys: string[]) => void; label: (k: string) => string; hint?: (k: string) => string | undefined; available?: (k: string) => boolean }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [q, setQ] = useState('');
   const cfg = BLOCKS[block];
-  const options = cfg.options.filter((k) => !available || available(k));
+  const needle = q.trim().toLowerCase();
+  const options = cfg.options.filter((k) => (!available || available(k)) && (!needle || `${label(k)} ${CAT[k] ?? ''} ${hint?.(k) ?? ''}`.toLowerCase().includes(needle)));
   const full = selected.length >= cfg.capacity;
   const toggle = (k: string) => onChange(selected.includes(k) ? selected.filter((x) => x !== k) : full ? selected : [...selected, k]);
   return (
     <>
-      <button type="button" className="msm-edit" data-tip={t('msm.edit.tip')} aria-label={`${t('msm.edit.tip')}: ${title}`} onClick={() => setOpen(true)}>
+      <button type="button" className="msm-edit" data-tip={t('msm.edit.tip')} aria-label={`${t('msm.edit.tip')}: ${title}`} onClick={() => (setQ(''), setOpen(true))}>
         <CapeIcon name="edit" size={20} />
       </button>
       {open && (
@@ -40,6 +42,10 @@ export function EditData({ block, title, selected, onChange, label, hint, availa
             {t('msm.edit.count', { n: selected.length, max: cfg.capacity })}
             {full && <span> · {t('msm.edit.full')}</span>}
           </p>
+          <label className="msm-searchbox msm-edit__search">
+            <CapeIcon name="search" size={16} />
+            <input type="search" className="msm-search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('msm.edit.search')} aria-label={t('msm.edit.search')} />
+          </label>
           <ul className="msm-edit__list">
             {options.map((k, i) => {
               const on = selected.includes(k);
@@ -58,6 +64,7 @@ export function EditData({ block, title, selected, onChange, label, hint, availa
                 </li>
               );
             })}
+            {options.length === 0 && <li className="msm-edit__none">{t('msm.edit.none')}</li>}
           </ul>
         </Drawer>
       )}

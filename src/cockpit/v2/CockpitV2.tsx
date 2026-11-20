@@ -13,6 +13,7 @@ import { Button } from '../../cape/Button';
 import { Indicator } from '../../cape/Indicator';
 import { List, ListItem, ListItemText } from '../../cape/List';
 import { Select } from '../../cape/Select';
+import { downloadCsv } from '../exportCsv';
 import { FAIL_ALERT, duration } from '../../domain/prod';
 import type { Activity } from '../../domain/prod';
 import { warehouseName } from '../../domain/mockData';
@@ -179,6 +180,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
     frame.current?.scrollTo({ top: 0 });
   }, [s.page, s.warehouseId]);
   const mobile = useMobile();
+  const [refreshing, setRefreshing] = useState(false);
   const err = "Couldn't load this data. It shows up again as soon as the connection is back.";
 
   return (
@@ -271,18 +273,31 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                     )}
                   </List>
                 </section>
-            <section className="v2-section">
+            <section className="v2-section v2-card v2-shiftcard">
               <SectionHeader
                 title="Shift performance"
                 action={
-                  <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
-                    View order history →
-                  </Button>
+                  <div className="v2-shift-actions">
+                    <Select
+                      className="v2-range"
+                      aria-label="Time window"
+                      value={s.range}
+                      onChange={(v) => {
+                        dispatch({ type: 'range', range: v as TimingRange });
+                        setRefreshing(true);
+                        window.setTimeout(() => setRefreshing(false), 450);
+                      }}
+                      options={RANGES.map((r) => ({ value: r, label: r === 'today' ? 'Today' : `Last ${r}` }))}
+                    />
+                    <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
+                      View order history →
+                    </Button>
+                  </div>
                 }
               />
               <div className="v2-columns v2-combo v2-combo--shift">
                 <div className="v2-column">
-                  <BoxState state={o.shift} lines={4}>
+                  <BoxState state={refreshing ? { status: 'loading' } : o.shift} lines={4}>
                     {(m) => (
                       <>
                         <div className="v2-kpis v2-kpis--one">
@@ -305,15 +320,8 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                   <div className="v2-chart">
                     <div className="v2-chart__head">
                       <h3 className="v2-card__title">Time per order, by hour</h3>
-                      <Select
-                        className="v2-range"
-                        aria-label="Time window"
-                        value={s.range}
-                        onChange={(v) => dispatch({ type: 'range', range: v as TimingRange })}
-                        options={RANGES.map((r) => ({ value: r, label: r === 'today' ? 'Today' : `Last ${r}` }))}
-                      />
                     </div>
-                    <BoxState state={o.timing} lines={5}>
+                    <BoxState state={refreshing ? { status: 'loading' } : o.timing} lines={5}>
                       {(b) =>
                         b.length ? (
                           <>
@@ -328,13 +336,32 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                   </div>
                 </div>
               </div>
-            </section>
-
-            <section className="v2-section">
-              <SectionHeader title="Picker team" />
-              <BoxState state={o.team} lines={6}>
-                {(rows) => <div className="v2-card v2-card--table">{rows.length ? <TeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} /> : <p className="v2-empty">No picker data available for this time range.</p>}</div>}
-              </BoxState>
+              <div className="v2-shiftcard__team">
+                <SectionHeader
+                  title="Picker team"
+                  action={
+                    <Button
+                      variant="secondary"
+                      status="inverse"
+                      size="small"
+                      startIcon={<CapeIcon name="download" size={18} />}
+                      disabled={o.team.status !== 'ready'}
+                      onClick={() =>
+                        o.team.status === 'ready' &&
+                        downloadCsv('picker-team', [
+                          ['Picker', 'Assignment (s)', 'Picking (s)', 'Picking / item (s)', 'Packing (s)', 'Partial fulfilment', 'Fail rate', 'Successful'],
+                          ...o.team.data.map((r) => [r.name, r.assignment, r.picking, r.pickingPerItem, r.packing, r.pfr, r.failRate, r.successful]),
+                        ])
+                      }
+                    >
+                      Export
+                    </Button>
+                  }
+                />
+                <BoxState state={refreshing ? { status: 'loading' } : o.team} lines={6}>
+                  {(rows) => <div className="v2-card v2-card--table">{rows.length ? <TeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} /> : <p className="v2-empty">No picker data available for this time range.</p>}</div>}
+                </BoxState>
+              </div>
             </section>
               </div>
               <AttentionPanel

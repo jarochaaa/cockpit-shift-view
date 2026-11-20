@@ -39,7 +39,7 @@
 .msm-tile--mild { border-color: var(--cp-feedback-color-warning-high); background: var(--cp-feedback-color-warning-low); }
 .msm-tile--exceeds { border-color: var(--cp-text-color-success); background: var(--cp-chart-color-success-lowest); }
 .msm-tile--exceeds .v2-stat__value { color: var(--cp-text-color-success); }
-.msm-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--cp-spacing-small); }
+.msm-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--cp-spacing-small); }
 
 .msm-secondary { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cp-spacing-xlarge); margin-top: var(--cp-spacing-medium); padding-top: var(--cp-spacing-medium); border-top: 1px solid var(--cp-border-color-normal); font-size: var(--cp-font-size-small); color: var(--cp-text-color-secondary); }
 .msm-secondary__title { display: inline-flex; align-items: center; gap: var(--cp-spacing-xsmall); font-weight: var(--cp-font-weight-semi-bold); color: var(--cp-text-color-primary); }
@@ -326,3 +326,174 @@
 
 .msm-tile--neutral { border-color: var(--cp-border-color-high); }
 .msm-tile--neutral .v2-stat__value { color: var(--cp-text-color-primary); }
+
+/* Needs attention cards, second proposal: neutral card, subtle tone border, the tag leads the row, only the tag carries colour */
+.msm-acard, .msm-acard--error, .msm-acard--warning, .msm-acard--info, .msm-acard--success { gap: var(--cp-spacing-xsmall); padding: var(--cp-spacing-medium); background: var(--cp-base-color-flat); border: 1px solid var(--cp-border-color-normal); }
+.msm-acard--error { border-color: color-mix(in srgb, var(--cp-feedback-color-danger-high) 35%, transparent); }
+.msm-acard--warning { border-color: color-mix(in srgb, var(--cp-feedback-color-warning-high) 55%, transparent); }
+.msm-acard--info { border-color: color-mix(in srgb, var(--cp-feedback-color-info-high) 35%, transparent); }
+.msm-acard--success { border-color: color-mix(in srgb, var(--cp-feedback-color-success-high) 35%, transparent); }
+
+.msm-acard__top { flex-wrap: nowrap; align-items: flex-start; gap: var(--cp-spacing-small); }
+.msm-acard__top .cp-tag { flex: none; }
+.msm-acard__title { flex: 1; min-width: 0; font-weight: var(--cp-font-weight-semi-bold); color: var(--cp-text-color-primary); line-height: 1.4; }
+.msm-acard__meta { font-size: var(--cp-font-size-small); color: var(--cp-text-color-secondary); }
+.msm-acard__foot { display: flex; align-items: center; justify-content: space-between; gap: var(--cp-spacing-small); margin-top: var(--cp-spacing-xsmall); }
+.msm-acard__strong { font-size: var(--cp-font-size-small); font-weight: var(--cp-font-weight-medium); color: var(--cp-text-color-secondary); }
+.msm-acard__chev { position: static; transform: none; color: var(--cp-icon-color-primary); }
+[dir='rtl'] .msm-acard__chev { transform: scaleX(-1); }
+.msm-acard__dismiss { flex: none; display: inline-flex; padding: 2px; border: 0; border-radius: 50%; background: none; color: var(--cp-icon-color-primary); cursor: pointer; }
+.msm-acard__dismiss:hover { background: var(--cp-feedback-color-neutral-low); }
+.msm-legend { display: flex; flex-wrap: wrap; gap: var(--cp-spacing-xsmall) var(--cp-spacing-medium); margin: 0 0 var(--cp-spacing-small); padding: 0; list-style: none; font-size: var(--cp-font-size-xsmall); color: var(--cp-text-color-secondary); }
+.msm-legend li { display: inline-flex; align-items: center; gap: var(--cp-spacing-xsmall); }
+.msm-legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--cp-border-color-high); }
+.msm-legend .is-error { background: var(--cp-feedback-color-danger-high); }
+.msm-legend .is-warning { background: var(--cp-feedback-color-warning-high); }
+.msm-legend .is-info { background: var(--cp-feedback-color-info-high); }
+
+/* People right now: no second border inside the card */
+.v2-people-card .v2-list.cp-list, .v2-people-card .v2-list { border: 0; border-radius: 0; }
+
+/* Ranking table: the status chips travel with the sticky header, centred */
+.msm-card:has(.msm-table) { --msm-chips-h: 56px; }
+.msm-status { position: sticky; top: 0; z-index: 6; justify-content: center; align-items: center; margin-bottom: 0; padding-block: var(--cp-spacing-small); background: var(--cp-base-color-flat); }
+.msm-table thead th { top: var(--msm-chips-h); }
+.msm-export { margin-inline-start: 0; }
+
+/* Shift performance and Picker team share one big card; the time window drives all of it */
+.v2-shiftcard { display: flex; flex-direction: column; gap: var(--cp-spacing-large); }
+.v2-shift-actions { display: flex; align-items: center; gap: var(--cp-spacing-small); }
+.v2-shiftcard__team { display: flex; flex-direction: column; gap: var(--cp-spacing-small); }
+.v2-shiftcard .v2-chart, .v2-shiftcard .v2-column > .v2-card, .v2-shiftcard .v2-card--table { border: 0; padding-inline: 0; box-shadow: none; background: none; }
+.msm-status .msm-search { margin-inline-start: 0; }
+.v2-shiftcard .v2-combo { border: 0; padding: 0; background: none; border-radius: 0; box-shadow: none; }
+
+/* Chips: label on desktop, icon on phones; search box with its icon */
+.msm-chip__icon { display: none; }
+.msm-searchbox { display: inline-flex; align-items: center; gap: var(--cp-spacing-xsmall); min-width: 180px; padding-inline: var(--cp-spacing-medium); border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-base-border-radius-large); background: var(--cp-base-color-flat); color: var(--cp-icon-color-secondary); }
+.msm-searchbox:focus-within { outline: 2px solid var(--cp-border-color-high); outline-offset: 1px; }
+.msm-searchbox .msm-search { flex: 1; min-width: 0; margin: 0; padding: var(--cp-spacing-xsmall) 0; border: 0; border-radius: 0; background: none; outline: none; }
+.msm-edit__search { display: flex; margin-bottom: var(--cp-spacing-medium); }
+.msm-edit__none { padding: var(--cp-spacing-large) 0; color: var(--cp-text-color-tertiary); font-size: var(--cp-font-size-small); }
+
+/* Hover: the card takes the lowest shade of its own state colour */
+.msm-acard { transition: background-color 0.12s; }
+.msm-acard--error:hover { background: var(--cp-chart-color-danger-lowest); }
+.msm-acard--warning:hover { background: var(--cp-chart-color-warning-lowest); }
+.msm-acard--info:hover { background: var(--cp-chart-color-info-lowest); }
+.msm-acard--success:hover { background: var(--cp-chart-color-success-lowest); }
+
+/* Full-width divider between the colour key and the first card */
+.msm-attention .msm-legend { margin: 0 calc(-1 * var(--cp-spacing-large)) 0; padding: 0 var(--cp-spacing-large) var(--cp-spacing-medium); border-bottom: 1px solid var(--cp-border-color-normal); }
+.msm-attention .msm-attention__list { padding-top: var(--cp-spacing-medium); }
+.msm-sheet .msm-legend { padding-bottom: var(--cp-spacing-medium); border-bottom: 1px solid var(--cp-border-color-normal); }
+
+/* Status chips and severity filters share the border colour of the cards with that status; selected takes the status background */
+.msm-chip--error, .msm-fchip--error { --tone: var(--cp-feedback-color-danger-high); --tone-bg: var(--cp-feedback-color-danger-low); --tone-border: color-mix(in srgb, var(--cp-feedback-color-danger-high) 35%, transparent); }
+.msm-chip--warning, .msm-fchip--warning { --tone: var(--cp-feedback-color-warning-high); --tone-bg: var(--cp-feedback-color-warning-low); --tone-border: color-mix(in srgb, var(--cp-feedback-color-warning-high) 55%, transparent); }
+.msm-chip--info, .msm-fchip--info { --tone: var(--cp-feedback-color-info-high); --tone-bg: var(--cp-feedback-color-info-low); --tone-border: color-mix(in srgb, var(--cp-feedback-color-info-high) 35%, transparent); }
+.msm-chip--success, .msm-fchip--success { --tone: var(--cp-feedback-color-success-high); --tone-bg: var(--cp-feedback-color-success-low); --tone-border: color-mix(in srgb, var(--cp-feedback-color-success-high) 35%, transparent); }
+.msm-chip--error, .msm-chip--warning, .msm-chip--info, .msm-chip--success { border-color: var(--tone-border); }
+.msm-chip--error .msm-chip__icon, .msm-chip--warning .msm-chip__icon, .msm-chip--info .msm-chip__icon, .msm-chip--success .msm-chip__icon { color: var(--tone); }
+.msm-chip--error.is-on, .msm-chip--warning.is-on, .msm-chip--info.is-on, .msm-chip--success.is-on { background: var(--tone-bg); border-color: var(--tone-border); color: var(--cp-text-color-primary); }
+.msm-chip--error:hover, .msm-chip--warning:hover, .msm-chip--info:hover, .msm-chip--success:hover { background: var(--tone-bg); }
+
+.msm-legend { display: flex; gap: var(--cp-spacing-small); }
+.msm-fchip { position: relative; display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 var(--cp-spacing-medium); border: 1px solid var(--tone-border); border-radius: 999px; background: var(--cp-base-color-flat); color: var(--tone); font: inherit; font-size: var(--cp-font-size-xsmall); cursor: pointer; }
+.msm-fchip__n { color: var(--cp-text-color-primary); font-weight: var(--cp-font-weight-semi-bold); }
+.msm-fchip:hover, .msm-fchip.is-on { background: var(--tone-bg); }
+.msm-fchip:focus-visible { outline: 2px solid var(--cp-border-color-high); outline-offset: 2px; }
+.msm-fchip::after { content: attr(data-tip); position: absolute; inset-inline-start: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); z-index: 20; padding: 4px 8px; border-radius: 6px; background: var(--cp-text-color-primary); color: var(--cp-base-color-flat); font-size: var(--cp-font-size-xsmall); font-weight: var(--cp-font-weight-medium); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.12s; }
+.msm-fchip:hover::after, .msm-fchip:focus-visible::after { opacity: 1; }
+
+/* Phone search: a magnifier that opens over the chips */
+.msm-search-btn { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin-inline-start: auto; padding: 0; border: 1px solid var(--cp-border-color-high); border-radius: 50%; background: var(--cp-base-color-flat); color: var(--cp-icon-color-primary); cursor: pointer; }
+.msm-search-close { display: inline-flex; padding: 2px; border: 0; border-radius: 50%; background: none; color: var(--cp-icon-color-primary); cursor: pointer; }
+
+/* Shift performance card: one padding all round, one gap between blocks, headers without leftover padding */
+.v2-store-layout .v2-section.v2-shiftcard { padding: var(--cp-spacing-large); gap: var(--cp-spacing-large); }
+.v2-shiftcard .v2-section-header { min-height: 0; padding: 0; margin: 0; }
+.v2-shiftcard .v2-columns { gap: var(--cp-spacing-large); align-items: start; }
+.v2-shiftcard .v2-column { display: flex; flex-direction: column; gap: var(--cp-spacing-medium); min-width: 0; }
+.v2-shiftcard .v2-chart { display: flex; flex-direction: column; gap: var(--cp-spacing-medium); margin: 0; }
+.v2-shiftcard .v2-chart__head { padding: 0; margin: 0; }
+.v2-shiftcard .v2-card.v2-card--table, .v2-shiftcard .v2-card--table { padding: 0; }
+.v2-shiftcard__team { gap: var(--cp-spacing-medium); }
+.v2-shiftcard .v2-column { padding: 0; }
+.v2-shiftcard .v2-kpis--one { margin: 0; }
+.v2-shiftcard .v2-column .v2-section-header { padding: 0; }
+
+/* Needs attention card, third layout: tag and time on one row, message below, cause in a grey box, status-coloured buttons last */
+.msm-acard, .msm-acard.is-button { cursor: default; gap: var(--cp-spacing-small); }
+.msm-acard__head { display: flex; align-items: center; justify-content: space-between; gap: var(--cp-spacing-small); }
+.msm-acard__time { margin-inline-start: auto; font-size: var(--cp-font-size-xsmall); color: var(--cp-text-color-secondary); white-space: nowrap; }
+.msm-acard__title { display: block; font-size: var(--cp-font-size-medium); font-weight: var(--cp-font-weight-semi-bold); color: var(--cp-text-color-primary); line-height: 1.35; }
+.msm-acard__meta { padding: var(--cp-spacing-small) var(--cp-spacing-medium); border-radius: var(--cp-base-border-radius-large); background: var(--cp-base-color-lowest); font-size: var(--cp-font-size-xsmall); line-height: 1.5; color: var(--cp-text-color-secondary); }
+.msm-acard__actions { display: flex; flex-wrap: wrap; gap: var(--cp-spacing-small); margin-top: var(--cp-spacing-xsmall); }
+.msm-abtn { flex: 1 1 0; min-height: 32px; padding: 0 var(--cp-spacing-medium); border: 1px solid var(--tone); border-radius: 999px; font: inherit; font-size: var(--cp-font-size-small); font-weight: var(--cp-font-weight-semi-bold); cursor: pointer; }
+.msm-abtn--ghost { background: var(--cp-base-color-flat); color: var(--tone); }
+.msm-abtn--ghost:hover { background: var(--tone-bg); }
+.msm-abtn--solid { background: var(--tone); color: var(--cp-base-color-flat); }
+.msm-abtn--solid:hover { filter: brightness(0.92); }
+.msm-abtn:focus-visible { outline: 2px solid var(--cp-border-color-high); outline-offset: 2px; }
+.msm-acard--error { --tone: var(--cp-feedback-color-danger-high); --tone-bg: var(--cp-feedback-color-danger-low); }
+.msm-acard--warning { --tone: var(--cp-feedback-color-warning-high); --tone-bg: var(--cp-feedback-color-warning-low); }
+.msm-acard--info { --tone: var(--cp-feedback-color-info-high); --tone-bg: var(--cp-feedback-color-info-low); }
+.msm-acard--success { --tone: var(--cp-feedback-color-success-high); --tone-bg: var(--cp-feedback-color-success-low); }
+.msm-abtn--solid { color: var(--cp-base-color-flat); }
+.msm-acard--warning .msm-abtn--solid { color: var(--cp-text-color-onwarning); }
+/* Filters: All first, centred */
+.msm-legend { justify-content: center; }
+.msm-fchip--all { --tone: var(--cp-icon-color-primary); --tone-bg: var(--cp-feedback-color-neutral-low); --tone-border: var(--cp-border-color-high); }
+
+/* Divider between Shift performance and Picker team, edge to edge of the card */
+.v2-shiftcard__team { margin-inline: calc(-1 * var(--cp-spacing-large)); padding: var(--cp-spacing-large) var(--cp-spacing-large) 0; border-top: 1px solid var(--cp-border-color-normal); }
+
+/* Block notes sit beside the title: smaller and regular weight, to win back vertical space */
+.msm-head .v2-section-header__title { flex: 0 1 auto; }
+.msm-head .v2-section-header__note { order: 0; flex: 1 1 160px; min-width: 0; margin: 0; font-size: var(--cp-font-size-xsmall); font-weight: var(--cp-font-weight-regular, 400); line-height: 1.4; }
+.msm-head .msm-edit { margin-inline-start: auto; }
+.msm-need { font-size: var(--cp-font-size-xsmall); font-weight: var(--cp-font-weight-regular, 400); color: var(--cp-text-color-tertiary); white-space: nowrap; }
+
+/* Ranking header: download then edit, flush right */
+.msm-head .msm-export { margin-inline-start: auto; }
+.msm-head .msm-export ~ .msm-edit { margin-inline-start: 0; }
+
+/* Severity filters use the exact chips of the store table: same icons, borders, fills and counts */
+.msm-chip--icononly .msm-chip__icon { display: inline-flex; }
+.msm-chip--icononly { position: relative; }
+.msm-chip[data-tip]::after { content: attr(data-tip); position: absolute; inset-inline-start: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); z-index: 20; padding: 4px 8px; border-radius: 6px; background: var(--cp-text-color-primary); color: var(--cp-base-color-flat); font-size: var(--cp-font-size-xsmall); font-weight: var(--cp-font-weight-medium); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.12s; }
+.msm-chip[data-tip]:hover::after, .msm-chip[data-tip]:focus-visible::after { opacity: 1; }
+.msm-sheet .msm-chip[data-tip]::after { display: none; }
+.msm-chip--all { --tone: var(--cp-icon-color-primary); }
+.msm-legend { gap: var(--cp-spacing-xsmall); }
+
+/* Needs attention card text: lighter and dark grey; buttons are Cape small, fully rounded, tinted by status */
+.msm-acard__title { font-weight: var(--cp-font-weight-regular, 400); color: var(--cp-text-color-secondary); }
+.msm-abtn.cp-button { flex: 1 1 0; border-radius: var(--cp-action-border-radius-pill, 999px); border: 1px solid var(--tone); }
+.msm-abtn--solid.cp-button { background: var(--tone); color: var(--cp-base-color-flat); }
+.msm-acard--warning .msm-abtn--solid.cp-button { color: var(--cp-text-color-onwarning); }
+.msm-abtn--ghost.cp-button { background: var(--cp-base-color-flat); color: var(--tone); }
+.msm-abtn--ghost.cp-button:hover { background: var(--tone-bg); }
+
+/* Every product button is fully rounded, Cape's pill radius */
+.cockpit--v2 .cp-button, .cockpit--v2 .pd-btn, .cockpit--v2 .lg-btn, .cockpit--v2 .lg-dd__trigger { border-radius: var(--cp-action-border-radius-pill, 999px); }
+.msm-abtn.cp-button { min-height: 40px; padding: 0 var(--cp-spacing-large); font-size: var(--cp-font-size-small); }
+
+/* Severity filters: always one row, compact, never pushing the list down */
+.msm-legend { flex-wrap: nowrap; }
+.msm-legend .msm-chip { flex: 1 1 0; min-width: 0; justify-content: center; padding-inline: var(--cp-spacing-small); }
+
+/* One title style for every block, Needs attention included */
+.msm-attention__head { min-height: 36px; }
+.msm-attention .msm-attention__head h2, .msm-sheet__head h2 { font-size: var(--cp-font-size-large); font-weight: var(--cp-font-weight-bold); line-height: 1.5; }
+
+/* Same title position in every store-view card */
+.v2-store-layout .v2-shiftcard .v2-columns .v2-column { padding: 0; }
+.v2-store-layout .v2-card > .v2-section-header { min-height: 36px; align-items: center; }
+.v2-store-layout .v2-shiftcard > .v2-section-header { padding: 0; }
+.v2-store-layout .v2-people-card > .v2-section-header { padding-top: 0; }
+.v2-store-layout .v2-card > .v2-section-header, .v2-store-layout .v2-shiftcard > .v2-section-header { height: 36px; min-height: 36px; padding-bottom: 0; box-sizing: border-box; }
+.v2-store-layout .v2-people-card > .v2-section-header { padding-bottom: var(--cp-spacing-small); height: auto; }
+.v2-store-layout .v2-people-card { padding-top: calc(var(--cp-spacing-large) + 3px); }
+.v2-store-layout .v2-people-card > .v2-section-header { min-height: 0; }

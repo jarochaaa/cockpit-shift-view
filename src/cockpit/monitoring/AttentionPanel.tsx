@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tag } from '../../cape/Tag';
+import { Button } from '../../cape/Button';
 import { CapeIcon } from '../legacy/icons';
 import { useMobile } from '../v2/useMobile';
 import './monitoring.css';
@@ -26,6 +27,11 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
   const { t } = useTranslation();
   const mobile = useMobile();
   const [sheet, setSheet] = useState(false);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [sev, setSev] = useState<AttentionTone | null>(null);
+  const live = items.filter((c) => !dismissed.has(c.key));
+  const countOf = (tn: AttentionTone) => live.filter((c) => c.tone === tn).length;
+  items = sev ? live.filter((c) => c.tone === sev) : live;
   const [collapsed, setCollapsed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const cur = useRef(false);
@@ -84,24 +90,51 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
 
   const card = (c: AttentionItem) => (
     <li key={c.key}>
-      <div
-        className={`msm-acard msm-acard--${c.tone}${c.onClick ? ' is-button' : ''}`}
-        role={c.onClick ? 'button' : undefined}
-        tabIndex={c.onClick ? 0 : undefined}
-        onClick={c.onClick ? () => (setSheet(false), c.onClick?.()) : undefined}
-        onKeyDown={(e) => c.onClick && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setSheet(false), c.onClick())}
-      >
-        <span className="msm-acard__top">
-          <b>{c.title}</b>
+      <div className={`msm-acard msm-acard--${c.tone}`}>
+        <span className="msm-acard__head">
           <Tag size="small" status={c.tone}>
             {c.tag}
           </Tag>
+          <span className="msm-acard__time">{c.strong}</span>
         </span>
+        <b className="msm-acard__title">{c.title}</b>
         <span className="msm-acard__meta">{c.meta}</span>
-        <span className="msm-acard__strong">{c.strong}</span>
-        {c.onClick && <CapeIcon name="chevronRight" size={16} className="msm-acard__chev" />}
+        {(c.tone === 'info' || c.onClick) && (
+          <span className="msm-acard__actions">
+            {c.tone === 'info' && (
+              <Button size="small" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => setDismissed(new Set(dismissed).add(c.key))}>
+                {t('msm.dismiss')}
+              </Button>
+            )}
+            {c.onClick && (
+              <Button size="small" variant="primary" className="msm-abtn msm-abtn--solid" onClick={() => (setSheet(false), c.onClick?.())}>
+                {t('msm.solve')}
+              </Button>
+            )}
+          </span>
+        )}
       </div>
     </li>
+  );
+
+  const SEV: { tone: AttentionTone; icon: 'flag' | 'trending' | 'info'; label: string }[] = [
+    { tone: 'error', icon: 'flag', label: t('msm.status.critical') },
+    { tone: 'warning', icon: 'trending', label: t('msm.status.risk') },
+    { tone: 'info', icon: 'info', label: t('msm.legend.info') },
+  ];
+  const legend = (
+    <div className="msm-legend" role="group" aria-label={t('msm.legend.label', { defaultValue: 'Filter by severity' })}>
+      <button type="button" className={`msm-chip msm-chip--all msm-chip--icononly${sev === null ? ' is-on' : ''}`} aria-pressed={sev === null} aria-label={t('msm.status.all')} data-tip={t('msm.status.all')} onClick={() => setSev(null)}>
+        <CapeIcon name="store" size={16} className="msm-chip__icon" />
+        <span className="msm-chip__n">{live.length}</span>
+      </button>
+      {SEV.map((x) => (
+        <button key={x.tone} type="button" className={`msm-chip msm-chip--${x.tone} msm-chip--icononly${sev === x.tone ? ' is-on' : ''}`} aria-pressed={sev === x.tone} aria-label={x.label} data-tip={x.label} onClick={() => setSev(sev === x.tone ? null : x.tone)}>
+          <CapeIcon name={x.icon} size={16} className="msm-chip__icon" />
+          <span className="msm-chip__n">{countOf(x.tone)}</span>
+        </button>
+      ))}
+    </div>
   );
 
   if (mobile)
@@ -128,6 +161,7 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
                 </button>
               </div>
               {note && <p className="msm-attention__note">{note}</p>}
+              {legend}
               <ul className="msm-sheet__list">
                 {items.map(card)}
                 {items.length === 0 && <li className="msm-attention__note">{empty}</li>}
@@ -160,28 +194,9 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
             </button>
           </div>
           {note && <p className="msm-attention__note">{note}</p>}
+          {legend}
           <ul className="msm-attention__list">
-            {items.map((c) => (
-              <li key={c.key}>
-                <div
-                  className={`msm-acard msm-acard--${c.tone}${c.onClick ? ' is-button' : ''}`}
-                  role={c.onClick ? 'button' : undefined}
-                  tabIndex={c.onClick ? 0 : undefined}
-                  onClick={c.onClick}
-                  onKeyDown={(e) => c.onClick && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), c.onClick())}
-                >
-                  <span className="msm-acard__top">
-                    <b>{c.title}</b>
-                    <Tag size="small" status={c.tone}>
-                      {c.tag}
-                    </Tag>
-                  </span>
-                  <span className="msm-acard__meta">{c.meta}</span>
-                  <span className="msm-acard__strong">{c.strong}</span>
-                  {c.onClick && <CapeIcon name="chevronRight" size={16} className="msm-acard__chev" />}
-                </div>
-              </li>
-            ))}
+            {items.map(card)}
             {items.length === 0 && <li className="msm-attention__note">{empty}</li>}
           </ul>
         </aside>
