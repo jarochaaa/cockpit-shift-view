@@ -1,3 +1,4 @@
+import { ForceMobile } from './cockpit/v2/useMobile';
 import { IATable } from './board/IATable';
 import { ROLES } from './board/iaData';
 import { useEffect, useReducer, useState } from 'react';
@@ -31,7 +32,8 @@ const LANGS: { id: Lang; label: string }[] = [
 
 export default function App() {
   const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
-  const [navOpen, setNavOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+  const [phone, setPhone] = useState(false);
   const [rationales, setRationales] = useState(true);
   // Expanded: only the product fills the window; a floating button brings the prototype UI back.
   const [expanded, setExpanded] = useState(false);
@@ -65,7 +67,7 @@ export default function App() {
         }
       />
 
-      <div className="board" onScroll={(e) => e.currentTarget.scrollLeft > 8 && setNavOpen(false)}>
+      <div className="board">
         <section className="board__web" aria-label="Store Management Cockpit">
           <header className="board__title">
             <h2>Store Management Cockpit - Prototype - Direction</h2>
@@ -78,18 +80,26 @@ export default function App() {
             </div>
           </header>
           <div className="board__row">
-            <div className="product">
+            <div className={`product${phone ? ' product--phone' : ''}`}>
+              <ForceMobile.Provider value={phone && s.version === 'cape'}>
               {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
+              </ForceMobile.Provider>
             </div>
             <div className="side">
               <div className="view-tag">
                 View <b>{code}</b>
               </div>
+              <button type="button" className="version-switch ia-switch" onClick={() => setNavOpen(true)}>
+                Product Flows
+              </button>
               <button type="button" className="version-switch ia-switch" onClick={() => setIaOpen(true)}>
                 Information Architecture
               </button>
-              <button type="button" className="version-switch" onClick={() => dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' })}>
+              <button type="button" className="version-switch" onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
                 Switch to {s.version === 'cape' ? 'Legacy Version' : 'Cape Version'}
+              </button>
+              <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
+                {phone ? 'Desktop Version' : 'Mobile Version'}
               </button>
               <div className="lang-switch" role="group" aria-label="App language">
                 <span>App language</span>

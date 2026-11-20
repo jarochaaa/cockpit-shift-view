@@ -235,6 +235,7 @@ export function aggregate(list: StoreRow[]) {
     late: weighted((s) => s.late, list),
     assign: weighted((s) => s.assign, list),
     instore: weighted(instore, list),
+    prep: weighted(prep, list),
     awt: weighted((s) => s.awt, list),
     pfr: weighted((s) => s.pfr, list),
     fail: weighted((s) => s.fail, list),
