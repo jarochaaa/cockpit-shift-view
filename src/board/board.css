@@ -15,6 +15,7 @@ body {
   height: 100%;
 }
 
+.proto-dock,
 .proto-nav,
 .board__title,
 .side {
@@ -52,25 +53,26 @@ body {
     align-items: flex-start;
     height: 100%;
     width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 24px 48px 24px 336px;
-    scroll-padding-left: 336px;
+    overflow: hidden;
+    padding: 24px 24px 24px 336px;
   }
   .board__web {
-    flex: none;
+    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
   .board__row {
+    width: 100%;
     display: flex;
     align-items: flex-start;
     gap: 24px;
   }
   .product {
-    flex: none;
-    width: 1280px;
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
     height: var(--stage-h);
     padding: 0;
     border-radius: 16px;
@@ -117,7 +119,7 @@ body {
     color: #d9ccf0;
   }
   .board__tag--user b {
-    margin-left: 4px;
+    margin-left: 0;
     color: #fff;
     font-weight: 700;
   }
@@ -313,12 +315,33 @@ body {
   }
 
   /* Floating, collapsible navigator */
-  .proto-nav {
-    z-index: 30;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  .proto-dock {
     position: fixed;
     left: 24px;
     top: 24px;
+    z-index: 30;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .expand-fab {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: #ffd400;
+    color: #111;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  }
+  .expand-fab:hover { background: #ffe14d; }
+  .proto-nav {
+    z-index: 30;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    position: static;
     width: 264px;
     max-height: calc(100dvh - 48px);
     overflow-y: auto;
@@ -434,3 +457,65 @@ body {
   outline: 2px solid var(--board-cyan);
   outline-offset: 2px;
 }
+
+/* Expanded prototype: only the product, full window; a floating black button restores the board. */
+.expand-switch { display: inline-flex; align-items: center; gap: 8px; }
+.expand-exit {
+  position: fixed;
+  z-index: 2000;
+  inset-block-end: 20px;
+  inset-inline-end: 20px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font: 600 13px/1 var(--board-font);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+.expand-exit:hover { background: #222; }
+.expand-exit:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (min-width: 1100px) {
+  .stage--expanded { --stage-h: 100dvh; }
+  .stage--expanded .proto-nav,
+  .stage--expanded .board__title,
+  .stage--expanded .side { display: none; }
+  .stage--expanded .board { padding: 0; display: block; }
+  .stage--expanded .board__web,
+  .stage--expanded .board__row { width: 100%; height: 100%; margin: 0; padding: 0; }
+  .stage--expanded .product { width: 100%; height: 100dvh; border-radius: 0; border: 0; box-shadow: none; }
+}
+
+/* Information Architecture floating table */
+.ia-layer { position: fixed; inset: 0; z-index: 3000; display: grid; place-items: center; padding: 3vh 3vw; }
+.ia-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.6); }
+.ia-panel { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--board-surface); color: var(--board-text); border: 1px solid var(--board-border); border-radius: 16px; box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5); font-family: var(--board-font); overflow: hidden; outline: 0; }
+.ia-head { display: flex; justify-content: space-between; gap: 16px; padding: 18px 20px 12px; }
+.ia-head h2 { margin: 0 0 4px; font: 700 18px/1.3 var(--board-font); }
+.ia-head p { margin: 0; font: 400 12px/1.5 var(--board-font); color: var(--board-muted); max-width: 920px; }
+.ia-head a { color: var(--board-cyan); }
+.ia-close { flex: none; width: 36px; height: 36px; border: 1px solid var(--board-border); border-radius: 999px; background: transparent; color: var(--board-text); font-size: 20px; line-height: 1; cursor: pointer; }
+.ia-close:hover { background: #2a2a2a; }
+.ia-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 0 20px 12px; }
+.ia-tools input { min-width: 260px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--board-border); background: #111; color: var(--board-text); font: 400 13px var(--board-font); }
+.ia-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ia-chips button { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--board-border); background: transparent; color: var(--board-text); font: 500 12px var(--board-font); cursor: pointer; }
+.ia-chips button[aria-pressed='true'] { background: var(--board-cyan); border-color: var(--board-cyan); color: #0e0e0f; }
+.ia-scroll { flex: 1; min-height: 0; overflow: auto; border-top: 1px solid var(--board-border); }
+.ia-table { border-collapse: separate; border-spacing: 0; width: max-content; min-width: 100%; font: 400 12px/1.5 var(--board-font); }
+.ia-table th, .ia-table td { padding: 10px 12px; text-align: start; vertical-align: top; border-bottom: 1px solid #2c2c2c; border-inline-end: 1px solid #2c2c2c; width: 220px; min-width: 220px; }
+.ia-table thead th { position: sticky; top: 0; z-index: 2; background: #232323; font-weight: 700; white-space: nowrap; width: auto; }
+.ia-table tbody th { position: sticky; inset-inline-start: 0; z-index: 1; background: var(--board-surface); font-weight: 700; width: 180px; min-width: 180px; }
+.ia-table thead th:nth-child(2) { position: sticky; inset-inline-start: 0; z-index: 3; }
+.ia-table td:nth-child(3), .ia-table td:nth-child(7), .ia-table td:nth-child(8) { width: 320px; min-width: 320px; }
+.ia-table td:nth-child(1), .ia-table td:nth-child(6), .ia-table td:nth-child(9) { width: 120px; min-width: 120px; }
+.ia-feas { display: inline-block; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px; background: #333; color: #ddd; }
+.ia-feas--high { background: #0f3d26; color: #7be0a8; }
+.ia-feas--mid { background: #4a3a0c; color: #ffd36b; }
+.ia-feas--unknown { background: transparent; border: 1px dashed var(--board-muted); color: var(--board-muted); font-style: italic; }
+.ia-empty { text-align: center; padding: 32px; color: var(--board-muted); }
+.ia-switch { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.stage--expanded .ia-layer { z-index: 3000; }
+
+.stage--expanded .proto-dock { z-index: 2500; }

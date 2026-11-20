@@ -22,7 +22,7 @@ const EDGE_CASES: Row[] = [
 ];
 
 
-export function Navigator({ code, version, onJump, open, onToggle }: { code: string; version: Version; onJump: (id: string) => void; open: boolean; onToggle: () => void }) {
+export function Navigator({ code, version, onJump, open, onToggle, action }: { code: string; version: Version; onJump: (id: string) => void; open: boolean; onToggle: () => void; action?: React.ReactNode }) {
   const PRESETS = presetsFor(version);
   const has = (id: string) => PRESETS.some((p) => p.id === id);
   const byId = (id: string) => PRESETS.find((p) => p.id === id)!;
@@ -50,10 +50,11 @@ export function Navigator({ code, version, onJump, open, onToggle }: { code: str
     ));
 
   return (
+    <div className="proto-dock">
     <nav className="proto-nav" aria-label="Prototype flow" data-open={open}>
       <button type="button" className="proto-nav__title" aria-expanded={open} onClick={onToggle}>
         <span className="proto-nav__chev" aria-hidden />
-        Store Management Cockpit - Shift View
+        Store Management Cockpit - Prototype - Direction
       </button>
       {open && (
         <>
@@ -86,5 +87,7 @@ export function Navigator({ code, version, onJump, open, onToggle }: { code: str
         </>
       )}
     </nav>
+    {action}
+    </div>
   );
 }

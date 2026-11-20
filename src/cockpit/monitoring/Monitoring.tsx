@@ -9,7 +9,7 @@ import { Select } from '../../cape/Select';
 import { Tag } from '../../cape/Tag';
 import helpCircle from '../../assets/v2/help-circle.svg';
 import notifications from '../../assets/v2/notifications.svg';
-import { ALERTS, COUNTRIES, DONOR, ESCALATE_DAY, LEADER, PROMO, SECONDARY, STORES, SYSTEM_ISSUE, TARGET, aggregate, band, cell, coverage, deviation, instore, nextAction, prep, score } from '../../domain/monitoring';
+import { ALERTS, COUNTRIES, DONOR, ESCALATE_DAY, FEASIBILITY, LEADER, PROMO, SECONDARY, STORES, SYSTEM_ISSUE, TARGET, aggregate, band, cell, coverage, deviation, instore, nextAction, prep, score } from '../../domain/monitoring';
 import type { Band, CountryId, RegionId, SignalKey, StoreRow, Zone } from '../../domain/monitoring';
 import type { Action } from '../../state';
 import { CapeIcon } from '../legacy/icons';
@@ -41,9 +41,10 @@ export function Info({ k }: { k: InfoKey }) {
     const r = btn.current.getBoundingClientRect();
     const left = Math.max(8, Math.min(r.left - 8, window.innerWidth - POP_W - 8));
     const below = r.bottom + 6;
-    setPos(below + 240 > window.innerHeight ? { left, bottom: window.innerHeight - r.top + 6 } : { left, top: below });
+    setPos(below + 380 > window.innerHeight ? { left, bottom: window.innerHeight - r.top + 6 } : { left, top: below });
   }, [open]);
   if (!on) return null;
+  const feas = FEASIBILITY[k] ?? null;
   const [why, where, how] = t(`msm.r.${k}`, { returnObjects: true }) as string[];
   return (
     <span className="msm-info" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
@@ -59,6 +60,13 @@ export function Info({ k }: { k: InfoKey }) {
             <span>{where}</span>
             <b>{t('msm.info.how')}</b>
             <span>{how}</span>
+            <b>{t('msm.info.src')}</b>
+            <span>{t(`msm.rs.${k}`)}</span>
+            <b>{t('msm.info.feas')}</b>
+            <span className={`msm-info__feas${feas == null ? ' msm-info__feas--unknown' : ''}`}>
+              {feas == null ? t('msm.info.unknown') : `${feas}%`}
+              <small>{t('msm.info.estimate')}</small>
+            </span>
           </span>,
           document.querySelector('.cockpit--v2') ?? document.body,
         )}
@@ -145,6 +153,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const [zone, setZone] = useState<Zone | 'all'>('all');
   const [manager, setManager] = useState('all');
   const [status, setStatus] = useState<Status>('all');
+  const [q, setQ] = useState('');
   const [openId, setOpenId] = useState<string | null>(null);
   const [done, setDone] = useState<Set<string>>(new Set());
 
@@ -153,7 +162,8 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const inCountry = STORES.filter((s) => s.country === country);
   const managers = [...new Set(inCountry.filter((s) => zone === 'all' || s.zone === zone).map((s) => s.owner))];
   const scoped = inCountry.filter((s) => (zone === 'all' || s.zone === zone) && (manager === 'all' || s.owner === manager)).sort((a, b) => score(b) - score(a));
-  const rows = status === 'all' ? scoped : scoped.filter((s) => statusOf(s) === status);
+  const needle = q.trim().toLowerCase();
+  const rows = (status === 'all' ? scoped : scoped.filter((s) => statusOf(s) === status)).filter((s) => !needle || `${s.name} ${s.id}`.toLowerCase().includes(needle));
   const C = aggregate(scoped);
   const name = (id: string) => byId(id).name;
   const ctx = { store: name('st-07'), donor: name(DONOR), leader: LEADER, v: C.late.toFixed(1) };
@@ -277,13 +287,16 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
               Promo
             </Tag>
             <span>{t('msm.promo', { name: PROMO.name, cashback: PROMO.cashback, window: PROMO.window, pct: SECONDARY.vsForecast })}</span>
+            <Tag size="small" status="warning">
+              {t('msm.promoSrc')}
+            </Tag>
             <Info k="promo" />
           </div>
         )}
 
         <div className="msm-layout">
           <div className="msm-main">
-            <section className="v2-section msm-strip">
+            <section className="msm-card msm-strip">
               <div className="v2-section-header msm-head">
                 <h2 className="v2-section-header__title">
                   {t('msm.liveNow')} <Info k="kpis" />
@@ -346,6 +359,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                     <span className="msm-chip__n">{count(st)}</span>
                   </button>
                 ))}
+                <input type="search" className="msm-search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('msm.searchStores')} aria-label={t('msm.searchStores')} />
               </div>
               <div className="msm-table-wrap pd-table-scroll">
                 <table className="msm-table">

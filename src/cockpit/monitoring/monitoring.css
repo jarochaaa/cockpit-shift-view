@@ -27,7 +27,6 @@
 /* Layout as in the Cape store view (72:1672): main column + full-height Needs attention panel */
 .msm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--cp-spacing-large); align-items: start; }
 .msm-main { display: flex; flex-direction: column; gap: var(--cp-spacing-large); min-width: 0; }
-.msm-strip { padding-bottom: 0; }
 .msm-strip .v2-stats { align-items: stretch; }
 .msm-strip .v2-stats > .msm-info { align-self: center; }
 .msm-card { padding: var(--cp-spacing-large) var(--cp-spacing-large) var(--cp-spacing-medium); border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-base-border-radius-large); background: var(--cp-base-color-flat); min-width: 0; }
@@ -251,8 +250,7 @@
 
 /* Consistent vertical rhythm: one gap between blocks, compact section headers */
 .msm-main { gap: var(--cp-spacing-large); }
-.msm .msm-strip { padding-bottom: 0; }
-.msm .msm-head { min-height: 0; padding-bottom: var(--cp-spacing-medium); }
+.msm .msm .msm-head { min-height: 0; padding-bottom: var(--cp-spacing-medium); }
 .msm-scope, .msm-promo { margin-bottom: var(--cp-spacing-large); }
 .msm-dsec .v2-stats .v2-stat { min-width: 0; }
 .msm-dsec .pd-legend { margin-top: var(--cp-spacing-small); }
@@ -278,3 +276,20 @@
 /* Header separated from the rows */
 .msm-table thead th { border-bottom: 1px solid var(--cp-border-color-normal); }
 .msm-table tbody tr:first-child td { border-top: 0; }
+
+/* Picker status dot at the start of each row, same colours as Legacy */
+.v2-status-dot { width: 8px; height: 8px; border-radius: 50%; margin-inline-end: var(--cp-spacing-small); }
+
+/* Solve and Review share one width so the Action column lines up */
+.msm-solve.cp-button { min-width: 88px; justify-content: center; }
+
+/* Solid status tags on the Needs attention cards, so they do not blend into the card tint */
+.msm-acard--error .cp-tag { background: var(--cp-feedback-color-danger-high); color: var(--cp-text-color-ondanger); }
+.msm-acard--warning .cp-tag { background: var(--cp-feedback-color-warning-high); color: var(--cp-text-color-onwarning); }
+.msm-acard--info .cp-tag { background: var(--cp-feedback-color-info-high); color: var(--cp-text-color-oninfo); }
+.msm-acard--success .cp-tag { background: var(--cp-feedback-color-success-high); color: var(--cp-text-color-onsuccess); }
+.msm-acard .cp-tag { font-weight: var(--cp-font-weight-bold); }
+
+/* Store search sits at the end of the status chips */
+.msm-search { margin-inline-start: auto; min-width: 180px; padding: var(--cp-spacing-xsmall) var(--cp-spacing-medium); border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-base-border-radius-large); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); font: inherit; font-size: var(--cp-font-size-small); }
+.msm-search:focus-visible { outline: 2px solid var(--cp-border-color-high); outline-offset: 1px; }

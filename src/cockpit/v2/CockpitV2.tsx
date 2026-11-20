@@ -228,6 +228,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                     {o.people.status === 'ready' && o.ppl.length > 0 ? (
                       o.ppl.map((p) => (
                         <ListItem key={p.id} secondaryAction={<span className="v2-list__time v2-list__time--strong">{duration(p.seconds)}</span>}>
+                          <span className={`pd-dot pd-dot--${p.activity} v2-status-dot`} role="img" aria-label={ACTIVITY_LABEL[p.activity]} />
                           <Avatar size="small" initials={personInitials(p.name)} />
                           <ListItemText primaryText={p.name} secondaryText={<span className={`v2-activity v2-activity--${p.activity}`}>{ACTIVITY_LABEL[p.activity]}</span>} />
                         </ListItem>
@@ -309,16 +310,22 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                 title="Needs attention"
                 empty={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'}
                 items={
-                  o.attention.status === 'ready'
-                    ? o.attn.map((a) => ({
-                        key: a.orderId,
-                        tone: a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error',
-                        title: `#${a.orderId}`,
-                        tag: a.kind === 'return' ? 'Return' : 'Late',
-                        meta: attentionMeta(a),
-                        strong: attentionTime(a),
-                        onClick: () => o.setOrderOpen(a.orderId),
-                      }))
+                  o.attention.status === 'ready' && !o.closed
+                    ? [
+                        // Statuses as the Store Management Cockpit shows them: PF Pending, Late, Return and Count.
+                        { key: 'pf-1', tone: 'warning' as const, title: '#695637493', tag: 'PF Pending', meta: 'Stage: Awaiting Approval · Picker A', strong: '1 item short' },
+                        ...o.attn.map((a) => ({
+                          key: a.orderId,
+                          tone: (a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error') as 'warning' | 'info' | 'error',
+                          title: `#${a.orderId}`,
+                          tag: a.kind === 'return' ? 'Return' : 'Late',
+                          meta: attentionMeta(a),
+                          strong: attentionTime(a),
+                          onClick: () => o.setOrderOpen(a.orderId),
+                        })),
+                        { key: 'count-1', tone: 'info' as const, title: 'Fresh whole milk 1L', tag: 'Count', meta: '3 of 4 found', strong: 'Off sale 1h 15m' },
+                        { key: 'count-2', tone: 'info' as const, title: 'Free-range eggs 6pk', tag: 'Count', meta: 'Waiting for a picker', strong: 'Off sale 40m' },
+                      ]
                     : []
                 }
               />
