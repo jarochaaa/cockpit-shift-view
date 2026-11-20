@@ -1,3 +1,6 @@
+import { ForceMobile } from './cockpit/v2/useMobile';
+import { IATable } from './board/IATable';
+import { ROLES } from './board/iaData';
 import { useEffect, useReducer, useState } from 'react';
 import { Hints } from './board/Hints';
 import { Navigator } from './board/Navigator';
@@ -29,8 +32,18 @@ const LANGS: { id: Lang; label: string }[] = [
 
 export default function App() {
   const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
-  const [navOpen, setNavOpen] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+  const [phone, setPhone] = useState(false);
   const [rationales, setRationales] = useState(true);
+  // Expanded: only the product fills the window; a floating button brings the prototype UI back.
+  const [expanded, setExpanded] = useState(false);
+  const [iaOpen, setIaOpen] = useState(false);
+  useEffect(() => {
+    if (!expanded) return;
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && !document.querySelector('.pd-layer') && setExpanded(false);
+    document.addEventListener('keydown', key);
+    return () => document.removeEventListener('keydown', key);
+  }, [expanded]);
   const code = codeFor(s);
 
   // The language switch changes the Cockpit only; the board stays English.
@@ -45,36 +58,48 @@ export default function App() {
   }, [code, s.version, s.lang]);
 
   return (
-    <div className="stage">
-      <Navigator code={code} version={s.version} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })} />
+    <div className={`stage${expanded ? ' stage--expanded' : ''}`}>
+      <Navigator code={code} version={s.version} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })}
+        action={
+          <button type="button" className="expand-fab" aria-label={expanded ? 'Show prototype UI' : 'Expand prototype'} title={expanded ? 'Show prototype UI' : 'Expand prototype'} aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{expanded ? <path d="M10 14l-7 7M3 15v6h6M14 10l7-7M21 9V3h-6" /> : <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />}</svg>
+          </button>
+        }
+      />
 
-      <div className="board" onScroll={(e) => e.currentTarget.scrollLeft > 8 && setNavOpen(false)}>
+      <div className="board">
         <section className="board__web" aria-label="Store Management Cockpit">
           <header className="board__title">
-            <h2>Store Management Cockpit - Shift View</h2>
+            <h2>Store Management Cockpit - Prototype - Direction</h2>
             <div className="board__tags">
-              <span className="board__tag">Web</span>
-              <span className="board__tag">Desktop</span>
-              <span className="board__tag board__tag--user">
-                User: <b>{s.page === 'monitoring' ? 'Area Manager' : 'Store Manager'}</b>
-              </span>
-              <span className="board__tag">{s.page === 'monitoring' ? 'Country Monitor' : 'Shift View'}</span>
-              <span className="board__tag">{s.version === 'cape' ? 'Cape Version' : 'Legacy Version'}</span>
-              <span className="board__tag board__tag--view">
-                View <b>{code}</b>
-              </span>
+              {(s.page === 'monitoring' ? ROLES.filter((r) => r !== 'Store Manager' && r !== 'Shift Lead') : ['Store Manager', 'Shift Lead']).map((r) => (
+                <span key={r} className="board__tag board__tag--user">
+                  <b>{r}</b>
+                </span>
+              ))}
             </div>
           </header>
           <div className="board__row">
-            <div className="product">
+            <div className={`product${phone ? ' product--phone' : ''}`}>
+              <ForceMobile.Provider value={phone && s.version === 'cape'}>
               {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
+              </ForceMobile.Provider>
             </div>
             <div className="side">
               <div className="view-tag">
                 View <b>{code}</b>
               </div>
-              <button type="button" className="version-switch" onClick={() => dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' })}>
+              <button type="button" className="version-switch ia-switch" onClick={() => setNavOpen(true)}>
+                Product Flows
+              </button>
+              <button type="button" className="version-switch ia-switch" onClick={() => setIaOpen(true)}>
+                Information Architecture
+              </button>
+              <button type="button" className="version-switch" onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
                 Switch to {s.version === 'cape' ? 'Legacy Version' : 'Cape Version'}
+              </button>
+              <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
+                {phone ? 'Desktop Version' : 'Mobile Version'}
               </button>
               <div className="lang-switch" role="group" aria-label="App language">
                 <span>App language</span>
@@ -104,6 +129,7 @@ export default function App() {
           </div>
         </section>
       </div>
+      {iaOpen && <IATable onClose={() => setIaOpen(false)} />}
     </div>
   );
 }

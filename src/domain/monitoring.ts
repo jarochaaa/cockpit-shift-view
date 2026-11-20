@@ -235,6 +235,7 @@ export function aggregate(list: StoreRow[]) {
     late: weighted((s) => s.late, list),
     assign: weighted((s) => s.assign, list),
     instore: weighted(instore, list),
+    prep: weighted(prep, list),
     awt: weighted((s) => s.awt, list),
     pfr: weighted((s) => s.pfr, list),
     fail: weighted((s) => s.fail, list),
@@ -310,3 +311,12 @@ export const ALERTS: AlertItem[] = [
   { key: 'riders', tone: 'warning', stores: ['st-11'], minutesAgo: 14 },
   { key: 'promo', tone: 'info', stores: [], minutesAgo: 62 },
 ];
+
+/**
+ * Feasibility to consume or configure each data point, in %. A design estimate from where the data lives today:
+ * live in SMC at store level is high, a new calculation or an outside tool is lower, null means unknown (shown as "Unknown").
+ */
+export const FEASIBILITY: Record<string, number | null> = {
+  scope: null, live: 90, kpis: 80, late: 90, assign: 90, unassigned: 90, prep: 85, pickers: 50, instore: 75, awt: null, pfr: 85, fail: 85,
+  age: null, secondary: null, ranking: 75, deviation: null, owner: null, action: null, drill: 90, alerts: null, promo: null,
+};

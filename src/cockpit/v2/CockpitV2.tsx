@@ -13,6 +13,7 @@ import { Button } from '../../cape/Button';
 import { Indicator } from '../../cape/Indicator';
 import { List, ListItem, ListItemText } from '../../cape/List';
 import { Select } from '../../cape/Select';
+import { downloadCsv } from '../exportCsv';
 import { FAIL_ALERT, duration } from '../../domain/prod';
 import type { Activity } from '../../domain/prod';
 import { warehouseName } from '../../domain/mockData';
@@ -27,7 +28,9 @@ import { BoxState } from '../BoxState';
 import { TimingChart, TimingLegend } from '../TimingChart';
 import { Monitoring } from '../monitoring/Monitoring';
 import { AttentionPanel } from '../monitoring/AttentionPanel';
+import { useMobile } from './useMobile';
 import './v2.css';
+import './mobile.css';
 
 /** Icons keep their own width/height; the 24px slot only centers them, as in the Figma placeholder. */
 function Icon({ src, className }: { src: string; className?: string }) {
@@ -103,6 +106,34 @@ function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
   );
 }
 
+/** Phone navigation: the same pages as the sidenav, as an app-style tab bar at the bottom. */
+function BottomNav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
+  const { t } = useTranslation();
+  const label = (key: string) => (key === 'stores' || key === 'settings' ? t(`v2.nav.${key}`) : t(`sec.nav.${key}`));
+  return (
+    <nav className="v2-bottomnav" aria-label={t('v2.nav.main')}>
+      {NAV.flatMap((g) => g.items).map((item) => {
+        const active = item.page === page || (item.page === 'monitoring' && page === 'overview');
+        return (
+          <a
+            key={item.key}
+            href="#"
+            className={`v2-bottomnav__item${active ? ' is-active' : ''}`}
+            aria-current={active ? 'page' : undefined}
+            onClick={(e) => {
+              e.preventDefault();
+              onGo(item.page);
+            }}
+          >
+            <Icon src={item.icon} />
+            <span>{label(item.key)}</span>
+          </a>
+        );
+      })}
+    </nav>
+  );
+}
+
 function SectionHeader({ title, action }: { title: string; action?: ReactNode }) {
   return (
     <div className="v2-section-header">
@@ -148,11 +179,13 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
   useEffect(() => {
     frame.current?.scrollTo({ top: 0 });
   }, [s.page, s.warehouseId]);
+  const mobile = useMobile();
+  const [refreshing, setRefreshing] = useState(false);
   const err = "Couldn't load this data. It shows up again as soon as the connection is back.";
 
   return (
-    <div ref={frame} className="cockpit cockpit--v2" data-theme="cape-light-b2b" dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang}>
-      <Sidenav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />
+    <div ref={frame} className="cockpit cockpit--v2" data-theme="cape-light-b2b" dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang} data-mobile={mobile ? '' : undefined}>
+      {!mobile && <Sidenav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />}
       <main className="v2-main">
         {s.page === 'monitoring' ? (
           <Monitoring dispatch={dispatch} rationales={rationales} />
@@ -182,7 +215,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                   {o.liveText}
                 </span>
                 <VendorSwitcher vendors={o.vendors} />
-                <Button variant="secondary" status="inverse" size="medium" className="v2-pill" startIcon={<Icon src={helpCircle} />}>
+                <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-help" startIcon={<Icon src={helpCircle} />}>
                   {t('v2.help')}
                 </Button>
                 <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-pill--icon" aria-label={t('v2.notifications')} startIcon={<Icon src={notifications} />} />
@@ -228,6 +261,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                     {o.people.status === 'ready' && o.ppl.length > 0 ? (
                       o.ppl.map((p) => (
                         <ListItem key={p.id} secondaryAction={<span className="v2-list__time v2-list__time--strong">{duration(p.seconds)}</span>}>
+                          <span className={`pd-dot pd-dot--${p.activity} v2-status-dot`} role="img" aria-label={ACTIVITY_LABEL[p.activity]} />
                           <Avatar size="small" initials={personInitials(p.name)} />
                           <ListItemText primaryText={p.name} secondaryText={<span className={`v2-activity v2-activity--${p.activity}`}>{ACTIVITY_LABEL[p.activity]}</span>} />
                         </ListItem>
@@ -239,18 +273,31 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                     )}
                   </List>
                 </section>
-            <section className="v2-section">
+            <section className="v2-section v2-card v2-shiftcard">
               <SectionHeader
                 title="Shift performance"
                 action={
-                  <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
-                    View order history →
-                  </Button>
+                  <div className="v2-shift-actions">
+                    <Select
+                      className="v2-range"
+                      aria-label="Time window"
+                      value={s.range}
+                      onChange={(v) => {
+                        dispatch({ type: 'range', range: v as TimingRange });
+                        setRefreshing(true);
+                        window.setTimeout(() => setRefreshing(false), 450);
+                      }}
+                      options={RANGES.map((r) => ({ value: r, label: r === 'today' ? 'Today' : `Last ${r}` }))}
+                    />
+                    <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
+                      View order history →
+                    </Button>
+                  </div>
                 }
               />
               <div className="v2-columns v2-combo v2-combo--shift">
                 <div className="v2-column">
-                  <BoxState state={o.shift} lines={4}>
+                  <BoxState state={refreshing ? { status: 'loading' } : o.shift} lines={4}>
                     {(m) => (
                       <>
                         <div className="v2-kpis v2-kpis--one">
@@ -273,15 +320,8 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                   <div className="v2-chart">
                     <div className="v2-chart__head">
                       <h3 className="v2-card__title">Time per order, by hour</h3>
-                      <Select
-                        className="v2-range"
-                        aria-label="Time window"
-                        value={s.range}
-                        onChange={(v) => dispatch({ type: 'range', range: v as TimingRange })}
-                        options={RANGES.map((r) => ({ value: r, label: r === 'today' ? 'Today' : `Last ${r}` }))}
-                      />
                     </div>
-                    <BoxState state={o.timing} lines={5}>
+                    <BoxState state={refreshing ? { status: 'loading' } : o.timing} lines={5}>
                       {(b) =>
                         b.length ? (
                           <>
@@ -296,29 +336,54 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                   </div>
                 </div>
               </div>
-            </section>
-
-            <section className="v2-section">
-              <SectionHeader title="Picker team" />
-              <BoxState state={o.team} lines={6}>
-                {(rows) => <div className="v2-card v2-card--table">{rows.length ? <TeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} /> : <p className="v2-empty">No picker data available for this time range.</p>}</div>}
-              </BoxState>
+              <div className="v2-shiftcard__team">
+                <SectionHeader
+                  title="Picker team"
+                  action={
+                    <Button
+                      variant="secondary"
+                      status="inverse"
+                      size="small"
+                      startIcon={<CapeIcon name="download" size={18} />}
+                      disabled={o.team.status !== 'ready'}
+                      onClick={() =>
+                        o.team.status === 'ready' &&
+                        downloadCsv('picker-team', [
+                          ['Picker', 'Assignment (s)', 'Picking (s)', 'Picking / item (s)', 'Packing (s)', 'Partial fulfilment', 'Fail rate', 'Successful'],
+                          ...o.team.data.map((r) => [r.name, r.assignment, r.picking, r.pickingPerItem, r.packing, r.pfr, r.failRate, r.successful]),
+                        ])
+                      }
+                    >
+                      Export
+                    </Button>
+                  }
+                />
+                <BoxState state={refreshing ? { status: 'loading' } : o.team} lines={6}>
+                  {(rows) => <div className="v2-card v2-card--table">{rows.length ? <TeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} /> : <p className="v2-empty">No picker data available for this time range.</p>}</div>}
+                </BoxState>
+              </div>
             </section>
               </div>
               <AttentionPanel
                 title="Needs attention"
                 empty={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'}
                 items={
-                  o.attention.status === 'ready'
-                    ? o.attn.map((a) => ({
-                        key: a.orderId,
-                        tone: a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error',
-                        title: `#${a.orderId}`,
-                        tag: a.kind === 'return' ? 'Return' : 'Late',
-                        meta: attentionMeta(a),
-                        strong: attentionTime(a),
-                        onClick: () => o.setOrderOpen(a.orderId),
-                      }))
+                  o.attention.status === 'ready' && !o.closed
+                    ? [
+                        // Statuses as the Store Management Cockpit shows them: PF Pending, Late, Return and Count.
+                        { key: 'pf-1', tone: 'warning' as const, title: '#695637493', tag: 'PF Pending', meta: 'Stage: Awaiting Approval · Picker A', strong: '1 item short' },
+                        ...o.attn.map((a) => ({
+                          key: a.orderId,
+                          tone: (a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error') as 'warning' | 'info' | 'error',
+                          title: `#${a.orderId}`,
+                          tag: a.kind === 'return' ? 'Return' : 'Late',
+                          meta: attentionMeta(a),
+                          strong: attentionTime(a),
+                          onClick: () => o.setOrderOpen(a.orderId),
+                        })),
+                        { key: 'count-1', tone: 'info' as const, title: 'Fresh whole milk 1L', tag: 'Count', meta: '3 of 4 found', strong: 'Off sale 1h 15m' },
+                        { key: 'count-2', tone: 'info' as const, title: 'Free-range eggs 6pk', tag: 'Count', meta: 'Waiting for a picker', strong: 'Off sale 40m' },
+                      ]
                     : []
                 }
               />
@@ -327,6 +392,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
           </>
         )}
       </main>
+      {mobile && <BottomNav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />}
     </div>
   );
 }
