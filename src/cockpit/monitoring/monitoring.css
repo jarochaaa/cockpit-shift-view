@@ -497,3 +497,23 @@
 .v2-store-layout .v2-people-card > .v2-section-header { padding-bottom: var(--cp-spacing-small); height: auto; }
 .v2-store-layout .v2-people-card { padding-top: calc(var(--cp-spacing-large) + 3px); }
 .v2-store-layout .v2-people-card > .v2-section-header { min-height: 0; }
+
+/* Insights panel on the start side (store view): the column sits left of the content */
+.msm-layout--start { grid-template-columns: auto minmax(0, 1fr); }
+.msm-layout--solo { grid-template-columns: minmax(0, 1fr); }
+[dir='rtl'] .msm-side--start .msm-attention__collapse svg { transform: scaleX(-1); }
+[dir='rtl'] .msm-side--start .msm-attention-rail svg { transform: none; }
+
+/* Trial: Live now and Country performance as one boxed group with dividers instead of a card per KPI */
+.msm-main .msm-strip .v2-stats,
+.msm-main .msm-grid { gap: 0; border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-base-border-radius-large); overflow: hidden; background: var(--cp-base-color-flat); }
+.msm-main .msm-strip .v2-stats { display: flex; flex-wrap: wrap; }
+.msm-main .msm-strip .v2-stats > .v2-stat, .msm-main .msm-grid > .v2-stat { flex: 1 1 140px; border: 0; border-radius: 0; background: transparent; box-shadow: none; margin: -1px 0 0 -1px; border-top: 1px solid var(--cp-border-color-normal); border-inline-start: 1px solid var(--cp-border-color-normal); }
+[dir='rtl'] .msm-main .msm-strip .v2-stats > .v2-stat, [dir='rtl'] .msm-main .msm-grid > .v2-stat { margin: -1px -1px 0 0; }
+/* The boxed KPI group runs edge to edge in its card: no padding at the sides or the bottom, the card border closes it */
+.msm-card:has(> .msm-grid), .msm-card:has(> .v2-stats) { padding: var(--cp-spacing-large) 0 0; overflow: hidden; }
+.msm-card:has(> .msm-grid) > .msm-head, .msm-card:has(> .v2-stats) > .msm-head { padding-inline: var(--cp-spacing-large); }
+.msm-main .msm-strip .v2-stats, .msm-main .msm-grid { border: 0; border-top: 1px solid var(--cp-border-color-normal); border-radius: 0; }
+
+/* Layout consistency: the page title uses the same style as every section title */
+.msm .v2-page-header__title { font-size: var(--cp-font-size-large); font-weight: var(--cp-font-weight-bold); line-height: 1.5; }

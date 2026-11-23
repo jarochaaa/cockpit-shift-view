@@ -23,7 +23,7 @@ export interface AttentionItem {
  * It fills the visible height of the cockpit frame, scrolls inside itself, collapses to a pulsing rail
  * while the page scrolls down and opens again when the page is back at the top.
  */
-export function AttentionPanel({ title, titleAddon, note, items, empty }: { title: string; titleAddon?: ReactNode; note?: ReactNode; items: AttentionItem[]; empty: string }) {
+export function AttentionPanel({ title, titleAddon, note, items, empty, side = 'end' }: { side?: 'start' | 'end'; title: string; titleAddon?: ReactNode; note?: ReactNode; items: AttentionItem[]; empty: string }) {
   const { t } = useTranslation();
   const mobile = useMobile();
   const [sheet, setSheet] = useState(false);
@@ -34,11 +34,7 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
   items = sev ? live.filter((c) => c.tone === sev) : live;
   const [collapsed, setCollapsed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const cur = useRef(false);
-  const set = (v: boolean) => {
-    cur.current = v;
-    setCollapsed(v);
-  };
+  const set = setCollapsed;
 
   useLayoutEffect(() => {
     const el = ref.current;
@@ -51,34 +47,8 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
       const top = Math.max(el.getBoundingClientRect().top, sr.top + gap);
       el.style.height = `${Math.max(240, sr.bottom - gap - top)}px`;
     };
-    let last = scroller.scrollTop;
-    let lockedUntil = 0;
-    // Direction is judged on the distance travelled since the last decision, so a slow scroll still adds up.
-    // After each toggle the layout reflows (the table changes width), which can nudge scrollTop on its own;
-    // those nudges are ignored for a moment so the panel never flips back and forth.
-    const toggle = (next: boolean) => {
-      if (next === cur.current) return;
-      set(next);
-      lockedUntil = performance.now() + 350;
-    };
-    const onScroll = () => {
-      const st = scroller.scrollTop;
-      fit();
-      if (performance.now() < lockedUntil) {
-        last = st;
-        return;
-      }
-      if (st < 40) {
-        toggle(false);
-        last = st;
-        return;
-      }
-      // Scrolling down collapses it; it only opens again once the page is back at the top.
-      if (st - last > 24) toggle(true);
-      else if (st - last < -24) last = st;
-      else return;
-      last = st;
-    };
+    // The panel only follows the page height; it opens and closes with its own arrow, never by scrolling.
+    const onScroll = fit;
     fit();
     scroller.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', fit);
@@ -173,10 +143,10 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
     );
 
   return (
-    <div className={`msm-side${collapsed ? ' msm-side--collapsed' : ''}`} ref={ref}>
+    <div className={`msm-side${collapsed ? ' msm-side--collapsed' : ''}${side === 'start' ? ' msm-side--start' : ''}`} ref={ref}>
       {collapsed ? (
         <button type="button" className="msm-attention-rail" aria-label={t('msm.expand')} title={t('msm.expand')} onClick={() => set(false)}>
-          <CapeIcon name="doubleChevronLeft" size={20} className="msm-flip" />
+          <CapeIcon name="doubleChevronLeft" size={20} className={side === 'start' ? 'v2-rot' : 'msm-flip'} />
           <span className="msm-attention-rail__n">{items.length}</span>
           <span className="msm-attention-rail__label">{title}</span>
         </button>
@@ -190,7 +160,7 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
               {t('msm.open', { n: items.length })}
             </Tag>
             <button type="button" className="msm-attention__collapse" aria-label={t('msm.collapse')} title={t('msm.collapse')} onClick={() => set(true)}>
-              <CapeIcon name="doubleChevronLeft" size={20} className="v2-rot" />
+              <CapeIcon name="doubleChevronLeft" size={20} className={side === 'start' ? 'msm-flip' : 'v2-rot'} />
             </button>
           </div>
           {note && <p className="msm-attention__note">{note}</p>}

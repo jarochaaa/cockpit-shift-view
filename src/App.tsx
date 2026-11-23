@@ -1,4 +1,6 @@
 import { ForceMobile } from './cockpit/v2/useMobile';
+import { TierContext } from './cockpit/tier';
+import type { Tier } from './cockpit/tier';
 import { IATable } from './board/IATable';
 import { ROLES } from './board/iaData';
 import { useEffect, useReducer, useState } from 'react';
@@ -33,6 +35,7 @@ const LANGS: { id: Lang; label: string }[] = [
 export default function App() {
   const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
   const [navOpen, setNavOpen] = useState(false);
+  const [tier, setTier] = useState<Tier>('vision');
   const [phone, setPhone] = useState(false);
   const [rationales, setRationales] = useState(true);
   // Expanded: only the product fills the window; a floating button brings the prototype UI back.
@@ -81,9 +84,11 @@ export default function App() {
           </header>
           <div className="board__row">
             <div className={`product${phone ? ' product--phone' : ''}`}>
+              <TierContext.Provider value={s.version === 'cape' ? tier : 'vision'}>
               <ForceMobile.Provider value={phone && s.version === 'cape'}>
               {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
               </ForceMobile.Provider>
+              </TierContext.Provider>
             </div>
             <div className="side">
               <div className="view-tag">
@@ -97,6 +102,9 @@ export default function App() {
               </button>
               <button type="button" className="version-switch" onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
                 Switch to {s.version === 'cape' ? 'Legacy Version' : 'Cape Version'}
+              </button>
+              <button type="button" className="version-switch" aria-pressed={tier === 'mvp'} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setTier(tier === 'mvp' ? 'vision' : 'mvp'))}>
+                Switch to {tier === 'mvp' ? 'End Vision' : 'MVP'}
               </button>
               <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
                 {phone ? 'Desktop Version' : 'Mobile Version'}

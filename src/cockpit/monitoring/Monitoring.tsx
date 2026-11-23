@@ -15,7 +15,7 @@ import type { Action } from '../../state';
 import { CapeIcon } from '../legacy/icons';
 import { Drawer } from '../prod/Drawers';
 import { EditData } from './EditData';
-import { downloadCsv } from '../exportCsv';
+import { useMvp } from '../tier';
 import { useLayoutPrefs } from './layout';
 import type { EditBlock } from './layout';
 import { useMobile } from '../v2/useMobile';
@@ -178,7 +178,8 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const cols = layout.get('table') as SignalKey[];
   const name = (id: string) => byId(id).name;
   const ctx = { store: name('st-07'), donor: name(DONOR), leader: LEADER, v: C.late.toFixed(1) };
-  const openStore = (id: string) => dispatch({ type: 'page', page: 'overview', warehouseId: id });
+  // For now a store opens the Legacy store view; flip back to 'cape' here when the new Store Level returns.
+  const openStore = (id: string) => (dispatch({ type: 'version', version: 'legacy' }), dispatch({ type: 'page', page: 'overview', warehouseId: id }));
   const markDone = (id: string) => setDone(new Set(done).add(id));
   const count = (st: Status) => (st === 'all' ? scoped.length : scoped.filter((s) => statusOf(s) === st).length);
 
@@ -266,14 +267,10 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   };
   const sigLabel = labelOf;
   const sigHint = (k: string) => (METRIC[k] ? IA_ROWS.find((r) => r.metric === METRIC[k].ia)?.desc : Array.isArray(t(`msm.r.${k}`, { returnObjects: true })) ? (t(`msm.r.${k}`, { returnObjects: true }) as string[])[0] : undefined);
-  const edit = (block: EditBlock, title: string) => (
+  const mvp = useMvp();
+  const edit = (block: EditBlock, title: string) => mvp ? null : (
     <EditData block={block} title={title} selected={layout.get(block)} onChange={(keys) => layout.set(block, keys)} label={sigLabel} hint={sigHint} available={(k) => k !== 'forecast' || country === 'ae'} />
   );
-  const exportRanking = () =>
-    downloadCsv('stores-by-priority', [
-      ['Store', 'Zone', 'Status', ...cols.map(labelOf)],
-      ...rows.map((s) => [s.name, t(`msm.zone.${s.zone}`), t(`msm.status.${statusOf(s)}`), ...cols.map((k) => (METRIC[k] ? fmtM(METRIC[k], storeValue(METRIC[k], s)) : MIN_COLS.includes(k) ? (k === 'assign' ? s.assign : k === 'prep' ? prep(s) : k === 'instore' ? instore(s) : s.awt).toFixed(1) : value(s, k)))]),
-    ]);
   const mobile = useMobile();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -356,7 +353,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
         </div>
         )}
 
-        {country === 'ae' && (
+        {country === 'ae' && !mvp && (
           <div className="msm-promo">
             <Tag size="small" status="info">
               Promo
@@ -369,7 +366,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
           </div>
         )}
 
-        <div className="msm-layout">
+        <div className={`msm-layout${mvp ? ' msm-layout--solo' : ''}`}>
           <div className="msm-main">
             <section className="msm-card msm-strip">
               <div className="v2-section-header msm-head">
@@ -398,9 +395,6 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                 <h2 className="v2-section-header__title">
                   {t('msm.ranking')} <Info k="ranking" />
                 </h2>
-                <button type="button" className="msm-edit msm-export" data-tip={t('msm.export')} aria-label={t('msm.export')} onClick={exportRanking}>
-                  <CapeIcon name="download" size={20} />
-                </button>
                 {edit('table', t('msm.ranking'))}
               </div>
               <div className="msm-status" ref={statusRef} role="tablist" aria-label={t('msm.col.action')}>
@@ -447,17 +441,19 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                           </span>
                         </th>
                       ))}
-                      <th>
-                        <span className="msm-th">
-                          {t('msm.col.action')} <Info k="action" />
-                        </span>
-                      </th>
+                      {!mvp && (
+                        <th>
+                          <span className="msm-th">
+                            {t('msm.col.action')} <Info k="action" />
+                          </span>
+                        </th>
+                      )}
                     </tr>
                   </thead>
                   <tbody>
                     {rows.map((s) => {
-                      const d = deviation(s);
                       const a = nextAction(s);
+                      const d = deviation(s);
                       return (
                         <tr
                           key={s.id}
@@ -517,27 +513,29 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                               </td>
                             );
                           })}
-                          <td>
-                            {done.has(s.id) ? (
-                              <span className="msm-act msm-act--done" title={t('msm.done')}>
-                                <CapeIcon name="checkCircle" size={18} />
-                              </span>
-                            ) : (
-                              <Button
-                                size="small"
-                                variant="secondary"
-                                status={mobile ? 'branded' : 'inverse'}
-                                className="msm-solve"
-                                title={a === 'none' ? t('msm.review') : t(`msm.act.${a}`)}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenId(s.id);
-                                }}
-                              >
-                                {statusOf(s) === 'ok' ? t('msm.review') : t('msm.solve')}
-                              </Button>
-                            )}
-                          </td>
+                          {!mvp && (
+                            <td>
+                              {done.has(s.id) ? (
+                                <span className="msm-act msm-act--done" title={t('msm.done')}>
+                                  <CapeIcon name="checkCircle" size={18} />
+                                </span>
+                              ) : (
+                                <Button
+                                  size="small"
+                                  variant="secondary"
+                                  status={mobile ? 'branded' : 'inverse'}
+                                  className="msm-solve"
+                                  title={a === 'none' ? t('msm.review') : t(`msm.act.${a}`)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenId(s.id);
+                                  }}
+                                >
+                                  {statusOf(s) === 'ok' ? t('msm.review') : t('msm.solve')}
+                                </Button>
+                              )}
+                            </td>
+                          )}
                         </tr>
                       );
                     })}
@@ -554,6 +552,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
             </section>
           </div>
 
+          {!mvp && (
           <AttentionPanel
             title={t('msm.attention')}
             titleAddon={<Info k="alerts" />}
@@ -561,6 +560,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
             empty={t('msm.noAttention')}
             items={attention.map((c) => ({ ...c, onClick: c.drawerId ? () => setOpenId(c.drawerId!) : undefined }))}
           />
+          )}
         </div>
 
         {openId && <StoreDrawer s={byId(openId)} done={done.has(openId)} onDone={() => markDone(openId)} onClose={() => setOpenId(null)} onOpenStore={() => openStore(openId)} />}
@@ -572,6 +572,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
 function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; done: boolean; onDone: () => void; onClose: () => void; onOpenStore: () => void }) {
   const { t, min } = useFmt();
   const mobile = useMobile();
+  const mvp = useMvp();
   const a = nextAction(s);
   const vars = { donor: byId(DONOR).name, leader: LEADER, store: s.name, n: s.age, v: s.awt.toFixed(0) };
   void min;
@@ -587,7 +588,7 @@ function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; d
           <Button variant="secondary" status="inverse" onClick={onOpenStore}>
             {t('msm.openStore')}
           </Button>
-          {t(`msm.do.${a}`, vars) &&
+          {!mvp && t(`msm.do.${a}`, vars) &&
             (done ? (
               <Tag status="success">{t('msm.done')}</Tag>
             ) : (

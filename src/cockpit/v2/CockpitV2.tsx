@@ -5,7 +5,6 @@ import portalLogo from '../../assets/v2/portal.svg';
 import helpCircle from '../../assets/v2/help-circle.svg';
 import navCart from '../../assets/v2/nav-cart.svg';
 import navDashboard from '../../assets/v2/nav-dashboard.svg';
-import navStores from '../../assets/v2/nav-stores.svg';
 import navHistory from '../../assets/v2/nav-history.svg';
 import notifications from '../../assets/v2/notifications.svg';
 import { Avatar } from '../../cape/Avatar';
@@ -13,7 +12,6 @@ import { Button } from '../../cape/Button';
 import { Indicator } from '../../cape/Indicator';
 import { List, ListItem, ListItemText } from '../../cape/List';
 import { Select } from '../../cape/Select';
-import { downloadCsv } from '../exportCsv';
 import { FAIL_ALERT, duration } from '../../domain/prod';
 import type { Activity } from '../../domain/prod';
 import { warehouseName } from '../../domain/mockData';
@@ -48,7 +46,6 @@ const NAV: { section?: string; items: NavItem[] }[] = [
     items: [
       // One Overview: it starts at Multi-Store Monitoring and drills into a store's view.
       { key: 'overview', icon: navDashboard, page: 'monitoring' },
-      { key: 'stores', icon: navStores, page: 'warehouses' },
     ],
   },
   {
@@ -223,7 +220,30 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
               </div>
             </header>
 
-            <div className="msm-layout v2-store-layout">
+            <div className="msm-layout msm-layout--start v2-store-layout">
+              <AttentionPanel
+                title="Needs attention" side="start"
+                empty={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'}
+                items={
+                  o.attention.status === 'ready' && !o.closed
+                    ? [
+                        // Statuses as the Store Management Cockpit shows them: PF Pending, Late, Return and Count.
+                        { key: 'pf-1', tone: 'warning' as const, title: '#695637493', tag: 'PF Pending', meta: 'Stage: Awaiting Approval · Picker A', strong: '1 item short' },
+                        ...o.attn.map((a) => ({
+                          key: a.orderId,
+                          tone: (a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error') as 'warning' | 'info' | 'error',
+                          title: `#${a.orderId}`,
+                          tag: a.kind === 'return' ? 'Return' : 'Late',
+                          meta: attentionMeta(a),
+                          strong: attentionTime(a),
+                          onClick: () => o.setOrderOpen(a.orderId),
+                        })),
+                        { key: 'count-1', tone: 'info' as const, title: 'Fresh whole milk 1L', tag: 'Count', meta: '3 of 4 found', strong: 'Off sale 1h 15m' },
+                        { key: 'count-2', tone: 'info' as const, title: 'Free-range eggs 6pk', tag: 'Count', meta: 'Waiting for a picker', strong: 'Off sale 40m' },
+                      ]
+                    : []
+                }
+              />
               <div className="msm-main">
             <section className="v2-section">
               <div className="v2-stats v2-stats--live">
@@ -339,24 +359,6 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
               <div className="v2-shiftcard__team">
                 <SectionHeader
                   title="Picker team"
-                  action={
-                    <Button
-                      variant="secondary"
-                      status="inverse"
-                      size="small"
-                      startIcon={<CapeIcon name="download" size={18} />}
-                      disabled={o.team.status !== 'ready'}
-                      onClick={() =>
-                        o.team.status === 'ready' &&
-                        downloadCsv('picker-team', [
-                          ['Picker', 'Assignment (s)', 'Picking (s)', 'Picking / item (s)', 'Packing (s)', 'Partial fulfilment', 'Fail rate', 'Successful'],
-                          ...o.team.data.map((r) => [r.name, r.assignment, r.picking, r.pickingPerItem, r.packing, r.pfr, r.failRate, r.successful]),
-                        ])
-                      }
-                    >
-                      Export
-                    </Button>
-                  }
                 />
                 <BoxState state={refreshing ? { status: 'loading' } : o.team} lines={6}>
                   {(rows) => <div className="v2-card v2-card--table">{rows.length ? <TeamTable rows={rows} sort={s.sort} onSort={(k) => dispatch({ type: 'sort', key: k })} /> : <p className="v2-empty">No picker data available for this time range.</p>}</div>}
@@ -364,29 +366,6 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
               </div>
             </section>
               </div>
-              <AttentionPanel
-                title="Needs attention"
-                empty={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'}
-                items={
-                  o.attention.status === 'ready' && !o.closed
-                    ? [
-                        // Statuses as the Store Management Cockpit shows them: PF Pending, Late, Return and Count.
-                        { key: 'pf-1', tone: 'warning' as const, title: '#695637493', tag: 'PF Pending', meta: 'Stage: Awaiting Approval · Picker A', strong: '1 item short' },
-                        ...o.attn.map((a) => ({
-                          key: a.orderId,
-                          tone: (a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error') as 'warning' | 'info' | 'error',
-                          title: `#${a.orderId}`,
-                          tag: a.kind === 'return' ? 'Return' : 'Late',
-                          meta: attentionMeta(a),
-                          strong: attentionTime(a),
-                          onClick: () => o.setOrderOpen(a.orderId),
-                        })),
-                        { key: 'count-1', tone: 'info' as const, title: 'Fresh whole milk 1L', tag: 'Count', meta: '3 of 4 found', strong: 'Off sale 1h 15m' },
-                        { key: 'count-2', tone: 'info' as const, title: 'Free-range eggs 6pk', tag: 'Count', meta: 'Waiting for a picker', strong: 'Off sale 40m' },
-                      ]
-                    : []
-                }
-              />
             </div>
             <OverviewDrawers o={o} s={s} />
           </>

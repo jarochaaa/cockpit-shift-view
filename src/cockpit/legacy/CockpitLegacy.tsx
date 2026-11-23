@@ -152,6 +152,11 @@ function Crumbs({ dispatch, store, page, vendors }: { dispatch: Dispatch<Action>
   };
   return (
     <div className="lg-crumb-row">
+      {vendors && (
+        <button type="button" className="lg-back" aria-label="Back to Overview" title="Back to Overview" onClick={() => (dispatch({ type: 'version', version: 'cape' }), dispatch({ type: 'page', page: 'monitoring' }))}>
+          <CapeIcon name="chevronLeft" size={18} />
+        </button>
+      )}
       <nav className="lg-crumbs" aria-label="Breadcrumb">
         <a href="#" onClick={go('warehouses')}>
           Store Management Cockpit
