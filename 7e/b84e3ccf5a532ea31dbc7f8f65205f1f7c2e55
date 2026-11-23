@@ -1,0 +1,44 @@
+src/cockpit/monitoring/strings.ts
+  s_5aa85af76a47b0::t_bb5940cf04678c 215-216,389-390
+  s_5aa85af76a47b0::t_aee327a50e400b 7,30-31,192,366
+src/cockpit/v2/CockpitV2.tsx
+  s_5aa85af76a47b0::t_c67d31bd8ca768 225-226
+  s_5aa85af76a47b0::t_aee327a50e400b 223-224,227-246
+src/App.tsx
+  s_5aa85af76a47b0::t_bb5940cf04678c 2-3,38,87,91,106-107
+  s_5aa85af76a47b0::t_7357cbd17734b1 108
+src/cockpit/tier.ts
+  s_5aa85af76a47b0::t_4060a5cf76964f 1-6
+src/cockpit/monitoring/AttentionPanel.tsx
+  s_5aa85af76a47b0::t_4060a5cf76964f 50-51
+  s_5aa85af76a47b0::t_aee327a50e400b 26,37,146,149,163
+src/board/Hints.tsx
+  s_5aa85af76a47b0::t_1b9ad4b70874a9 64
+src/cockpit/monitoring/Monitoring.tsx
+  s_5aa85af76a47b0::t_ebbc7d3b873f4b 181-182
+  s_5aa85af76a47b0::t_bb5940cf04678c 18,270-271,356,369,555,563,575,591
+  s_5aa85af76a47b0::t_5291e02fc30330 444-450,456,516-538
+src/cockpit/monitoring/monitoring.css
+  s_5aa85af76a47b0::t_35a659c199bc4e 506-512
+  s_5aa85af76a47b0::t_f1c8c8bd9f7111 517-519
+  s_5aa85af76a47b0::t_aee327a50e400b 500-505
+  s_5aa85af76a47b0::t_8b69fed455323f 513-516
+src/cockpit/legacy/CockpitLegacy.tsx
+  s_5aa85af76a47b0::t_65ee0efe824724 155-159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "7eb84e3ccf5a532ea31dbc7f8f65205f1f7c2e55",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
