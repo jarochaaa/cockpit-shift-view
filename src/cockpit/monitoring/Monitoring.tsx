@@ -15,7 +15,7 @@ import type { Action } from '../../state';
 import { CapeIcon } from '../legacy/icons';
 import { Drawer } from '../prod/Drawers';
 import { EditData } from './EditData';
-import { useMvp } from '../tier';
+import { useCharts, useMvp } from '../tier';
 import { useLayoutPrefs } from './layout';
 import type { EditBlock } from './layout';
 import { useMobile } from '../v2/useMobile';
@@ -27,6 +27,8 @@ import { AttentionPanel } from './AttentionPanel';
 import { FilterChips } from './FilterChips';
 import type { FilterChip } from './FilterChips';
 import { AiIcon } from './AiIcon';
+import { Bullet, Sparkline } from './Charts';
+import type { Trend } from './Charts';
 import { NewsBanner } from './NewsBanner';
 import './monitoring.css';
 
@@ -222,6 +224,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
 
   const labelOf = (k: string) => (EXTRA_BASE.includes(k) ? t(`msm.sec.${k}`) : t(`msm.k.${k}`, { defaultValue: METRIC[k]?.label ?? k }));
   const fmtM = (x: Metric, v: number) => (x.unit === 'pct' ? `${v.toFixed(v < 3 ? 2 : 1)}%` : x.unit === 'min' ? min(v) : x.unit === 'sec' ? `${v.toFixed(1)}s` : x.unit === 'count' ? String(Math.round(v)) : v.toFixed(v < 10 ? 1 : 0));
+  let sparkNow = false;
   const tile = (k: string, v: string, b: Band | 'neutral', target?: string) => (
     <div className={`v2-stat msm-tile msm-tile--${b}`} key={k}>
       <span className="v2-stat__value">{v}</span>
@@ -232,10 +235,12 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
         {b !== 'neutral' && t(`msm.band.${b}`)}
         {target && ` · ${t('msm.target', { v: target })}`}
       </span>
+      {charts && sparkNow && <Sparkline seed={k} trend={(b === 'high' ? 'up' : b === 'mild' ? 'up' : b === 'exceeds' ? 'down' : 'flat') as Trend} tone={b === 'high' ? 'up' : b === 'mild' ? 'mild' : 'calm'} />}
     </div>
   );
 
-  const tileFor = (k: string) => {
+  const tileFor = (k: string, spark = false) => {
+    sparkNow = spark;
     switch (k) {
       case 'late':
         return tile('late', pct(C.late), band(C.late, TARGET.late), pct(TARGET.late, 0));
@@ -273,6 +278,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const sigLabel = labelOf;
   const sigHint = (k: string) => (METRIC[k] ? IA_ROWS.find((r) => r.metric === METRIC[k].ia)?.desc : Array.isArray(t(`msm.r.${k}`, { returnObjects: true })) ? (t(`msm.r.${k}`, { returnObjects: true }) as string[])[0] : undefined);
   const mvp = useMvp();
+  const charts = useCharts();
   const edit = (block: EditBlock, title: string) => mvp ? null : (
     <EditData block={block} title={title} selected={layout.get(block)} onChange={(keys) => layout.set(block, keys)} label={sigLabel} hint={sigHint} available={(k) => k !== 'forecast' || country === 'ae'} />
   );
@@ -368,7 +374,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                 <span className="v2-section-header__note">{t('msm.liveNote')}</span>
                 {edit('live', t('msm.liveNow'))}
               </div>
-              <div className="v2-stats">{layout.get('live').map(tileFor)}</div>
+              <div className="v2-stats">{layout.get('live').map((k) => tileFor(k, true))}</div>
             </section>
 
             <section className="msm-card">
@@ -379,7 +385,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                 <span className="v2-section-header__note">{t('msm.lastHour')} · {t('msm.weighted', { n: C.orders })}</span>
                 {edit('perf', t('msm.countryPerf'))}
               </div>
-              <div className="msm-grid">{layout.get('perf').filter((k) => k !== 'forecast' || country === 'ae').map(tileFor)}</div>
+              <div className="msm-grid">{layout.get('perf').filter((k) => k !== 'forecast' || country === 'ae').map((k) => tileFor(k))}</div>
             </section>
 
             <section className="msm-card">
@@ -507,6 +513,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                                 ) : (
                                   value(s, k)
                                 )}
+                                {charts && (k === 'late' || k === 'assign' || k === 'awt') && <Bullet value={k === 'late' ? s.late : k === 'assign' ? s.assign : s.awt} target={TARGET[k]} />}
                               </td>
                             );
                           })}

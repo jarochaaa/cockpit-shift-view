@@ -1,5 +1,5 @@
 import { ForceMobile } from './cockpit/v2/useMobile';
-import { DarkContext, TierContext } from './cockpit/tier';
+import { ChartsContext, DarkContext, TierContext } from './cockpit/tier';
 import type { Tier } from './cockpit/tier';
 import { IATable } from './board/IATable';
 import { ROLES } from './board/iaData';
@@ -38,6 +38,7 @@ export default function App() {
   const [tier, setTier] = useState<Tier>('vision');
   const [phone, setPhone] = useState(false);
   const [dark, setDark] = useState(false);
+  const [charts, setCharts] = useState(false);
   const [rationales, setRationales] = useState(false);
   // Expanded: only the product fills the window; a floating button brings the prototype UI back.
   const [expanded, setExpanded] = useState(false);
@@ -87,6 +88,7 @@ export default function App() {
             <div className={`product${phone ? ' product--phone iphone' : ''}`} data-dark={dark && s.version === 'cape' ? '' : undefined}>
               {(() => {
                 const content = (
+                  <ChartsContext.Provider value={charts && s.version === 'cape'}>
                   <DarkContext.Provider value={dark && s.version === 'cape'}>
                   <TierContext.Provider value={s.version === 'cape' ? tier : 'vision'}>
                     <ForceMobile.Provider value={phone && s.version === 'cape'}>
@@ -94,6 +96,7 @@ export default function App() {
                     </ForceMobile.Provider>
                   </TierContext.Provider>
                   </DarkContext.Provider>
+                  </ChartsContext.Provider>
                 );
                 return phone ? (
                   <div className="iphone__screen">
@@ -149,15 +152,28 @@ export default function App() {
                 </div>
               </div>
               {s.version === 'cape' && s.page === 'monitoring' && (
-                <div className="lang-switch" role="group" aria-label="Rationales">
-                  <span>Rationales</span>
-                  <div className="lang-switch__opts">
-                    <button type="button" aria-pressed={rationales} onClick={() => setRationales(true)}>
-                      On
-                    </button>
-                    <button type="button" aria-pressed={!rationales} onClick={() => setRationales(false)}>
-                      Off
-                    </button>
+                <div className="proto-pair">
+                  <div className="lang-switch" role="group" aria-label="Rationales">
+                    <span>Rationales</span>
+                    <div className="lang-switch__opts">
+                      <button type="button" aria-pressed={rationales} onClick={() => setRationales(true)}>
+                        On
+                      </button>
+                      <button type="button" aria-pressed={!rationales} onClick={() => setRationales(false)}>
+                        Off
+                      </button>
+                    </div>
+                  </div>
+                  <div className="lang-switch" role="group" aria-label="Charts">
+                    <span>Charts</span>
+                    <div className="lang-switch__opts">
+                      <button type="button" aria-pressed={charts} onClick={() => setCharts(true)}>
+                        On
+                      </button>
+                      <button type="button" aria-pressed={!charts} onClick={() => setCharts(false)}>
+                        Off
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

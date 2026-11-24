@@ -860,3 +860,23 @@
 /* Insights panel is narrow: compact chips so four of them with two-digit counts stay on one row; they wrap only if a count gets longer */
 .msm-legend .fc { gap: 4px; }
 .msm-legend .fc__chip { padding-inline: 6px; gap: 4px; }
+
+/* Charts: sparklines in Live now, bullet bars in the ranking */
+.msm-tile .msm-spark { position: relative; display: block; width: 100%; height: 28px; margin-top: var(--cp-spacing-small); }
+.msm-spark svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.msm-spark__line { fill: none; stroke: var(--spark); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.msm-spark__area { fill: var(--spark); opacity: 0.1; }
+.msm-spark__dot { position: absolute; inset-inline-end: 0; width: 8px; height: 8px; margin: -4px -4px 0 0; border-radius: 50%; background: var(--spark); box-shadow: 0 0 0 2px var(--cp-base-color-flat); }
+[dir='rtl'] .msm-spark__dot { margin: -4px 0 0 -4px; }
+.msm-bullet { position: relative; display: block; width: 100%; max-width: 72px; height: 14px; margin-top: 2px; outline: none; }
+.msm-bullet::before { content: ''; position: absolute; inset-inline: 0; top: 50%; height: 4px; transform: translateY(-50%); border-radius: 2px; background: var(--cp-feedback-color-neutral-low); }
+.msm-bullet i { position: absolute; inset-inline-start: 0; top: 50%; height: 4px; transform: translateY(-50%); border-radius: 2px; background: var(--cp-icon-color-tertiary); }
+.msm-bullet--high i { background: var(--cp-feedback-color-danger-high); }
+.msm-bullet--mild i { background: var(--cp-feedback-color-warning-high); }
+.msm-bullet b { position: absolute; inset-block: 2px; inset-inline-start: 50%; width: 1.5px; background: var(--cp-text-color-primary); opacity: 0.55; }
+.msm-bullet::after { content: attr(data-tip); position: absolute; inset-inline-start: 0; bottom: calc(100% + 6px); z-index: 30; width: 220px; padding: 6px 8px; border-radius: 6px; background: var(--cp-text-color-primary); color: var(--cp-base-color-flat); font-size: var(--cp-font-size-xsmall); font-weight: var(--cp-font-weight-medium); line-height: 1.4; text-align: start; white-space: normal; pointer-events: none; opacity: 0; transition: opacity 0.15s ease; }
+.msm-bullet:hover::after, .msm-bullet:focus-visible::after { opacity: 1; }
+
+/* Insights header: air under the title row, before the filters */
+.msm-attention .msm-attention__head { margin-bottom: var(--cp-spacing-large); }
+.msm-attention .msm-attention__head .msm-attention__info { margin-inline-end: 0; }
