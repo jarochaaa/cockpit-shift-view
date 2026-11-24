@@ -26,6 +26,7 @@ import { BoxState } from '../BoxState';
 import { TimingChart, TimingLegend } from '../TimingChart';
 import { Monitoring } from '../monitoring/Monitoring';
 import { AttentionPanel } from '../monitoring/AttentionPanel';
+import { useDark } from '../tier';
 import { useMobile } from './useMobile';
 import './v2.css';
 import './mobile.css';
@@ -166,6 +167,7 @@ function split(v: string) {
 
 /** DMarts Portal layout (Cape default theme): the production content in Cape components. */
 export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispatch: Dispatch<Action>; rationales?: boolean }) {
+  const dark = useDark();
   const { t } = useTranslation();
   const o = useOverview(s);
   const name = warehouseName(s.warehouseId);
@@ -181,7 +183,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
   const err = "Couldn't load this data. It shows up again as soon as the connection is back.";
 
   return (
-    <div ref={frame} className="cockpit cockpit--v2" data-theme="cape-light-b2b" dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang} data-mobile={mobile ? '' : undefined}>
+    <div ref={frame} className="cockpit cockpit--v2" data-theme={dark ? 'cape-dark-b2b' : 'cape-light-b2b'} dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang} data-mobile={mobile ? '' : undefined}>
       {!mobile && <Sidenav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />}
       <main className="v2-main">
         {s.page === 'monitoring' ? (

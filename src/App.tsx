@@ -1,5 +1,5 @@
 import { ForceMobile } from './cockpit/v2/useMobile';
-import { TierContext } from './cockpit/tier';
+import { DarkContext, TierContext } from './cockpit/tier';
 import type { Tier } from './cockpit/tier';
 import { IATable } from './board/IATable';
 import { ROLES } from './board/iaData';
@@ -37,7 +37,8 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false);
   const [tier, setTier] = useState<Tier>('vision');
   const [phone, setPhone] = useState(false);
-  const [rationales, setRationales] = useState(true);
+  const [dark, setDark] = useState(false);
+  const [rationales, setRationales] = useState(false);
   // Expanded: only the product fills the window; a floating button brings the prototype UI back.
   const [expanded, setExpanded] = useState(false);
   const [iaOpen, setIaOpen] = useState(false);
@@ -83,32 +84,60 @@ export default function App() {
             </div>
           </header>
           <div className="board__row">
-            <div className={`product${phone ? ' product--phone' : ''}`}>
-              <TierContext.Provider value={s.version === 'cape' ? tier : 'vision'}>
-              <ForceMobile.Provider value={phone && s.version === 'cape'}>
-              {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
-              </ForceMobile.Provider>
-              </TierContext.Provider>
+            <div className={`product${phone ? ' product--phone iphone' : ''}`} data-dark={dark && s.version === 'cape' ? '' : undefined}>
+              {(() => {
+                const content = (
+                  <DarkContext.Provider value={dark && s.version === 'cape'}>
+                  <TierContext.Provider value={s.version === 'cape' ? tier : 'vision'}>
+                    <ForceMobile.Provider value={phone && s.version === 'cape'}>
+                      {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
+                    </ForceMobile.Provider>
+                  </TierContext.Provider>
+                  </DarkContext.Provider>
+                );
+                return phone ? (
+                  <div className="iphone__screen">
+                    <div className="iphone__status" aria-hidden>
+                      <span className="iphone__time">9:41</span>
+                      <span className="iphone__island" />
+                      <span className="iphone__sys">
+                        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5.5" width="3" height="6.5" rx="1" /><rect x="10" y="3" width="3" height="9" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
+                        <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.3c2.3 0 4.4.9 6 2.4l1-1.1A10.2 10.2 0 0 0 8.5.8 10.2 10.2 0 0 0 1.5 3.6l1 1.1a8.7 8.7 0 0 1 6-2.4Zm0 3.4c1.4 0 2.700.5 3.700 1.400l1-1.100a7.200 7.200 0 0 0-4.700-1.800c-1.800 0-3.500.7-4.700 1.800l1 1.100c1-.9 2.300-1.400 3.700-1.400Zm0 3.300c.7 0 1.300.3 1.800.7L8.500 11.500 6.700 9.700c.5-.4 1.100-.7 1.800-.7Z" /></svg>
+                        <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3.500" stroke="currentColor" opacity="0.4" /><rect x="2" y="2" width="19" height="9" rx="2" fill="currentColor" /><path d="M24 4.500v4c.8-.3 1.500-1.100 1.500-2s-.7-1.700-1.500-2Z" fill="currentColor" opacity="0.5" /></svg>
+                      </span>
+                    </div>
+                    <div className="iphone__app">{content}</div>
+                    <span className="iphone__home" aria-hidden />
+                  </div>
+                ) : (
+                  content
+                );
+              })()}
             </div>
             <div className="side">
               <div className="view-tag">
                 View <b>{code}</b>
               </div>
-              <button type="button" className="version-switch ia-switch" onClick={() => setNavOpen(true)}>
-                Product Flows
-              </button>
-              <button type="button" className="version-switch ia-switch" onClick={() => setIaOpen(true)}>
-                Information Architecture
-              </button>
-              <button type="button" className="version-switch" onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
-                Switch to {s.version === 'cape' ? 'Legacy Version' : 'Cape Version'}
-              </button>
-              <button type="button" className="version-switch" aria-pressed={tier === 'mvp'} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setTier(tier === 'mvp' ? 'vision' : 'mvp'))}>
-                Switch to {tier === 'mvp' ? 'End Vision' : 'MVP'}
-              </button>
-              <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
-                {phone ? 'Desktop Version' : 'Mobile Version'}
-              </button>
+              <div className="proto-grid" role="group" aria-label="Prototype controls">
+                <button type="button" className="version-switch" onClick={() => setNavOpen(true)}>
+                  Product Flows
+                </button>
+                <button type="button" className="version-switch" onClick={() => setIaOpen(true)}>
+                  Information Architecture
+                </button>
+                <button type="button" className="version-switch" aria-pressed={s.version === 'legacy'} onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
+                  Legacy Version
+                </button>
+                <button type="button" className="version-switch" aria-pressed={tier === 'mvp'} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setTier(tier === 'mvp' ? 'vision' : 'mvp'))}>
+                  MVP
+                </button>
+                <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
+                  Mobile Version
+                </button>
+                <button type="button" className="version-switch" aria-pressed={dark} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setDark(!dark))}>
+                  Dark Mode
+                </button>
+              </div>
               <div className="lang-switch" role="group" aria-label="App language">
                 <span>App language</span>
                 <div className="lang-switch__opts">

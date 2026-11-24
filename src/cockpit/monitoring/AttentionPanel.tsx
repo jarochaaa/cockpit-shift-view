@@ -5,6 +5,8 @@ import { Tag } from '../../cape/Tag';
 import { Button } from '../../cape/Button';
 import { CapeIcon } from '../legacy/icons';
 import { useMobile } from '../v2/useMobile';
+import { FilterChips } from './FilterChips';
+import type { FilterChip } from './FilterChips';
 import './monitoring.css';
 
 export type AttentionTone = 'error' | 'warning' | 'info' | 'success';
@@ -77,7 +79,7 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
               </Button>
             )}
             {c.onClick && (
-              <Button size="small" variant="primary" className="msm-abtn msm-abtn--solid" onClick={() => (setSheet(false), c.onClick?.())}>
+              <Button size="small" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => (setSheet(false), c.onClick?.())}>
                 {t('msm.solve')}
               </Button>
             )}
@@ -87,23 +89,15 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
     </li>
   );
 
-  const SEV: { tone: AttentionTone; icon: 'flag' | 'trending' | 'info'; label: string }[] = [
-    { tone: 'error', icon: 'flag', label: t('msm.status.critical') },
-    { tone: 'warning', icon: 'trending', label: t('msm.status.risk') },
-    { tone: 'info', icon: 'info', label: t('msm.legend.info') },
+  const chips: FilterChip[] = [
+    { key: 'all', tone: 'all', icon: 'dashboard', label: t('msm.status.all'), count: live.length },
+    { key: 'error', tone: 'error', icon: 'flag', label: t('msm.status.critical'), count: countOf('error') },
+    { key: 'warning', tone: 'warning', icon: 'trending', label: t('msm.status.risk'), count: countOf('warning') },
+    { key: 'info', tone: 'info', icon: 'info', label: t('msm.legend.info'), count: countOf('info') },
   ];
   const legend = (
-    <div className="msm-legend" role="group" aria-label={t('msm.legend.label', { defaultValue: 'Filter by severity' })}>
-      <button type="button" className={`msm-chip msm-chip--all msm-chip--icononly${sev === null ? ' is-on' : ''}`} aria-pressed={sev === null} aria-label={t('msm.status.all')} data-tip={t('msm.status.all')} onClick={() => setSev(null)}>
-        <CapeIcon name="store" size={16} className="msm-chip__icon" />
-        <span className="msm-chip__n">{live.length}</span>
-      </button>
-      {SEV.map((x) => (
-        <button key={x.tone} type="button" className={`msm-chip msm-chip--${x.tone} msm-chip--icononly${sev === x.tone ? ' is-on' : ''}`} aria-pressed={sev === x.tone} aria-label={x.label} data-tip={x.label} onClick={() => setSev(sev === x.tone ? null : x.tone)}>
-          <CapeIcon name={x.icon} size={16} className="msm-chip__icon" />
-          <span className="msm-chip__n">{countOf(x.tone)}</span>
-        </button>
-      ))}
+    <div className="msm-legend">
+      <FilterChips chips={chips} value={sev ?? 'all'} onChange={(k) => setSev(k === 'all' ? null : (k as AttentionTone))} label={t('msm.legend.label', { defaultValue: 'Filter by severity' })} />
     </div>
   );
 
@@ -146,7 +140,7 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
     <div className={`msm-side${collapsed ? ' msm-side--collapsed' : ''}${side === 'start' ? ' msm-side--start' : ''}`} ref={ref}>
       {collapsed ? (
         <button type="button" className="msm-attention-rail" aria-label={t('msm.expand')} title={t('msm.expand')} onClick={() => set(false)}>
-          <CapeIcon name="doubleChevronLeft" size={20} className={side === 'start' ? 'v2-rot' : 'msm-flip'} />
+          <CapeIcon name="chevronLeft" size={20} className={side === 'start' ? 'v2-rot' : 'msm-flip'} />
           <span className="msm-attention-rail__n">{items.length}</span>
           <span className="msm-attention-rail__label">{title}</span>
         </button>
@@ -159,11 +153,15 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
             <Tag size="small" status="error" className="msm-attention__count">
               {t('msm.open', { n: items.length })}
             </Tag>
-            <button type="button" className="msm-attention__collapse" aria-label={t('msm.collapse')} title={t('msm.collapse')} onClick={() => set(true)}>
-              <CapeIcon name="doubleChevronLeft" size={20} className={side === 'start' ? 'msm-flip' : 'v2-rot'} />
+            {note && (
+              <button type="button" className="msm-attention__info msm-edit" aria-label={String(note)} data-tip={String(note)}>
+                <CapeIcon name="info" size={20} />
+              </button>
+            )}
+            <button type="button" className="msm-attention__collapse msm-edit" aria-label={t('msm.collapse')} data-tip={t('msm.collapse')} onClick={() => set(true)}>
+              <CapeIcon name="chevronLeft" size={20} className={side === 'start' ? 'msm-flip' : 'v2-rot'} />
             </button>
           </div>
-          {note && <p className="msm-attention__note">{note}</p>}
           {legend}
           <ul className="msm-attention__list">
             {items.map(card)}

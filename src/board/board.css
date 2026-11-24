@@ -532,3 +532,7 @@ body {
 .product--phone { flex: none !important; width: 390px !important; margin-inline: auto; transform: translateZ(0); }
 .product--phone .pd-drawer { width: 100%; max-width: 100%; }
 .version-switch[aria-pressed='true'] { background: var(--board-cyan); color: #0e0e0f; }
+
+/* Prototype controls: square boxes, three per row, on / off like toggles */
+.proto-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.proto-grid .version-switch { display: flex; align-items: center; justify-content: center; aspect-ratio: 1; padding: 6px; border-radius: 14px; font-size: 12px; line-height: 1.25; text-align: center; overflow-wrap: anywhere; }

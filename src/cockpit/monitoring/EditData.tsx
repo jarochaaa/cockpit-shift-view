@@ -17,6 +17,12 @@ export function EditData({ block, title, selected, onChange, label, hint, availa
   const needle = q.trim().toLowerCase();
   const options = cfg.options.filter((k) => (!available || available(k)) && (!needle || `${label(k)} ${CAT[k] ?? ''} ${hint?.(k) ?? ''}`.toLowerCase().includes(needle)));
   const full = selected.length >= cfg.capacity;
+  const groups = options.reduce<{ head: string; keys: string[] }[]>((acc, k) => {
+    const last = acc[acc.length - 1];
+    if (last && last.head === CAT[k]) last.keys.push(k);
+    else acc.push({ head: CAT[k], keys: [k] });
+    return acc;
+  }, []);
   const toggle = (k: string) => onChange(selected.includes(k) ? selected.filter((x) => x !== k) : full ? selected : [...selected, k]);
   return (
     <>
@@ -46,26 +52,29 @@ export function EditData({ block, title, selected, onChange, label, hint, availa
             <CapeIcon name="search" size={16} />
             <input type="search" className="msm-search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('msm.edit.search')} aria-label={t('msm.edit.search')} />
           </label>
-          <ul className="msm-edit__list">
-            {options.map((k, i) => {
-              const on = selected.includes(k);
-              const locked = full && !on;
-              const head = CAT[k] !== CAT[options[i - 1]] ? CAT[k] : null;
-              return (
-                <li key={k} className={locked ? 'is-locked' : undefined}>
-                  {head && <h3 className="msm-edit__group">{head}</h3>}
-                  <label>
-                    <span className="msm-edit__text">
-                      <b>{label(k)}</b>
-                      {hint?.(k) && <small>{hint(k)}</small>}
-                    </span>
-                    <input type="checkbox" role="switch" className="msm-switch" checked={on} disabled={locked} onChange={() => toggle(k)} />
-                  </label>
-                </li>
-              );
-            })}
-            {options.length === 0 && <li className="msm-edit__none">{t('msm.edit.none')}</li>}
-          </ul>
+          {groups.map((g) => (
+            <section key={g.head} className="msm-edit__sec">
+              <h3 className="msm-edit__group">{g.head}</h3>
+              <ul className="msm-edit__box">
+                {g.keys.map((k) => {
+                  const on = selected.includes(k);
+                  const locked = full && !on;
+                  return (
+                    <li key={k} className={locked ? 'is-locked' : undefined}>
+                      <label>
+                        <span className="msm-edit__text">
+                          <b>{label(k)}</b>
+                          {hint?.(k) && <small>{hint(k)}</small>}
+                        </span>
+                        <input type="checkbox" role="switch" className="msm-switch" checked={on} disabled={locked} onChange={() => toggle(k)} />
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
+          {options.length === 0 && <p className="msm-edit__none">{t('msm.edit.none')}</p>}
         </Drawer>
       )}
     </>

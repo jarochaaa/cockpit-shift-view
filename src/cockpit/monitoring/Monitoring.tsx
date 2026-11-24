@@ -1,4 +1,4 @@
-import { Fragment, createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, Dispatch } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +9,7 @@ import { Select } from '../../cape/Select';
 import { Tag } from '../../cape/Tag';
 import helpCircle from '../../assets/v2/help-circle.svg';
 import notifications from '../../assets/v2/notifications.svg';
-import { ALERTS, COUNTRIES, DONOR, ESCALATE_DAY, FEASIBILITY, LEADER, PROMO, SECONDARY, STORES, SYSTEM_ISSUE, TARGET, aggregate, band, cell, coverage, deviation, instore, nextAction, prep, score } from '../../domain/monitoring';
+import { ALERTS, COUNTRIES, DONOR, ESCALATE_DAY, FEASIBILITY, LEADER, SECONDARY, STORES, SYSTEM_ISSUE, TARGET, aggregate, band, cell, coverage, deviation, instore, nextAction, prep, score } from '../../domain/monitoring';
 import type { Band, CountryId, RegionId, SignalKey, StoreRow, Zone } from '../../domain/monitoring';
 import type { Action } from '../../state';
 import { CapeIcon } from '../legacy/icons';
@@ -24,6 +24,10 @@ import type { Metric } from '../../domain/metrics';
 import { IA_ROWS } from '../../board/iaData';
 import './strings';
 import { AttentionPanel } from './AttentionPanel';
+import { FilterChips } from './FilterChips';
+import type { FilterChip } from './FilterChips';
+import { AiIcon } from './AiIcon';
+import { NewsBanner } from './NewsBanner';
 import './monitoring.css';
 
 const byId = (id: string) => STORES.find((s) => s.id === id)!;
@@ -90,7 +94,7 @@ type Status = 'all' | 'critical' | 'risk' | 'ok';
 const STATUSES: Status[] = ['all', 'critical', 'risk', 'ok'];
 /** One colour language for status everywhere: chips, row bars, attention cards, tags. */
 const STATUS_TONE: Record<Exclude<Status, 'all'>, 'error' | 'warning' | 'info' | 'success'> = { critical: 'error', risk: 'warning', ok: 'success' };
-const STATUS_ICON: Record<Status, 'store' | 'flag' | 'trending' | 'checkCircle'> = { all: 'store', critical: 'flag', risk: 'trending', ok: 'checkCircle' };
+const STATUS_ICON: Record<Status, 'dashboard' | 'flag' | 'trending' | 'checkCircle'> = { all: 'dashboard', critical: 'flag', risk: 'trending', ok: 'checkCircle' };
 const EXTRA_BASE = ['nsfr', 'basket', 'refunds', 'forecast'];
 const MIN_COLS: SignalKey[] = ['assign', 'prep', 'awt', 'instore'];
 const statusOf = (s: StoreRow): Exclude<Status, 'all'> => {
@@ -182,6 +186,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const openStore = (id: string) => (dispatch({ type: 'version', version: 'legacy' }), dispatch({ type: 'page', page: 'overview', warehouseId: id }));
   const markDone = (id: string) => setDone(new Set(done).add(id));
   const count = (st: Status) => (st === 'all' ? scoped.length : scoped.filter((s) => statusOf(s) === st).length);
+  const statusChips: FilterChip[] = STATUSES.map((st) => ({ key: st, tone: st === 'all' ? 'all' : STATUS_TONE[st], icon: STATUS_ICON[st], label: t(`msm.status.${st}`), count: count(st) }));
 
   // Market-wide alerts first (scenario alerts in the UAE, a computed one elsewhere), then every store needing action.
   const marketCards: AttentionCard[] =
@@ -274,6 +279,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const mobile = useMobile();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const statusRef = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   // Filtering shortens the list; hold the table's height so the page does not shrink and throw the scroll back up.
@@ -282,7 +288,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   useEffect(() => setHoldH(0), [country, zone, region]);
   // The sticky table header sits exactly under the chips row: measure it instead of guessing its height.
   useLayoutEffect(() => {
-    const el = statusRef.current;
+    const el = mobile ? statusRef.current : headRef.current;
     const card = el?.parentElement;
     if (!el || !card) return;
     const set = () => card.style.setProperty('--msm-chips-h', `${el.getBoundingClientRect().height}px`);
@@ -307,16 +313,13 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
             <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-help" startIcon={<img src={helpCircle} alt="" />}>
               {t('v2.help')}
             </Button>
-            {mobile ? (
-              <Button variant="secondary" status="inverse" size="medium" className={`v2-pill v2-pill--icon${filtersOpen ? ' is-on' : ''}`} aria-label={t('msm.filters')} aria-pressed={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)} startIcon={<CapeIcon name="filter" size={24} />} />
-            ) : (
-              <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-pill--icon" aria-label={t('v2.notifications')} startIcon={<img src={notifications} alt="" />} />
-            )}
+            <Button variant="secondary" status="inverse" size="medium" className={`v2-pill v2-pill--icon${filtersOpen ? ' is-on' : ''}`} aria-label={t('msm.filters')} aria-pressed={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)} startIcon={<CapeIcon name="filter" size={24} />} />
+            {!mobile && <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-pill--icon" aria-label={t('v2.notifications')} startIcon={<img src={notifications} alt="" />} />}
             <Avatar size="large" initials="A" className="v2-avatar" />
           </div>
         </header>
 
-        {(!mobile || filtersOpen) && (
+        {filtersOpen && (
         <div className="msm-scope" role="group" aria-label={t('msm.scope.region')}>
           <Select
             className="msm-scope__select"
@@ -353,25 +356,14 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
         </div>
         )}
 
-        {country === 'ae' && !mvp && (
-          <div className="msm-promo">
-            <Tag size="small" status="info">
-              Promo
-            </Tag>
-            <span>{t('msm.promo', { name: PROMO.name, cashback: PROMO.cashback, window: PROMO.window, pct: SECONDARY.vsForecast })}</span>
-            <Tag size="small" status="warning">
-              {t('msm.promoSrc')}
-            </Tag>
-            <Info k="promo" />
-          </div>
-        )}
+        {!mvp && <NewsBanner />}
 
         <div className={`msm-layout${mvp ? ' msm-layout--solo' : ''}`}>
           <div className="msm-main">
             <section className="msm-card msm-strip">
               <div className="v2-section-header msm-head">
                 <h2 className="v2-section-header__title">
-                  {t('msm.liveNow')} <Info k="kpis" />
+                  {t('msm.liveNow')} <span className="msm-liveDot"><Indicator status="success" size="small" /></span> <Info k="kpis" />
                 </h2>
                 <span className="v2-section-header__note">{t('msm.liveNote')}</span>
                 {edit('live', t('msm.liveNow'))}
@@ -391,23 +383,27 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
             </section>
 
             <section className="msm-card">
-              <div className="v2-section-header msm-head">
+              <div className="v2-section-header msm-head" ref={headRef}>
                 <h2 className="v2-section-header__title">
                   {t('msm.ranking')} <Info k="ranking" />
                 </h2>
+                <span className="v2-section-header__note">{t('msm.storesN', { n: count('all') })}</span>
+                {!mobile && (
+                  <>
+                    <label className="msm-searchbox msm-head__search">
+                      <CapeIcon name="search" size={16} />
+                      <input type="search" className="msm-search" value={q} onChange={(e) => (hold(), setQ(e.target.value))} placeholder={t('msm.searchStores')} aria-label={t('msm.searchStores')} />
+                    </label>
+                    <div className="msm-head__filters">
+                      <FilterChips chips={statusChips} value={status} onChange={(k) => (hold(), setStatus(k as Status))} label={t('msm.col.action')} />
+                    </div>
+                  </>
+                )}
                 {edit('table', t('msm.ranking'))}
               </div>
-              <div className="msm-status" ref={statusRef} role="tablist" aria-label={t('msm.col.action')}>
-                {STATUSES.filter(() => !(mobile && searchOpen)).map((st) => (
-                  <Fragment key={st}>
-                  {st === 'all' && !mobile && <span className="msm-need">{t('msm.rankingNote', { n: count('critical') + count('risk') })}</span>}
-                  <button type="button" role="tab" aria-selected={status === st} aria-label={t(`msm.status.${st}`)} title={t(`msm.status.${st}`)} className={`msm-chip msm-chip--${st === 'all' ? 'all' : STATUS_TONE[st]}${status === st ? ' is-on' : ''}`} onClick={() => (hold(), setStatus(st))}>
-                    <CapeIcon name={STATUS_ICON[st]} size={16} className="msm-chip__icon" />
-                    <span className="msm-chip__label">{t(`msm.status.${st}`)}</span>
-                    <span className="msm-chip__n">{count(st)}</span>
-                  </button>
-                  </Fragment>
-                ))}
+              {mobile && (
+              <div className="msm-status" ref={statusRef}>
+                {mobile && !searchOpen && <FilterChips chips={statusChips} value={status} onChange={(k) => (hold(), setStatus(k as Status))} label={t('msm.col.action')} />}
                 {mobile && !searchOpen ? (
                   <button type="button" className="msm-search-btn" aria-label={t('msm.searchStores')} title={t('msm.searchStores')} onClick={() => setSearchOpen(true)}>
                     <CapeIcon name="search" size={20} />
@@ -424,6 +420,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                   </label>
                 )}
               </div>
+              )}
               <div className="msm-table-wrap pd-table-scroll" ref={wrapRef} style={holdH ? { minHeight: holdH } : undefined}>
                 <table className="msm-table">
                   <thead>
@@ -612,7 +609,12 @@ function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; d
       </div>
 
       <section className={`msm-suggest msm-suggest--${done ? 'success' : STATUS_TONE[statusOf(s)]}`}>
-        <h3>{t('msm.drawer.suggested')}</h3>
+        <h3>
+          {t('msm.drawer.suggested')}
+          <Tag size="small" status="neutral">
+            Our playbook
+          </Tag>
+        </h3>
         <p>{t(`msm.actLong.${a}`, vars)}</p>
         <div className="msm-suggest__contact">
           <span>
@@ -621,6 +623,24 @@ function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; d
           <Button size="small" variant="secondary" status="inverse">
             {t('msm.drawer.call')}
           </Button>
+        </div>
+      </section>
+
+      <section className="msm-suggest msm-suggest--ai">
+        <h3>
+          <AiIcon size={18} className="msm-ai-icon" />
+          AI agent analysis
+          <Tag size="small" status="branded">
+            AI
+          </Tag>
+        </h3>
+        <p>
+          {`Late orders are ${pct(s.late, 0)} against a usual ${pct(s.usualLate, 0)}, with ${s.unassigned} ${s.unassigned === 1 ? 'order' : 'orders'} still waiting for a picker. In 3 similar peaks over the last 4 weeks, assignment time came back under target within 30 minutes after the store added 2 pickers.`}
+        </p>
+        <div className="msm-suggest__contact">
+          <span>
+            Confidence: <b>Medium</b> · based on this store's last 4 weeks
+          </span>
         </div>
       </section>
 

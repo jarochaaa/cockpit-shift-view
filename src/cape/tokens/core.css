@@ -203,6 +203,7 @@
   --cp-base-border-radius-medium: 8px; /* Border radius value used in children elements */
   --cp-base-border-radius-large: 12px; /* Border radius value used in smaller containers */
   --cp-base-border-radius-xlarge: 20px; /* Border radius value used in mother containers such as cards, dialogs or overlays */
+  --cp-base-border-radius-2xlarge: 24px; /* Local extension (not in Cape yet): roomier mother containers such as dashboard cards and panels */
   --cp-base-border-width-xsmall: 0; /* Default border width for surface elements */
   --cp-base-border-width-small: 1px; /* Default border width for surface elements */
   --cp-base-border-width-medium: 2px; /* Border width for active or focused states of surface elements */

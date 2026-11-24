@@ -1,6 +1,7 @@
 @import './tokens/core.css';
 @import './tokens/talabat-light.css';
 @import './tokens/cape-light.css';
+@import './tokens/cape-dark.css';
 
 .cp-card {
   background: var(--cp-base-color-flat);
