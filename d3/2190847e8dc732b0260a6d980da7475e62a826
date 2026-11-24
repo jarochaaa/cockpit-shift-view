@@ -1,0 +1,100 @@
+src/board/board.css
+  s_5aa85af76a47b0::t_f025849047e8e7 535-538
+src/cockpit/monitoring/strings.ts
+  s_5aa85af76a47b0::t_d39a5cef7744bd 119,305,480
+  s_5aa85af76a47b0::t_8458ed3e7c890b 66,252,427
+src/cockpit/monitoring/NewsBanner.tsx
+  s_5aa85af76a47b0::t_ed4f4dae066371 1,107,109,111,113,115-116,123,127-138,140,145,147-148,151-152,175,181-188
+  s_5aa85af76a47b0::t_09c6d7e9e043a2 2-4,6-74,77,79,84-85,87-98,100-102,105,117,119,153,156-160,179-180,189,207,209-212,216,220,263-267,270-271,289,291-292
+  s_5aa85af76a47b0::t_7534fa0cdc4516 5,99,103-104,106,110,112,118,142,154-155,161-169,176-178,190-206,208,213-215,217-219,221-247,249,254,256-262,268-269,272-288,290
+  s_5aa85af76a47b0::t_33aed2d275dd0e 75-76,78,80-83,86,141,248,250-253,255
+  s_5aa85af76a47b0::t_e714b91f96e839 108,114,139,143-144,146
+  s_5aa85af76a47b0::t_9d504faa8d6721 170-171
+  s_5aa85af76a47b0::t_d419867700997d 120-122,172-174
+  s_5aa85af76a47b0::t_7e54ee22d1df1c 124-126,149-150
+src/cockpit/tier.ts
+  s_5aa85af76a47b0::t_d419867700997d 7-10
+src/cape/tokens/cape-dark.css
+  s_5aa85af76a47b0::t_f3a6110187d0f9 1-8,11-170,172-430
+  s_5aa85af76a47b0::t_d419867700997d 9-10,171
+src/cockpit/monitoring/AiIcon.tsx
+  s_5aa85af76a47b0::t_09c6d7e9e043a2 1-9
+src/cockpit/v2/CockpitV2.tsx
+  s_5aa85af76a47b0::t_d419867700997d 29,170,186
+src/App.tsx
+  s_5aa85af76a47b0::t_d419867700997d 2,40,87,90,96
+  s_5aa85af76a47b0::t_ed4f4dae066371 88-89,91-95,97-115
+  s_5aa85af76a47b0::t_d8442548f8ebb3 41
+  s_5aa85af76a47b0::t_f025849047e8e7 121-140
+src/cockpit/monitoring/monitoring.css
+  s_5aa85af76a47b0::t_e714b91f96e839 647-650
+  s_5aa85af76a47b0::t_d39a5cef7744bd 751-757,759-764,766,768-769
+  s_5aa85af76a47b0::t_e4ecc01c5aae14 854-859
+  s_5aa85af76a47b0::t_e3d4026d259bf7 849
+  s_5aa85af76a47b0::t_0e5cc0c5c82d43 533-537
+  s_5aa85af76a47b0::t_33aed2d275dd0e 680-707
+  s_5aa85af76a47b0::t_ed4f4dae066371 607-646
+  s_5aa85af76a47b0::t_967883f580462a 543-545
+  s_5aa85af76a47b0::t_b1453fe92228e4 770-815
+  s_5aa85af76a47b0::t_d972c7a402150e 841-842,844-846
+  s_5aa85af76a47b0::t_0819183763d83c 527-532
+  s_5aa85af76a47b0::t_2a3a0aeaaee8fa 843
+  s_5aa85af76a47b0::t_9a5dcbff9d3617 708-709
+  s_5aa85af76a47b0::t_bc725e99cb50b9 765,767
+  s_5aa85af76a47b0::t_8458ed3e7c890b 817-821
+  s_5aa85af76a47b0::t_a2289d1a15e7da 651-652
+  s_5aa85af76a47b0::t_aac3cc38cdd994 710-726
+  s_5aa85af76a47b0::t_6ee711676270a3 816
+  s_5aa85af76a47b0::t_82d934fe7dfcfb 549-601
+  s_5aa85af76a47b0::t_3066d6b101e145 520-526
+  s_5aa85af76a47b0::t_22425a9b074f42 546-548
+  s_5aa85af76a47b0::t_e0da879502794c 758
+  s_5aa85af76a47b0::t_7534fa0cdc4516 653-679
+  s_5aa85af76a47b0::t_d419867700997d 727-750
+  s_5aa85af76a47b0::t_c4172a4843eea7 602-606
+  s_5aa85af76a47b0::t_5c416520112663 822-825
+  s_5aa85af76a47b0::t_f9fa777fbb5745 860-862
+  s_5aa85af76a47b0::t_d493318cce0195 538-542
+  s_5aa85af76a47b0::t_322b4ce67980b0 847-848,850-853
+  s_5aa85af76a47b0::t_9d504faa8d6721 518-519,826-840
+src/cape/tokens/core.css
+  s_5aa85af76a47b0::t_d493318cce0195 206
+src/cockpit/monitoring/EditData.tsx
+  s_5aa85af76a47b0::t_aac3cc38cdd994 20-25,55-77
+src/cockpit/monitoring/AttentionPanel.tsx
+  s_5aa85af76a47b0::t_7534fa0cdc4516 143,161-162
+  s_5aa85af76a47b0::t_b1453fe92228e4 8-9,92-96,99-100
+  s_5aa85af76a47b0::t_e0c35afff4cd52 82
+  s_5aa85af76a47b0::t_d39a5cef7744bd 156-160
+src/cape/cape.css
+  s_5aa85af76a47b0::t_d419867700997d 4
+src/cockpit/monitoring/Monitoring.tsx
+  s_5aa85af76a47b0::t_b1453fe92228e4 27-28,97,189,391,401,405-406
+  s_5aa85af76a47b0::t_39d3c6c9ff8d25 638
+  s_5aa85af76a47b0::t_418b0cd47c78cc 1
+  s_5aa85af76a47b0::t_82d934fe7dfcfb 12,612-617,629-637,639-643
+  s_5aa85af76a47b0::t_33aed2d275dd0e 359
+  s_5aa85af76a47b0::t_3066d6b101e145 366
+  s_5aa85af76a47b0::t_322b4ce67980b0 282,291,316-317,322,386
+  s_5aa85af76a47b0::t_09c6d7e9e043a2 29-30
+  s_5aa85af76a47b0::t_8458ed3e7c890b 390,392-400,404,423
+  s_5aa85af76a47b0::t_d99f5fc246b299 644-646
+src/cockpit/monitoring/FilterChips.tsx
+  s_5aa85af76a47b0::t_b1453fe92228e4 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "d32190847e8dc732b0260a6d980da7475e62a826",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
