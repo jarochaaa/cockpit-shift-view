@@ -541,7 +541,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                             );
                           })}
                           {!mvp && (
-                            <td>
+                            <td className="msm-cell-action">
                               {done.has(s.id) ? (
                                 <span className="msm-act msm-act--done" title={t('msm.done')}>
                                   <CapeIcon name="checkCircle" size={18} />

@@ -43,9 +43,9 @@
 .cockpit--v2[data-mobile] .msm-row > td { display: block; min-width: 0; padding: 0; border: 0; text-align: start; }
 .cockpit--v2[data-mobile] .msm-row > td[data-label] { padding: var(--cp-spacing-small) var(--cp-spacing-medium); border-radius: var(--cp-base-border-radius-large); background: var(--cp-base-color-lowest); }
 .cockpit--v2[data-mobile] .msm-row > td:first-child,
-.cockpit--v2[data-mobile] .msm-row > td:last-child { grid-column: 1 / -1; }
+.cockpit--v2[data-mobile] .msm-row > td.msm-cell-action { grid-column: 1 / -1; }
 .cockpit--v2[data-mobile] .msm-row > td[data-label]::before { content: attr(data-label); display: block; font-size: var(--cp-font-size-xsmall); color: var(--cp-text-color-tertiary); }
-.cockpit--v2[data-mobile] .msm-row > td:last-child .msm-solve { width: 100%; }
+.cockpit--v2[data-mobile] .msm-row > td.msm-cell-action .msm-solve { width: 100%; }
 
 /* Drawers go full width */
 .cockpit--v2[data-mobile] .pd-drawer, .pd-layer .pd-drawer { max-width: 100vw; }
