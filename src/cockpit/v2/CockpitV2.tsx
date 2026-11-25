@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { IconButton } from '../../cape/IconButton';
 import type { Dispatch, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import portalLogo from '../../assets/v2/portal.svg';
@@ -12,6 +13,7 @@ import { Button } from '../../cape/Button';
 import { Indicator } from '../../cape/Indicator';
 import { List, ListItem, ListItemText } from '../../cape/List';
 import { Select } from '../../cape/Select';
+import { Tag } from '../../cape/Tag';
 import { FAIL_ALERT, duration } from '../../domain/prod';
 import type { Activity } from '../../domain/prod';
 import { warehouseName } from '../../domain/mockData';
@@ -25,9 +27,10 @@ import { TeamTable } from '../prod/TeamTable';
 import { BoxState } from '../BoxState';
 import { TimingChart, TimingLegend } from '../TimingChart';
 import { Monitoring } from '../monitoring/Monitoring';
-import { AttentionPanel } from '../monitoring/AttentionPanel';
-import { useDark } from '../tier';
+import { useBlueprint, useDark, useMvp } from '../tier';
+import { Blueprint } from '../monitoring/Blueprint';
 import { useMobile } from './useMobile';
+import './legacy-skin.css';
 import './v2.css';
 import './mobile.css';
 
@@ -96,9 +99,9 @@ function Sidenav({ page, onGo }: { page: Page; onGo: (p: Page) => void }) {
         ))}
       </div>
       <div className="v2-sidenav__footer">
-        <button type="button" className="v2-sidenav__collapse" aria-label={t('sec.nav.collapse')} aria-expanded={!collapsed} onClick={() => setCollapsed(!collapsed)}>
+        <IconButton className="v2-sidenav__collapse" aria-label={t('sec.nav.collapse')} aria-expanded={!collapsed} onClick={() => setCollapsed(!collapsed)}>
           <CapeIcon name="doubleChevronLeft" size={20} className={collapsed ? 'v2-rot' : undefined} />
-        </button>
+        </IconButton>
       </div>
     </nav>
   );
@@ -153,7 +156,10 @@ function Stat({ value, unit, label, stage, onClick }: { value: ReactNode; unit?:
         {value}
         {unit && <span className="v2-stat__unit">{unit}</span>}
       </span>
-      <span className="v2-stat__label">{label}</span>
+      <span className="v2-stat__row">
+        <span className="v2-stat__label">{label}</span>
+        {onClick && <CapeIcon name="arrowRight" size={20} className="v2-stat__go" />}
+      </span>
     </Tag>
   );
 }
@@ -168,6 +174,8 @@ function split(v: string) {
 /** DMarts Portal layout (Cape default theme): the production content in Cape components. */
 export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispatch: Dispatch<Action>; rationales?: boolean }) {
   const dark = useDark();
+  const blueprint = useBlueprint();
+  const mvp = useMvp();
   const { t } = useTranslation();
   const o = useOverview(s);
   const name = warehouseName(s.warehouseId);
@@ -182,8 +190,42 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
   const [refreshing, setRefreshing] = useState(false);
   const err = "Couldn't load this data. It shows up again as soon as the connection is back.";
 
+  if (blueprint && s.page === 'monitoring' && !mobile)
+    return (
+      <div ref={frame} className="cockpit cockpit--v2 cockpit--bp" data-theme={dark ? 'cape-dark-b2b' : 'cape-light-b2b'} dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang}>
+        <Blueprint withNav />
+      </div>
+    );
+
+  // Needs attention, as in the Legacy store view (PF Pending, Late, Return, Count) in the new card style.
+  const attnItems =
+    o.attention.status === 'ready' && !o.closed
+      ? [
+          { key: 'pf-1', tone: 'warning' as const, title: '#695637493', tag: 'PF Pending', meta: 'Stage: Awaiting Approval · Picker A', strong: '1 item short', onClick: undefined as (() => void) | undefined },
+          ...o.attn.map((a) => ({
+            key: a.orderId,
+            tone: (a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error') as 'warning' | 'info' | 'error',
+            title: `#${a.orderId}`,
+            tag: a.kind === 'return' ? 'Return' : 'Late',
+            meta: attentionMeta(a),
+            strong: attentionTime(a),
+            onClick: () => o.setOrderOpen(a.orderId) as void,
+          })),
+          { key: 'count-1', tone: 'info' as const, title: 'Fresh whole milk 1L', tag: 'Count', meta: '3 of 4 found', strong: 'Off sale 1h 15m', onClick: undefined as (() => void) | undefined },
+          { key: 'count-2', tone: 'info' as const, title: 'Free-range eggs 6pk', tag: 'Count', meta: 'Waiting for a picker', strong: 'Off sale 40m', onClick: undefined as (() => void) | undefined },
+        ]
+      : [];
+  const attnEmpty = o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.';
+
+  const liveEl = (
+    <span className={`v2-live${o.live ? ' v2-live--on' : ''}${o.failed ? ' v2-text--danger' : ''}`}>
+      <Indicator status={o.failed ? 'error' : o.live ? 'error' : 'neutral'} size="small" />
+      {mobile ? o.liveText.replace(/updated\s*/i, '') : o.liveText}
+    </span>
+  );
+
   return (
-    <div ref={frame} className="cockpit cockpit--v2" data-theme={dark ? 'cape-dark-b2b' : 'cape-light-b2b'} dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang} data-mobile={mobile ? '' : undefined}>
+    <div ref={frame} className="cockpit cockpit--v2" data-theme={dark ? 'cape-dark-b2b' : 'cape-light-b2b'} dir={RTL_LOCALES.has(s.lang) ? 'rtl' : 'ltr'} lang={s.lang} data-mobile={mobile ? '' : undefined} data-tier={mvp ? 'mvp' : undefined}>
       {!mobile && <Sidenav page={s.page} onGo={(page) => dispatch({ type: 'page', page })} />}
       <main className="v2-main">
         {s.page === 'monitoring' ? (
@@ -208,11 +250,9 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                 onClick={() => dispatch({ type: 'page', page: 'monitoring' })}
               />
               <h1 className="v2-page-header__title">{name}</h1>
+              {mobile && liveEl}
               <div className="v2-page-header__actions">
-                <span className={`v2-live${o.live ? ' v2-live--on' : ''}${o.failed ? ' v2-text--danger' : ''}`}>
-                  <Indicator status={o.failed ? 'error' : o.live ? 'error' : 'neutral'} size="small" />
-                  {o.liveText}
-                </span>
+                {!mobile && liveEl}
                 <VendorSwitcher vendors={o.vendors} />
                 <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-help" startIcon={<Icon src={helpCircle} />}>
                   {t('v2.help')}
@@ -222,32 +262,15 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
               </div>
             </header>
 
-            <div className="msm-layout msm-layout--start v2-store-layout">
-              <AttentionPanel
-                title="Needs attention" side="start"
-                empty={o.attention.status === 'error' ? err : o.attention.status === 'loading' ? 'Loading…' : o.closed ? 'The store is closed. Orders and pickers show up here when it opens.' : 'Nothing needs attention right now.'}
-                items={
-                  o.attention.status === 'ready' && !o.closed
-                    ? [
-                        // Statuses as the Store Management Cockpit shows them: PF Pending, Late, Return and Count.
-                        { key: 'pf-1', tone: 'warning' as const, title: '#695637493', tag: 'PF Pending', meta: 'Stage: Awaiting Approval · Picker A', strong: '1 item short' },
-                        ...o.attn.map((a) => ({
-                          key: a.orderId,
-                          tone: (a.kind === 'return' ? (a.minutes >= 24 * 60 ? 'warning' : 'info') : 'error') as 'warning' | 'info' | 'error',
-                          title: `#${a.orderId}`,
-                          tag: a.kind === 'return' ? 'Return' : 'Late',
-                          meta: attentionMeta(a),
-                          strong: attentionTime(a),
-                          onClick: () => o.setOrderOpen(a.orderId),
-                        })),
-                        { key: 'count-1', tone: 'info' as const, title: 'Fresh whole milk 1L', tag: 'Count', meta: '3 of 4 found', strong: 'Off sale 1h 15m' },
-                        { key: 'count-2', tone: 'info' as const, title: 'Free-range eggs 6pk', tag: 'Count', meta: 'Waiting for a picker', strong: 'Off sale 40m' },
-                      ]
-                    : []
-                }
-              />
+            <div className="msm-layout msm-layout--solo v2-store-layout">
               <div className="msm-main">
-            <section className="v2-section">
+            <section className="msm-card msm-strip v2-livecard">
+              <div className="v2-section-header msm-head">
+                <h2 className="v2-section-header__title">
+                  Live orders <span className="msm-liveDot"><Indicator status={o.failed ? 'error' : o.live ? 'success' : 'neutral'} size="small" /></span>
+                </h2>
+                <span className="v2-section-header__note">Open orders by stage, refreshed every 5 min</span>
+              </div>
               <div className="v2-stats v2-stats--live">
                 {STAGES.map((k) => {
                   const n = o.count(k);
@@ -256,12 +279,42 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                 {o.idle > 0 && (
                   <div className="v2-idle">
                     <b>{o.idle}</b>
-                    <span>idle / untracked pickers</span>
+                    <span>Idle / untracked pickers</span>
                   </div>
                 )}
               </div>
             </section>
 
+            <div className="v2-nowrow">
+              <section className="v2-section v2-card v2-attncard" aria-label="Needs attention">
+                <SectionHeader title="Needs attention" action={attnItems.length ? <Tag size="small" status="error">{attnItems.length} open</Tag> : undefined} />
+                <ul className="v2-attnlist">
+                  {attnItems.map((c) => (
+                    <li key={c.key}>
+                      <div className={`msm-acard msm-acard--${c.tone}`}>
+                        <span className="msm-acard__head">
+                          <Tag size="small" status={c.tone}>
+                            {c.tag}
+                          </Tag>
+                          <span className="msm-acard__time">{c.strong}</span>
+                        </span>
+                        <span className="msm-acard__text">
+                          <b className="msm-acard__title">{c.title}</b>
+                          <span className="msm-acard__meta">{c.meta}</span>
+                        </span>
+                        {c.onClick && (
+                          <span className="msm-acard__actions">
+                            <Button size="medium" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={c.onClick}>
+                              Review order
+                            </Button>
+                          </span>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                  {attnItems.length === 0 && <li className="v2-attnempty">{attnEmpty}</li>}
+                </ul>
+              </section>
                 <section className="v2-section v2-card v2-people-card">
                   <SectionHeader title="People right now" action={o.people.status === 'ready' ? <span className="v2-section-header__note">{o.working} of {o.ppl.length} working</span> : undefined} />
                   {o.people.status === 'ready' && o.ppl.length > 0 && (
@@ -295,6 +348,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                     )}
                   </List>
                 </section>
+            </div>
             <section className="v2-section v2-card v2-shiftcard">
               <SectionHeader
                 title="Shift performance"
@@ -302,6 +356,7 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                   <div className="v2-shift-actions">
                     <Select
                       className="v2-range"
+                      wrapperClassName="v2-range-wrap"
                       aria-label="Time window"
                       value={s.range}
                       onChange={(v) => {
@@ -311,8 +366,8 @@ export function CockpitV2({ s, dispatch, rationales = true }: { s: State; dispat
                       }}
                       options={RANGES.map((r) => ({ value: r, label: r === 'today' ? 'Today' : `Last ${r}` }))}
                     />
-                    <Button variant="secondary" status="inverse" size="small" onClick={() => dispatch({ type: 'page', page: 'orders' })}>
-                      View order history →
+                    <Button variant="secondary" status="inverse" size="small" endIcon={<CapeIcon name="arrowRight" size={20} />} onClick={() => dispatch({ type: 'page', page: 'orders' })}>
+                      View order history
                     </Button>
                   </div>
                 }

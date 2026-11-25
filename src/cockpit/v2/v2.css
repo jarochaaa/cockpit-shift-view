@@ -39,9 +39,9 @@
 }
 .v2-sidenav__dmarts {
   font-family: var(--cp-font-family-roboto-ltr);
-  font-weight: 900;
+  font-weight: var(--cp-font-weight-black);
   font-style: italic;
-  font-size: 21px;
+  font-size: var(--cp-font-size-large);
   line-height: 1.5;
   color: var(--cp-base-color-branded);
 }
@@ -92,10 +92,10 @@
   inset-block: 0;
   inset-inline-start: 0;
   width: 1.5px;
-  border-radius: 4px;
+  border-radius: var(--cp-border-radius-small);
   background: var(--cp-text-color-branded);
 }
-.v2-sidenav__item:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); outline-offset: -2px; }
+.v2-sidenav__item:focus-visible { outline: var(--cp-border-width-medium) solid var(--cp-action-color-branded-primary-enabled); outline-offset: calc(-1 * var(--cp-spacing-tiny)); }
 
 /* Main */
 .v2-main {
@@ -192,8 +192,6 @@
 }
 .v2-live--on { color: var(--cp-text-color-danger); }
 .v2-range.cp-select {
-  height: 32px;
-  min-width: 140px;
   font-family: inherit;
 }
 
@@ -307,7 +305,7 @@
 .cockpit--v2 .lg-dd__item.is-selected { box-shadow: inset 2px 0 0 var(--cp-action-color-branded-primary-enabled); }
 .cockpit--v2 .lg-seg--on,
 .cockpit--v2 .lg-toggle button.is-on,
-.cockpit--v2 .lg-btn--apply:not(:disabled) { background: var(--cp-action-color-branded-primary-enabled); border-color: var(--cp-action-color-branded-primary-enabled); color: #fff; }
+.cockpit--v2 .lg-btn--apply:not(:disabled) { background: var(--cp-action-color-branded-primary-enabled); border-color: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-onbranded); }
 .cockpit--v2 .lg-btn--outline { border-color: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-branded); }
 .cockpit--v2 .lg-wh__card p { color: var(--cp-text-color-branded); }
 .cockpit--v2 .lg-wh__card:hover { border-color: var(--cp-action-color-branded-primary-enabled); }
@@ -374,9 +372,9 @@
 .v2-sidenav { display: flex; flex-direction: column; transition: flex-basis 0.15s ease; }
 .v2-sidenav__sections { flex: 1; }
 .v2-sidenav__footer { display: flex; justify-content: flex-end; padding: var(--cp-spacing-medium) var(--cp-spacing-2xlarge); border-top: 1px solid var(--cp-border-color-normal); }
-.v2-sidenav__collapse { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: var(--cp-base-border-radius-medium, 8px); background: none; color: var(--cp-text-color-primary); cursor: pointer; }
+.v2-sidenav__collapse { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: var(--cp-base-border-radius-medium); background: none; color: var(--cp-text-color-primary); cursor: pointer; }
 .v2-sidenav__collapse:hover { background: var(--cp-feedback-color-branded-low); }
-.v2-sidenav__collapse:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.v2-sidenav__collapse:focus-visible { outline: var(--cp-border-width-medium) solid var(--cp-action-color-branded-primary-enabled); }
 .v2-rot { transform: scaleX(-1); }
 .cockpit--v2[dir='rtl'] .v2-sidenav__collapse svg:not(.v2-rot) { transform: scaleX(-1); }
 .cockpit--v2[dir='rtl'] .v2-sidenav__collapse .v2-rot { transform: none; }
@@ -400,14 +398,14 @@
 .v2-stats--live { align-items: stretch; }
 .v2-stat--button { font: inherit; text-align: start; cursor: pointer; }
 .v2-stat--button:hover { border-color: var(--cp-border-color-high); }
-.v2-stat--button:focus-visible { outline: 2px solid var(--pd-accent); outline-offset: 2px; }
+.v2-stat--button:focus-visible { outline: var(--cp-border-width-medium) solid var(--pd-accent); outline-offset: var(--cp-spacing-tiny); }
 .v2-idle { flex: 0 1 auto; display: flex; flex-direction: column; justify-content: center; padding: var(--cp-spacing-medium) var(--cp-spacing-xlarge); border: 1px solid var(--cp-text-color-danger); border-radius: var(--cp-base-border-radius-large); background: var(--cp-chart-color-danger-lowest); color: var(--cp-text-color-danger); }
 .v2-idle b { font-size: var(--cp-font-size-xlarge); font-weight: var(--cp-font-weight-bold); line-height: 1.33; }
 .v2-idle span { font-size: var(--cp-font-size-small); font-weight: var(--cp-font-weight-medium); }
 /* Needs attention rows open the order drawer */
 .v2-list__button { cursor: pointer; }
 .v2-list__button:hover { background: var(--cp-feedback-color-branded-low); }
-.v2-list__button:focus-visible { outline: 2px solid var(--pd-accent); outline-offset: -2px; }
+.v2-list__button:focus-visible { outline: var(--cp-border-width-medium) solid var(--pd-accent); outline-offset: calc(-1 * var(--cp-spacing-tiny)); }
 .v2-list__primary { display: inline-flex; align-items: center; gap: var(--cp-spacing-small); }
 .v2-chev { color: var(--cp-text-color-tertiary); }
 /* People right now */
@@ -437,8 +435,8 @@
 .cockpit--v2 .pd-badge { border-radius: var(--cp-base-border-radius-small); }
 .cockpit--v2 .pd-order-link, .cockpit--v2 .pd-link, .cockpit--v2 .pd-btn--text { color: var(--cp-text-color-branded); }
 .cockpit--v2 .pd-btn { border-color: var(--cp-border-color-normal); border-radius: var(--cp-action-border-radius-pill); font-family: inherit; }
-.cockpit--v2 .pd-btn--primary { border-color: var(--pd-accent); background: var(--pd-accent); color: #fff; }
-.cockpit--v2 .pd-btn--primary:hover { background: var(--cp-action-color-branded-primary-hover, var(--pd-accent)); }
+.cockpit--v2 .pd-btn--primary { border-color: var(--pd-accent); background: var(--pd-accent); color: var(--cp-text-color-onbranded); }
+.cockpit--v2 .pd-btn--primary:hover { background: var(--cp-action-color-branded-primary-hover); }
 .cockpit--v2 .pd-btn--text { border: 0; }
 .cockpit--v2 .pd-team { font-family: inherit; }
 .cockpit--v2 .pd-table-scroll { margin: 0; border: 0; }
@@ -458,3 +456,30 @@
 .cockpit--v2 .timing-chart__seg--assign, .cockpit--v2 .legend__swatch--assign { background: var(--cp-chart-color-branded-highest); }
 .cockpit--v2 .timing-chart__seg--pick, .cockpit--v2 .legend__swatch--pick { background: var(--cp-chart-color-branded-high); }
 .cockpit--v2 .timing-chart__seg--pack, .cockpit--v2 .legend__swatch--pack { background: var(--cp-chart-color-branded-medium); }
+
+/* Store level view: Shift performance, divider between the two columns and matching titles */
+.v2-shiftcard .v2-columns { column-gap: 0; align-items: stretch; }
+.v2-shiftcard .v2-columns > .v2-column:first-child { padding-inline-end: var(--cp-spacing-large); }
+.v2-shiftcard .v2-columns > .v2-column + .v2-column { padding-inline-start: var(--cp-spacing-large); border-inline-start: 0; }
+.v2-shiftcard .v2-column .v2-section-header__title, .v2-shiftcard .v2-chart__head .v2-card__title { font-size: var(--cp-font-size-medium); font-weight: var(--cp-font-weight-bold); line-height: 1.45; color: var(--cp-text-color-primary); }
+@container cockpit (max-width: 900px) {
+  .v2-shiftcard .v2-columns { row-gap: var(--cp-spacing-large); }
+  .v2-shiftcard .v2-columns > .v2-column:first-child { padding-inline-end: 0; }
+  .v2-shiftcard .v2-columns > .v2-column + .v2-column { padding-inline-start: 0; border-inline-start: 0; border-top: 0; padding-top: 0; }
+}
+/* Picker team table: 24px radius like every other box */
+.v2-shiftcard .v2-card--table, .v2-shiftcard .v2-card.v2-card--table { border: 1px solid var(--cp-border-color-normal); border-radius: var(--cp-base-border-radius-2xlarge); overflow: hidden; background: var(--cp-base-color-flat); }
+/* Idle / untracked pickers: label shares the KPI red */
+.v2-livecard .v2-idle span, .v2-livecard .v2-idle b { color: var(--cp-text-color-danger); }
+
+/* Needs attention + People right now: same header height and divider, aligned across both boxes */
+.v2-store-layout .v2-nowrow > .v2-card { padding: 0; overflow: hidden; gap: 0; }
+.v2-store-layout .v2-nowrow > .v2-card > .v2-section-header { box-sizing: border-box; height: 56px; min-height: 56px; margin: 0; padding: 0 var(--cp-spacing-large); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--cp-border-color-normal); }
+.v2-store-layout .v2-nowrow > .v2-attncard .v2-attnlist { margin-inline: 0; }
+.v2-store-layout .v2-nowrow > .v2-people-card .v2-people-bar { padding: var(--cp-spacing-medium) var(--cp-spacing-large) var(--cp-spacing-small); }
+
+/* Avg prep time: the total sits right next to the title */
+.v2-shiftcard .v2-column .v2-section-header { justify-content: flex-start; gap: var(--cp-spacing-medium); }
+
+/* Picker team: one border only (the table box), no divider line above it */
+.v2-store-layout .v2-shiftcard .v2-shiftcard__team { border-top: 0; padding-top: 0; }

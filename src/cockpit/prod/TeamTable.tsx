@@ -67,15 +67,15 @@ export function TeamTable({ rows, sort, onSort }: { rows: TeamRow[]; sort: State
             return (
               <tr key={r.id} className={alert ? 'pd-team__alert' : undefined}>
                 <td>{r.name}</td>
-                <td>{duration(r.assignment)}</td>
-                <td>{duration(r.picking)}</td>
-                <td>{duration(r.pickingPerItem)}</td>
-                <td>{duration(r.packing)}</td>
-                <td>{duration(r.assignment + r.picking + r.packing)}</td>
-                <td className="pd-ok">{pct(r.pfr)}</td>
-                <td className={alert ? 'pd-bad' : 'pd-ok'}>{pct(r.failRate)}</td>
-                <td>{r.successful}</td>
-                <td>
+                <td data-label="Assignment Time">{duration(r.assignment)}</td>
+                <td data-label="Picking Time">{duration(r.picking)}</td>
+                <td data-label="Picking Time / Item">{duration(r.pickingPerItem)}</td>
+                <td data-label="Packing Time">{duration(r.packing)}</td>
+                <td data-label="Prep Time">{duration(r.assignment + r.picking + r.packing)}</td>
+                <td data-label="Partial fulfillment" className="pd-ok">{pct(r.pfr)}</td>
+                <td data-label="Fail rate" className={alert ? 'pd-bad' : 'pd-ok'}>{pct(r.failRate)}</td>
+                <td data-label="Successful">{r.successful}</td>
+                <td data-label="Receiving Time / SKU">
                   {r.receivingPerSku == null ? (
                     '—'
                   ) : (
