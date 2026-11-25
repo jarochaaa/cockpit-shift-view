@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { IconButton } from '../../cape/IconButton';
 import type { CSSProperties, Dispatch } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ import type { Action } from '../../state';
 import { CapeIcon } from '../legacy/icons';
 import { Drawer } from '../prod/Drawers';
 import { EditData } from './EditData';
-import { useCharts, useMvp } from '../tier';
+import { useBlueprint, useCharts, useMvp } from '../tier';
 import { useLayoutPrefs } from './layout';
 import type { EditBlock } from './layout';
 import { useMobile } from '../v2/useMobile';
@@ -27,6 +28,7 @@ import { AttentionPanel } from './AttentionPanel';
 import { FilterChips } from './FilterChips';
 import type { FilterChip } from './FilterChips';
 import { AiIcon } from './AiIcon';
+import { Blueprint } from './Blueprint';
 import { Bullet, Sparkline } from './Charts';
 import type { Trend } from './Charts';
 import { NewsBanner } from './NewsBanner';
@@ -63,9 +65,9 @@ export function Info({ k }: { k: string }) {
   const [why, where, how] = row ? [`Critical when: ${row.critical}`, `Asked for by ${row.persona}. Evidence: ${row.evidence}.`, `Expected action: ${row.action}`] : (t(`msm.r.${k}`, { returnObjects: true }) as string[]);
   return (
     <span className="msm-info" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
-      <button ref={btn} type="button" className="msm-info__btn" aria-label={t('msm.info.label')} aria-expanded={open} onClick={() => setOpen(!open)} onBlur={() => setOpen(false)}>
+      <IconButton ref={btn} className="msm-info__btn" aria-label={t('msm.info.label')} aria-expanded={open} onClick={() => setOpen(!open)} onBlur={() => setOpen(false)}>
         <CapeIcon name="info" size={16} />
-      </button>
+      </IconButton>
       {open &&
         createPortal(
           <span className="msm-info__pop" role="tooltip" dir={i18n.dir()} style={{ ...pos, width: POP_W }}>
@@ -142,8 +144,7 @@ function StoresLive({ stores, short }: { stores: StoreRow[]; short?: boolean }) 
   return (
     <details ref={ref} className="pd-vendors msm-live-stores" onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node) && ref.current?.removeAttribute('open')}>
       <summary className="pd-vendors__btn">
-        <span className="msm-dot-status msm-dot-status--success" />
-        {short ? stores.length : t('msm.storesLive', { n: stores.length })}
+        {short ? t('msm.storesShort') : t('msm.storesLive', { n: stores.length })}
         <CapeIcon name="chevronDown" size={16} />
       </summary>
       <ul className="pd-vendors__list" aria-label={t('msm.storesLiveList')}>
@@ -184,8 +185,8 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const cols = layout.get('table') as SignalKey[];
   const name = (id: string) => byId(id).name;
   const ctx = { store: name('st-07'), donor: name(DONOR), leader: LEADER, v: C.late.toFixed(1) };
-  // For now a store opens the Legacy store view; flip back to 'cape' here when the new Store Level returns.
-  const openStore = (id: string) => (dispatch({ type: 'version', version: 'legacy' }), dispatch({ type: 'page', page: 'overview', warehouseId: id }));
+  // The store level view is the Legacy one everywhere; App decides what renders for page 'overview'.
+  const openStore = (id: string) => dispatch({ type: 'page', page: 'overview', warehouseId: id });
   const markDone = (id: string) => setDone(new Set(done).add(id));
   const count = (st: Status) => (st === 'all' ? scoped.length : scoped.filter((s) => statusOf(s) === st).length);
   const statusChips: FilterChip[] = STATUSES.map((st) => ({ key: st, tone: st === 'all' ? 'all' : STATUS_TONE[st], icon: STATUS_ICON[st], label: t(`msm.status.${st}`), count: count(st) }));
@@ -227,15 +228,21 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   let sparkNow = false;
   const tile = (k: string, v: string, b: Band | 'neutral', target?: string) => (
     <div className={`v2-stat msm-tile msm-tile--${b}`} key={k}>
-      <span className="v2-stat__value">{v}</span>
-      <span className="v2-stat__label msm-tile__label">
-        {labelOf(k)} <Info k={EXTRA_BASE.includes(k) ? 'secondary' : k} />
-      </span>
-      <span className="msm-tile__foot">
-        {b !== 'neutral' && t(`msm.band.${b}`)}
-        {target && ` · ${t('msm.target', { v: target })}`}
-      </span>
-      {charts && sparkNow && <Sparkline seed={k} trend={(b === 'high' ? 'up' : b === 'mild' ? 'up' : b === 'exceeds' ? 'down' : 'flat') as Trend} tone={b === 'high' ? 'up' : b === 'mild' ? 'mild' : 'calm'} />}
+      <div className="msm-tile__row">
+        <div className="msm-tile__text">
+          <span className="v2-stat__value">{v}</span>
+          <span className="v2-stat__label msm-tile__label">
+            {labelOf(k)} <Info k={EXTRA_BASE.includes(k) ? 'secondary' : k} />
+          </span>
+          {!mvp && (
+            <span className="msm-tile__foot">
+              {b !== 'neutral' && t(`msm.band.${b}`)}
+              {target && ` · ${t('msm.target', { v: target })}`}
+            </span>
+          )}
+        </div>
+        {charts && sparkNow && <Sparkline seed={k} trend={(b === 'high' ? 'up' : b === 'mild' ? 'up' : b === 'exceeds' ? 'down' : 'flat') as Trend} tone={b === 'high' ? 'up' : b === 'mild' ? 'mild' : 'calm'} />}
+      </div>
     </div>
   );
 
@@ -279,6 +286,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const sigHint = (k: string) => (METRIC[k] ? IA_ROWS.find((r) => r.metric === METRIC[k].ia)?.desc : Array.isArray(t(`msm.r.${k}`, { returnObjects: true })) ? (t(`msm.r.${k}`, { returnObjects: true }) as string[])[0] : undefined);
   const mvp = useMvp();
   const charts = useCharts();
+  const blueprint = useBlueprint();
   const edit = (block: EditBlock, title: string) => mvp ? null : (
     <EditData block={block} title={title} selected={layout.get(block)} onChange={(keys) => layout.set(block, keys)} label={sigLabel} hint={sigHint} available={(k) => k !== 'forecast' || country === 'ae'} />
   );
@@ -287,6 +295,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
   const statusRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [view, setView] = useState<'list' | 'cards'>('list');
   const wrapRef = useRef<HTMLDivElement>(null);
   // Filtering shortens the list; hold the table's height so the page does not shrink and throw the scroll back up.
   const [holdH, setHoldH] = useState(0);
@@ -304,31 +313,29 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
     return () => ro.disconnect();
   }, [mobile]);
 
+  if (blueprint) return <Blueprint />;
+
   return (
     <RationalesOn.Provider value={rationales}>
       <div className="msm">
         <header className="v2-page-header">
           <h1 className="v2-page-header__title">{t('msm.title')}</h1>
           <div className="v2-page-header__actions">
-            <span className="v2-live v2-live--on msm-live">
-              <Indicator status="error" size="small" />
-              {mobile ? t('msm.liveShort') : t('msm.live', { n: 2 })}
-              {!mobile && <Info k="live" />}
-            </span>
             <StoresLive stores={scoped} short={mobile} />
             <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-help" startIcon={<img src={helpCircle} alt="" />}>
               {t('v2.help')}
             </Button>
-            <Button variant="secondary" status="inverse" size="medium" className={`v2-pill v2-pill--icon${filtersOpen ? ' is-on' : ''}`} aria-label={t('msm.filters')} aria-pressed={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)} startIcon={<CapeIcon name="filter" size={24} />} />
+            {!mvp && <Button variant="secondary" status="inverse" size="medium" className={`v2-pill v2-pill--icon${filtersOpen ? ' is-on' : ''}`} aria-label={t('msm.filters')} aria-pressed={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)} startIcon={<CapeIcon name="filter" size={24} />} />}
             {!mobile && <Button variant="secondary" status="inverse" size="medium" className="v2-pill v2-pill--icon" aria-label={t('v2.notifications')} startIcon={<img src={notifications} alt="" />} />}
             <Avatar size="large" initials="A" className="v2-avatar" />
           </div>
         </header>
 
-        {filtersOpen && (
+        {filtersOpen && !mvp && (
         <div className="msm-scope" role="group" aria-label={t('msm.scope.region')}>
           <Select
             className="msm-scope__select"
+            wrapperClassName="msm-scope__sel"
             aria-label={t('msm.scope.region')}
             value={region}
             onChange={(v) => {
@@ -341,6 +348,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
           />
           <Select
             className="msm-scope__select"
+            wrapperClassName="msm-scope__sel"
             aria-label={t('msm.scope.country')}
             value={country}
             onChange={(v) => {
@@ -351,6 +359,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
           />
           <Select
             className="msm-scope__select"
+            wrapperClassName="msm-scope__sel"
             aria-label={t('msm.scope.zone')}
             value={zone}
             onChange={(v) => {
@@ -371,7 +380,7 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                 <h2 className="v2-section-header__title">
                   {t('msm.liveNow')} <span className="msm-liveDot"><Indicator status="success" size="small" /></span> <Info k="kpis" />
                 </h2>
-                <span className="v2-section-header__note">{t('msm.liveNote')}</span>
+                <span className="v2-section-header__note">{t('msm.liveNote', { every: '\u0000' }).split('\u0000').flatMap((x, i, arr) => (i < arr.length - 1 ? [x, <b key={i} className="msm-every">{t('msm.liveEvery')}</b>] : [x]))}</span>
                 {edit('live', t('msm.liveNow'))}
               </div>
               <div className="v2-stats">{layout.get('live').map((k) => tileFor(k, true))}</div>
@@ -400,34 +409,46 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                       <CapeIcon name="search" size={16} />
                       <input type="search" className="msm-search" value={q} onChange={(e) => (hold(), setQ(e.target.value))} placeholder={t('msm.searchStores')} aria-label={t('msm.searchStores')} />
                     </label>
+                    {!mvp && (
                     <div className="msm-head__filters">
                       <FilterChips chips={statusChips} value={status} onChange={(k) => (hold(), setStatus(k as Status))} label={t('msm.col.action')} />
                     </div>
+                    )}
                   </>
                 )}
                 {edit('table', t('msm.ranking'))}
+                {!mobile && (
+                  <span className="msm-viewtoggle" role="group" aria-label={t('msm.ranking')}>
+                    <IconButton className="msm-edit" data-tip={t('msm.viewList')} aria-label={t('msm.viewList')} aria-pressed={view === 'list'} onClick={() => (hold(), setView('list'))}>
+                      <CapeIcon name="list" size={20} />
+                    </IconButton>
+                    <IconButton className="msm-edit" data-tip={t('msm.viewCards')} aria-label={t('msm.viewCards')} aria-pressed={view === 'cards'} onClick={() => (hold(), setView('cards'))}>
+                      <CapeIcon name="layoutBlock" size={20} />
+                    </IconButton>
+                  </span>
+                )}
               </div>
               {mobile && (
               <div className="msm-status" ref={statusRef}>
-                {mobile && !searchOpen && <FilterChips chips={statusChips} value={status} onChange={(k) => (hold(), setStatus(k as Status))} label={t('msm.col.action')} />}
+                {mobile && !searchOpen && !mvp && <FilterChips chips={statusChips} value={status} onChange={(k) => (hold(), setStatus(k as Status))} label={t('msm.col.action')} />}
                 {mobile && !searchOpen ? (
-                  <button type="button" className="msm-search-btn" aria-label={t('msm.searchStores')} title={t('msm.searchStores')} onClick={() => setSearchOpen(true)}>
+                  <IconButton className="msm-search-btn" aria-label={t('msm.searchStores')} title={t('msm.searchStores')} onClick={() => setSearchOpen(true)}>
                     <CapeIcon name="search" size={20} />
-                  </button>
+                  </IconButton>
                 ) : (
                   <label className="msm-searchbox">
                     <CapeIcon name="search" size={16} />
                     <input type="search" className="msm-search" autoFocus={mobile} value={q} onChange={(e) => (hold(), setQ(e.target.value))} placeholder={t('msm.searchStores')} aria-label={t('msm.searchStores')} />
                     {mobile && (
-                      <button type="button" className="msm-search-close" aria-label={t('msm.drawer.close')} onClick={() => (setQ(''), setSearchOpen(false))}>
+                      <IconButton className="msm-search-close" aria-label={t('msm.drawer.close')} onClick={() => (setQ(''), setSearchOpen(false))}>
                         <CapeIcon name="close" size={16} />
-                      </button>
+                      </IconButton>
                     )}
                   </label>
                 )}
               </div>
               )}
-              <div className="msm-table-wrap pd-table-scroll" ref={wrapRef} style={holdH ? { minHeight: holdH } : undefined}>
+              <div className="msm-table-wrap pd-table-scroll" data-view={view} ref={wrapRef} style={holdH ? { minHeight: holdH } : undefined}>
                 <table className="msm-table">
                   <thead>
                     <tr>
@@ -479,9 +500,11 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                               <span>
                                 {t(`msm.zone.${s.zone}`)}
                               </span>
+                              {!mvp && (
                               <span className={`msm-dev msm-dev--${d.tone}`} title={t('msm.vsCountry', { v: signed(d.country) })}>
                                 {t('msm.vsUsualSig', { v: signed(d.usual), signal: t(`msm.sig.${d.signal}`) })}
                               </span>
+                              )}
                             </span>
                           </td>
                           {cols.map((k) => {

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { IconButton } from '../../cape/IconButton';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tag } from '../../cape/Tag';
@@ -69,17 +70,19 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
           </Tag>
           <span className="msm-acard__time">{c.strong}</span>
         </span>
-        <b className="msm-acard__title">{c.title}</b>
-        <span className="msm-acard__meta">{c.meta}</span>
+        <span className="msm-acard__text">
+          <b className="msm-acard__title">{c.title}</b>
+          <span className="msm-acard__meta">{c.meta}</span>
+        </span>
         {(c.tone === 'info' || c.onClick) && (
           <span className="msm-acard__actions">
             {c.tone === 'info' && (
-              <Button size="small" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => setDismissed(new Set(dismissed).add(c.key))}>
-                {t('msm.dismiss')}
+              <Button size="medium" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => setDismissed(new Set(dismissed).add(c.key))}>
+                {t('msm.review')}
               </Button>
             )}
             {c.onClick && (
-              <Button size="small" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => (setSheet(false), c.onClick?.())}>
+              <Button size="medium" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => (setSheet(false), c.onClick?.())}>
                 {t('msm.solve')}
               </Button>
             )}
@@ -120,9 +123,9 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
                 <Tag size="small" status="error" className="msm-attention__count">
                   {t('msm.open', { n: items.length })}
                 </Tag>
-                <button type="button" className="msm-attention__collapse" aria-label={t('msm.collapse')} onClick={() => setSheet(false)}>
+                <IconButton className="msm-attention__collapse" aria-label={t('msm.collapse')} onClick={() => setSheet(false)}>
                   <CapeIcon name="close" size={20} />
-                </button>
+                </IconButton>
               </div>
               {note && <p className="msm-attention__note">{note}</p>}
               {legend}
@@ -154,13 +157,13 @@ export function AttentionPanel({ title, titleAddon, note, items, empty, side = '
               {t('msm.open', { n: items.length })}
             </Tag>
             {note && (
-              <button type="button" className="msm-attention__info msm-edit" aria-label={String(note)} data-tip={String(note)}>
+              <IconButton className="msm-attention__info msm-edit" aria-label={String(note)} data-tip={String(note)}>
                 <CapeIcon name="info" size={20} />
-              </button>
+              </IconButton>
             )}
-            <button type="button" className="msm-attention__collapse msm-edit" aria-label={t('msm.collapse')} data-tip={t('msm.collapse')} onClick={() => set(true)}>
+            <IconButton className="msm-attention__collapse msm-edit" aria-label={t('msm.collapse')} data-tip={t('msm.collapse')} onClick={() => set(true)}>
               <CapeIcon name="chevronLeft" size={20} className={side === 'start' ? 'msm-flip' : 'v2-rot'} />
-            </button>
+            </IconButton>
           </div>
           {legend}
           <ul className="msm-attention__list">

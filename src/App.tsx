@@ -1,5 +1,6 @@
+import { CapeIcon } from './cockpit/legacy/icons';
 import { ForceMobile } from './cockpit/v2/useMobile';
-import { ChartsContext, DarkContext, TierContext } from './cockpit/tier';
+import { BlueprintContext, ChartsContext, DarkContext, TierContext } from './cockpit/tier';
 import type { Tier } from './cockpit/tier';
 import { IATable } from './board/IATable';
 import { ROLES } from './board/iaData';
@@ -38,7 +39,8 @@ export default function App() {
   const [tier, setTier] = useState<Tier>('vision');
   const [phone, setPhone] = useState(false);
   const [dark, setDark] = useState(false);
-  const [charts, setCharts] = useState(false);
+  const [charts, setCharts] = useState(true);
+  const [blueprint, setBlueprint] = useState(false);
   const [rationales, setRationales] = useState(false);
   // Expanded: only the product fills the window; a floating button brings the prototype UI back.
   const [expanded, setExpanded] = useState(false);
@@ -66,7 +68,7 @@ export default function App() {
     <div className={`stage${expanded ? ' stage--expanded' : ''}`}>
       <Navigator code={code} version={s.version} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })}
         action={
-          <button type="button" className="expand-fab" aria-label={expanded ? 'Show prototype UI' : 'Expand prototype'} title={expanded ? 'Show prototype UI' : 'Expand prototype'} aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>
+          <button type="button" className="expand-fab" aria-label={expanded ? 'Show prototype UI' : 'Expand prototype'} data-tip={expanded ? 'Show prototype UI' : 'Expand prototype'} aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{expanded ? <path d="M10 14l-7 7M3 15v6h6M14 10l7-7M21 9V3h-6" /> : <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />}</svg>
           </button>
         }
@@ -88,6 +90,7 @@ export default function App() {
             <div className={`product${phone ? ' product--phone iphone' : ''}`} data-dark={dark && s.version === 'cape' ? '' : undefined}>
               {(() => {
                 const content = (
+                  <BlueprintContext.Provider value={blueprint && s.version === 'cape'}>
                   <ChartsContext.Provider value={charts && s.version === 'cape'}>
                   <DarkContext.Provider value={dark && s.version === 'cape'}>
                   <TierContext.Provider value={s.version === 'cape' ? tier : 'vision'}>
@@ -97,6 +100,7 @@ export default function App() {
                   </TierContext.Provider>
                   </DarkContext.Provider>
                   </ChartsContext.Provider>
+                  </BlueprintContext.Provider>
                 );
                 return phone ? (
                   <div className="iphone__screen">
@@ -122,23 +126,46 @@ export default function App() {
                 View <b>{code}</b>
               </div>
               <div className="proto-grid" role="group" aria-label="Prototype controls">
-                <button type="button" className="version-switch" onClick={() => setNavOpen(true)}>
-                  Product Flows
-                </button>
                 <button type="button" className="version-switch" onClick={() => setIaOpen(true)}>
+                  <CapeIcon name="group" size={20} />
                   Information Architecture
                 </button>
-                <button type="button" className="version-switch" aria-pressed={s.version === 'legacy'} onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
-                  Legacy Version
-                </button>
                 <button type="button" className="version-switch" aria-pressed={tier === 'mvp'} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setTier(tier === 'mvp' ? 'vision' : 'mvp'))}>
+                  <CapeIcon name="flag" size={20} />
                   MVP
                 </button>
+                <button type="button" className="version-switch" aria-pressed={blueprint} onClick={() => (blueprint ? setBlueprint(false) : (setBlueprint(true), s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), dispatch({ type: 'page', page: 'monitoring' })))}>
+                  <CapeIcon name="dashboard" size={20} />
+                  Blueprint
+                </button>
                 <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
+                    <rect x="7" y="2.5" width="10" height="19" rx="2.5" />
+                    <path d="M10.5 18.5h3" />
+                  </svg>
                   Mobile Version
                 </button>
+                <button type="button" className="version-switch" onClick={() => setNavOpen(true)}>
+                  <CapeIcon name="arrowRight" size={20} />
+                  Product Flows
+                </button>
+                <button type="button" className="version-switch" aria-pressed={s.version === 'legacy'} onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
+                  <CapeIcon name="history" size={20} />
+                  Legacy Version
+                </button>
                 <button type="button" className="version-switch" aria-pressed={dark} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setDark(!dark))}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden>
+                    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />
+                  </svg>
                   Dark Mode
+                </button>
+                <button type="button" className="version-switch" aria-pressed={rationales} onClick={() => setRationales(!rationales)}>
+                  <CapeIcon name="rateReview" size={20} />
+                  Rationales
+                </button>
+                <button type="button" className="version-switch" aria-pressed={charts} onClick={() => setCharts(!charts)}>
+                  <CapeIcon name="lineChart" size={20} />
+                  Charts
                 </button>
               </div>
               <div className="lang-switch" role="group" aria-label="App language">
@@ -151,32 +178,6 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              {s.version === 'cape' && s.page === 'monitoring' && (
-                <div className="proto-pair">
-                  <div className="lang-switch" role="group" aria-label="Rationales">
-                    <span>Rationales</span>
-                    <div className="lang-switch__opts">
-                      <button type="button" aria-pressed={rationales} onClick={() => setRationales(true)}>
-                        On
-                      </button>
-                      <button type="button" aria-pressed={!rationales} onClick={() => setRationales(false)}>
-                        Off
-                      </button>
-                    </div>
-                  </div>
-                  <div className="lang-switch" role="group" aria-label="Charts">
-                    <span>Charts</span>
-                    <div className="lang-switch__opts">
-                      <button type="button" aria-pressed={charts} onClick={() => setCharts(true)}>
-                        On
-                      </button>
-                      <button type="button" aria-pressed={!charts} onClick={() => setCharts(false)}>
-                        Off
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
               <Hints s={s} code={code} />
             </div>
           </div>

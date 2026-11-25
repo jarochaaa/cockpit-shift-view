@@ -12,7 +12,9 @@ function rng(seed: string) {
 }
 
 export type Trend = 'up' | 'down' | 'flat';
-const TONE = { up: 'var(--cp-feedback-color-danger-high)', mild: 'var(--cp-feedback-color-warning-high)', calm: 'var(--cp-icon-color-tertiary)' };
+const TONE = { up: 'var(--cp-chart-color-danger-high)', mild: 'var(--cp-chart-color-warning-highest)', calm: 'var(--cp-chart-color-neutral-high)' };
+
+const SPARK_TIP = 'Last 12 hours, one point per hour; the dot is now. A line climbing means the KPI is drifting away from target (red or amber when it matters); flat means stable.';
 
 /** Last 12 hours of one KPI: a thin line with a round dot on "now". Colour only when the trend is a problem. */
 export function Sparkline({ seed, trend, tone = 'calm' }: { seed: string; trend: Trend; tone?: keyof typeof TONE }) {
@@ -26,12 +28,14 @@ export function Sparkline({ seed, trend, tone = 'calm' }: { seed: string; trend:
   const y = (v: number) => 100 - v * 100;
   const line = pts.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
   return (
-    <span className="msm-spark" role="img" aria-label="Last 12 hours" style={{ '--spark': TONE[tone] } as CSSProperties}>
-      <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-        <polygon points={`0,100 ${line} 100,100`} className="msm-spark__area" />
-        <polyline points={line} className="msm-spark__line" vectorEffect="non-scaling-stroke" />
-      </svg>
-      <i className="msm-spark__dot" style={{ top: `${y(pts[n - 1])}%` }} />
+    <span className="msm-spark" data-tip={SPARK_TIP} tabIndex={0} role="img" aria-label={SPARK_TIP} style={{ '--spark': TONE[tone] } as CSSProperties}>
+      <span className="msm-spark__plot">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+          <polygon points={`0,100 ${line} 100,100`} className="msm-spark__area" />
+          <polyline points={line} className="msm-spark__line" vectorEffect="non-scaling-stroke" />
+        </svg>
+        <i className="msm-spark__dot" style={{ top: `${y(pts[n - 1])}%` }} />
+      </span>
     </span>
   );
 }

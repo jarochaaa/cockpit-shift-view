@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { State } from '../state';
 
 type Hint = { title: string; look: string[]; tryThis: string[]; data?: string[] };
@@ -84,9 +85,15 @@ const EDGE_RECIPES: { title: string; steps: string[] }[] = [
 /** Desktop-only side box: what to look at, what to try and what the data means in the current view. */
 export function Hints({ s, code }: { s: State; code: string }) {
   const h = HINTS[s.version === 'legacy' && code === 'SM10' ? 'SM13' : code] ?? HINTS.SM1;
+  const [open, setOpen] = useState(false);
   return (
-    <aside className="tester-notes" aria-label="Facilitator hints">
-      <div className="tester-notes__tag">Facilitator hints · view {code}</div>
+    <aside className={`tester-notes${open ? '' : ' tester-notes--closed'}`} aria-label="Facilitator hints">
+      <button type="button" className="tester-notes__tag tester-notes__toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <span>Facilitator hints · view {code}</span>
+        <span aria-hidden>{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <>
       <h2>{h.title}</h2>
       <p className="tester-notes__label">Look at</p>
       <ul>
@@ -125,6 +132,8 @@ export function Hints({ s, code }: { s: State; code: string }) {
           </div>
         ))}
       </details>
+        </>
+      )}
     </aside>
   );
 }

@@ -1,9 +1,14 @@
+import { useMobile } from '../v2/useMobile';
+import { IconButton } from '../../cape/IconButton';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../../cape/Button';
 import { Tag } from '../../cape/Tag';
 import { CapeIcon } from '../legacy/icons';
 import { Drawer } from '../prod/Drawers';
 import { AiIcon } from './AiIcon';
+
+/** For now every message uses the branded (purple) tone. */
+const BANNER_TONE = 'branded' as const;
 
 type Tone = 'branded' | 'warning' | 'success';
 
@@ -99,6 +104,7 @@ const clip = (s: string) => (s.length > MAX ? `${s.slice(0, MAX - 1).trimEnd()}â
 /** News banner: the text drifts slowly; the pointer pauses it, eases it to the middle and reveals the actions. */
 export function NewsBanner() {
   const [i, setI] = useState(0);
+  const mobile = useMobile();
   const [hover, setHover] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [open, setOpen] = useState<{ id: string; focus?: 'actions' } | null>(null);
@@ -156,13 +162,13 @@ export function NewsBanner() {
 
   return (
     <>
-      <div className={`msm-news${paused ? ' is-paused' : ''}`} role="region" aria-roledescription="carousel" aria-label="This week" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} onFocus={() => setHover(true)} onBlur={() => setHover(false)}>
+      <div className={`msm-news${paused ? ' is-paused' : ''}`} role="region" aria-roledescription="carousel" aria-label="This week" onMouseEnter={() => !mobile && setHover(true)} onMouseLeave={() => setHover(false)} onFocus={() => !mobile && setHover(true)} onBlur={() => setHover(false)}>
         <div className="msm-news__track" style={{ marginInlineStart: `${-i * 100}%` }}>
           {NEWS.map((n, k) => {
             return (
-              <div key={n.id} ref={(el) => void (slides.current[k] = el)} className={`msm-news__slide msm-news__slide--${n.tone}`} aria-hidden={k !== i}>
+              <div key={n.id} ref={(el) => void (slides.current[k] = el)} className={`msm-news__slide msm-news__slide--${BANNER_TONE}`} aria-hidden={k !== i}>
                 <div className="msm-news__main">
-                  <Tag size="small" status={n.tone}>
+                  <Tag size="small" status={BANNER_TONE}>
                     {n.kind}
                   </Tag>
                   <span className="msm-news__range">{n.range}</span>
@@ -179,29 +185,25 @@ export function NewsBanner() {
         </div>
         {NEWS.length > 1 && (
           <>
-            <button type="button" className="msm-news__arrow msm-news__arrow--prev" aria-label="Previous" onClick={() => go(i - 1)}>
+            <IconButton className="msm-news__arrow msm-news__arrow--prev" aria-label="Previous" onClick={() => go(i - 1)}>
               <CapeIcon name="chevronLeft" size={18} />
-            </button>
-            <button type="button" className="msm-news__arrow msm-news__arrow--next" aria-label="Next" onClick={() => go(i + 1)}>
+            </IconButton>
+            <IconButton className="msm-news__arrow msm-news__arrow--next" aria-label="Next" onClick={() => go(i + 1)}>
               <CapeIcon name="chevronLeft" size={18} />
-            </button>
+            </IconButton>
           </>
         )}
         <div className="msm-news__dots">
-          <button type="button" className="msm-news__play" aria-label={playing ? 'Stop animation' : 'Play animation'} title={playing ? 'Stop animation' : 'Play animation'} onClick={() => setPlaying(!playing)}>
+          <IconButton className="msm-news__play" aria-label={playing ? 'Stop animation' : 'Play animation'} title={playing ? 'Stop animation' : 'Play animation'} onClick={() => setPlaying(!playing)}>
             {playing ? (
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden>
-                <rect x="1" y="1" width="8" height="8" rx="1.500" />
-              </svg>
+              <CapeIcon name="stop" size={12} />
             ) : (
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden>
-                <path d="M2 1.200v7.600a.5.5 0 0 0 .75.430l6.300-3.800a.5.5 0 0 0 0-.860L2.750.770A.5.5 0 0 0 2 1.200Z" />
-              </svg>
+              <CapeIcon name="play" size={12} />
             )}
-          </button>
+          </IconButton>
           {NEWS.length > 1 &&
             NEWS.map((n, k) => (
-              <button key={n.id} type="button" aria-label={`${n.kind}, ${k + 1} of ${NEWS.length}`} aria-current={k === i} className={`msm-news__dot msm-news__dot--${n.tone}${k === i ? ' is-on' : ''}`} onClick={() => go(k)} />
+              <button key={n.id} type="button" aria-label={`${n.kind}, ${k + 1} of ${NEWS.length}`} aria-current={k === i} className={`msm-news__dot msm-news__dot--${BANNER_TONE}${k === i ? ' is-on' : ''}`} onClick={() => go(k)} />
             ))}
         </div>
       </div>
@@ -234,7 +236,7 @@ function NewsDrawer({ n, focus, done, onMark, onClose }: { n: News; focus?: 'act
     >
       <div className="msm-modal__body msm-dr">
         <div className="msm-modal__meta">
-          <Tag size="small" status={n.tone}>
+          <Tag size="small" status={BANNER_TONE}>
             {n.kind}
           </Tag>
           <span className="msm-news__range">{n.range}</span>
@@ -257,20 +259,14 @@ function NewsDrawer({ n, focus, done, onMark, onClose }: { n: News; focus?: 'act
         <section ref={actionsRef} className={focus === 'actions' ? 'msm-dr__focus' : undefined}>
           <h3>What you can do</h3>
           <ul className="msm-modal__acts">
-            {n.doNow.map((a) => {
-              const k = `${n.id}:${a.label}`;
-              return (
-                <li key={a.label}>
-                  <span>
-                    <b>{a.label}</b>
-                    <small>{a.why}</small>
-                  </span>
-                  <Button size="small" variant="secondary" status="inverse" disabled={done.has(k)} onClick={() => onMark(k)}>
-                    {done.has(k) ? 'Done âœ“' : 'Do it'}
-                  </Button>
-                </li>
-              );
-            })}
+            {n.doNow.map((a) => (
+              <li key={a.label}>
+                <span>
+                  <b>{a.label}</b>
+                  <small>{a.why}</small>
+                </span>
+              </li>
+            ))}
           </ul>
         </section>
         <section className="msm-modal__ai">
