@@ -1,0 +1,43 @@
+src/cape/tokens/cape-light.css
+  s_5aa85af76a47b0::t_d5a25f6d5fed86 5-6
+src/cockpit/monitoring/EditData.tsx
+  s_5aa85af76a47b0::t_fee46883df44f8 3,31,33
+  s_5aa85af76a47b0::t_68cbbc3d88c0a8 2,42-43,45
+  s_5aa85af76a47b0::t_99d5fab3bac2b3 40
+src/cape/cape.css
+  s_5aa85af76a47b0::t_18ac40e907115e 127-130
+  s_5aa85af76a47b0::t_7b386e9920fb87 168
+  s_5aa85af76a47b0::t_56f8821225b9dd 206-207,209,218,221
+src/cape/tokens/cape-dark.css
+  s_5aa85af76a47b0::t_d5a25f6d5fed86 8-9
+src/cockpit/monitoring/AiIcon.tsx
+  s_5aa85af76a47b0::t_bd9d4d38a0decc 1-3,5
+src/cockpit/v2/legacy-skin.css
+  s_5aa85af76a47b0::t_5a95945df57f21 1-67,69-151,153-193
+  s_5aa85af76a47b0::t_d15a2aec5658ff 68,152
+src/cockpit/legacy/icons.tsx
+  s_5aa85af76a47b0::t_bd9d4d38a0decc 42-44
+  s_5aa85af76a47b0::t_e6bb12866009c1 39-40
+  s_5aa85af76a47b0::t_481b2cc24c23de 35-36
+  s_5aa85af76a47b0::t_cbbed883370b38 37-38
+src/cape/Select.tsx
+  s_5aa85af76a47b0::t_18ac40e907115e 3,14,17,19,32-33
+src/cape/IconButton.tsx
+  s_5aa85af76a47b0::t_14e1ed107fe5ea 6,14,18,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "64799cd11977d33eb5e1f016d70a04a0cebc9400",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
