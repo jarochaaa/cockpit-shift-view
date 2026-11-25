@@ -5,7 +5,8 @@
  * Do not edit directly
  */
 
-[data-theme="cape-dark-b2b"] {
+[data-theme="cape-dark-b2b"],
+.iphone[data-dark] {
   --cp-text-color-primary: #F4F4F5; /* Used for the primary headers and long text */
   --cp-text-color-secondary: #CDCDD1; /* Used for displaying less prominant copy */
   --cp-text-color-tertiary: #898A91; /* Used for displaying short text on disabled elements */

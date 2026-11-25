@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Button } from '../../cape/Button';
+import { IconButton } from '../../cape/IconButton';
 import { useTranslation } from 'react-i18next';
 import { Drawer } from '../prod/Drawers';
 import { CapeIcon } from '../legacy/icons';
@@ -26,21 +28,21 @@ export function EditData({ block, title, selected, onChange, label, hint, availa
   const toggle = (k: string) => onChange(selected.includes(k) ? selected.filter((x) => x !== k) : full ? selected : [...selected, k]);
   return (
     <>
-      <button type="button" className="msm-edit" data-tip={t('msm.edit.tip')} aria-label={`${t('msm.edit.tip')}: ${title}`} onClick={() => (setQ(''), setOpen(true))}>
+      <IconButton className="msm-edit" data-tip={t('msm.edit.tip')} aria-label={`${t('msm.edit.tip')}: ${title}`} onClick={() => (setQ(''), setOpen(true))}>
         <CapeIcon name="edit" size={20} />
-      </button>
+      </IconButton>
       {open && (
         <Drawer
           title={`${t('msm.edit.tip')} · ${title}`}
           onClose={() => setOpen(false)}
           footer={
             <>
-              <button type="button" className="pd-btn pd-btn--ghost" onClick={() => onChange(cfg.defaults)}>
+              <Button variant="secondary" className="pd-btn pd-btn--ghost" onClick={() => onChange(cfg.defaults)}>
                 {t('msm.edit.reset')}
-              </button>
-              <button type="button" className="pd-btn pd-btn--primary" onClick={() => setOpen(false)}>
+              </Button>
+              <Button className="pd-btn pd-btn--primary" onClick={() => setOpen(false)}>
                 {t('msm.edit.done')}
-              </button>
+              </Button>
             </>
           }
         >

@@ -1,0 +1,193 @@
+/* Cape skin for the shared lg-* / pd-* components: every colour comes from Cape tokens (light + dark). Generated from the Legacy base styles; Legacy itself is untouched. */
+.cockpit--v2 .cockpit--legacy { background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-muted { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-small { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-late { color: var(--cp-text-color-danger); }
+.cockpit--v2 .lg-pf { color: var(--cp-text-color-warning); }
+.cockpit--v2 .lg-top { border-top: 1px solid var(--cp-action-color-branded-primary-enabled); border-bottom: 1px solid var(--cp-border-color-high); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-top__avatar { border: 1px solid var(--cp-border-color-high); color: var(--cp-text-color-info); }
+.cockpit--v2 .lg-tag--staging { color: var(--cp-text-color-branded); background: var(--cp-feedback-color-branded-low); }
+.cockpit--v2 .lg-tag--beta { color: var(--cp-text-color-info); background: var(--cp-feedback-color-info-low); }
+.cockpit--v2 .lg-tag--beta::before { background: var(--cp-feedback-color-info-high); }
+.cockpit--v2 .lg-nav { background: var(--cp-base-color-flat); border-inline-end: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-nav__link { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-nav__link:hover { background: var(--cp-feedback-color-branded-low); }
+.cockpit--v2 .lg-nav__link.is-active { color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-nav__link:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-nav__section-title { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .lg-nav__footer { border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-nav__collapse { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-btn--outline { border: 1px solid var(--cp-action-color-branded-primary-enabled); background: var(--cp-base-color-flat); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-btn--ghost { border: 1px solid var(--cp-border-color-normal); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-btn--apply { background: var(--cp-text-color-primary); color: var(--cp-text-color-onbranded); }
+.cockpit--v2 .lg-btn--apply:disabled { background: var(--cp-border-color-normal); color: var(--cp-base-color-overlay); }
+.cockpit--v2 .lg-icon-btn { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-icon-btn:disabled { color: var(--cp-base-color-overlay); }
+.cockpit--v2 .lg-main { background: var(--cp-base-color-flat); }
+.cockpit--v2 .lg-crumbs { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-crumbs b { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-crumbs__sep { color: var(--cp-base-color-overlay); }
+.cockpit--v2 .lg-h1 { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-h2 { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-live { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .lg-live__dot { background: var(--cp-feedback-color-success-high); }
+.cockpit--v2 .lg-live__dot--on { background: var(--cp-feedback-color-danger-high); box-shadow: var(--cp-base-elevation-high); }
+.cockpit--v2 .lg-stage { background: var(--cp-base-color-lowest); }
+.cockpit--v2 .lg-stage b { color: var(--cp-base-color-overlay); }
+.cockpit--v2 .lg-stage span { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .lg-stage--unassigned, .cockpit--v2 .lg-stage--picking { background: var(--cp-feedback-color-warning-low); }
+.cockpit--v2 .lg-stage--unassigned b, .cockpit--v2 .lg-stage--picking b, .cockpit--v2 .lg-stage--unassigned span, .cockpit--v2 .lg-stage--picking span { color: var(--cp-text-color-warning); }
+.cockpit--v2 .lg-stage--packing { background: var(--cp-feedback-color-info-low); }
+.cockpit--v2 .lg-stage--packing b, .cockpit--v2 .lg-stage--packing span { color: var(--cp-text-color-info); }
+.cockpit--v2 .lg-stage--readyForRider { background: var(--cp-feedback-color-success-low); }
+.cockpit--v2 .lg-stage--readyForRider b, .cockpit--v2 .lg-stage--readyForRider span { color: var(--cp-text-color-success); }
+.cockpit--v2 .lg-now { border-top: 1px solid var(--cp-base-color-lightest); }
+.cockpit--v2 .lg-now__col + .lg-now__col { border-inline-start: 1px solid var(--cp-feedback-color-neutral-low); }
+.cockpit--v2 .lg-now__head { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-attn__row { background: var(--cp-feedback-color-warning-low); }
+.cockpit--v2 .lg-attn__row--late { background: var(--cp-feedback-color-danger-low); }
+.cockpit--v2 .lg-avatar { background: var(--cp-base-color-lowest); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-pill { background: var(--cp-base-color-lowest); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-pill--picking, .cockpit--v2 .lg-pill--packing { background: var(--cp-feedback-color-success-low); color: var(--cp-text-color-success); }
+.cockpit--v2 .lg-pill--idle { background: var(--cp-feedback-color-warning-low); color: var(--cp-text-color-warning); }
+.cockpit--v2 .lg-empty { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .lg-empty p { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-error { background: var(--cp-feedback-color-danger-low); color: var(--cp-text-color-danger); }
+.cockpit--v2 .lg-shift { background: var(--cp-base-color-lowest); }
+.cockpit--v2 .lg-card { background: var(--cp-base-color-flat); border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-stats hr { border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-stats__row { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-stats__row b { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-team .team-table th { background: var(--cp-base-color-flat); }
+.cockpit--v2 .lg-dd__trigger { border: 1px solid var(--cp-border-color-normal); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-dd[open] .lg-dd__trigger, .cockpit--v2 .lg-dd__trigger--active { border-color: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-dd__trigger:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-dd__body { background: var(--cp-base-color-flat); box-shadow: var(--cp-base-elevation-high); }
+.cockpit--v2 .lg-dd__item { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-dd__item:hover { background: var(--cp-feedback-color-branded-low); }
+.cockpit--v2 .lg-dd__item.is-selected { background: var(--cp-feedback-color-branded-low); box-shadow: inset 2px 0 0 var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-field__label { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-input { border: 1px solid var(--cp-border-color-normal); color: var(--cp-text-color-primary); background: var(--cp-base-color-flat); }
+.cockpit--v2 .lg-input--date { border-color: var(--cp-border-color-high); }
+.cockpit--v2 .lg-input--date input { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-table { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-table th { color: var(--cp-text-color-primary); border-bottom: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-table td { color: var(--cp-text-color-primary); border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-table__empty { color: var(--cp-text-color-secondary) !important; }
+.cockpit--v2 .lg-badge { background: var(--cp-base-color-lowest); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-badge--pending_assignment, .cockpit--v2 .lg-badge--on_hold, .cockpit--v2 .lg-badge--awaiting_approval { background: var(--cp-feedback-color-warning-low); color: var(--cp-text-color-warning); }
+.cockpit--v2 .lg-badge--picking, .cockpit--v2 .lg-badge--packaging { background: var(--cp-feedback-color-info-low); color: var(--cp-text-color-info); }
+.cockpit--v2 .lg-badge--ready_for_pickup, .cockpit--v2 .lg-badge--successful { background: var(--cp-feedback-color-success-low); color: var(--cp-text-color-success); }
+.cockpit--v2 .lg-badge--cancelled { background: var(--cp-feedback-color-danger-low); color: var(--cp-text-color-danger); }
+.cockpit--v2 .lg-badge--sig-complaint, .cockpit--v2 .lg-badge--sig-refund { background: var(--cp-feedback-color-danger-low); color: var(--cp-text-color-danger); }
+.cockpit--v2 .lg-badge--sig-compensation { background: var(--cp-feedback-color-warning-low); color: var(--cp-text-color-warning); }
+.cockpit--v2 .lg-badge--sig-review { background: var(--cp-feedback-color-info-low); color: var(--cp-text-color-info); }
+.cockpit--v2 .lg-pager { border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-pager p { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-pager__page { background: var(--cp-feedback-color-branded-low); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-chip { border: 1px solid var(--cp-border-color-high); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-chip--on { border-color: var(--cp-action-color-branded-primary-enabled); background: var(--cp-feedback-color-branded-low); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-empty-box { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-empty-box h2 { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-empty-box p { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-kpi { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-seg { border: 1px solid var(--cp-border-color-normal); background: var(--cp-base-color-flat); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-seg--on { background: var(--cp-text-color-primary); border-color: var(--cp-border-color-high); color: var(--cp-text-color-onbranded); }
+.cockpit--v2 .lg-toggle { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-toggle button { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-toggle button.is-on { background: var(--cp-text-color-primary); color: var(--cp-text-color-onbranded); }
+.cockpit--v2 .lg-issue { border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-issue-group h3 { border-bottom: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .lg-search { border: 1px solid var(--cp-border-color-high); }
+.cockpit--v2 .lg-search input { color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-search:focus-within { border-color: var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-wh__card:hover { border-color: var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .lg-wh__card h2 { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .lg-wh__card p { color: var(--cp-text-color-branded); }
+@container cockpit (max-width: 900px) {
+  .cockpit--v2 .lg-now__col + .lg-now__col { border-top: 1px solid var(--cp-border-color-normal); }
+}
+.cockpit--v2 .lg-table td.lg-late { color: var(--cp-text-color-danger); }
+.cockpit--v2 .lg-back { border: 1px solid var(--cp-border-color-normal); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .lg-back:hover { border-color: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-branded); }
+.cockpit--v2 .lg-back:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .pd-badge { background: var(--cp-base-color-lowest); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-badge--success { background: var(--cp-feedback-color-success-low); color: var(--cp-text-color-success); }
+.cockpit--v2 .pd-badge--danger { background: var(--cp-feedback-color-danger-low); color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-badge--warning { background: var(--cp-feedback-color-warning-low); color: var(--cp-text-color-warning); }
+.cockpit--v2 .pd-badge--info { background: var(--cp-feedback-color-info-low); color: var(--cp-text-color-info); }
+.cockpit--v2 .pd-badge--neutral { background: var(--cp-base-color-lowest); color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-vendors__btn { background: var(--cp-feedback-color-warning-low); color: var(--cp-text-color-warning); }
+.cockpit--v2 .pd-vendors__btn--closed { background: var(--cp-feedback-color-danger-low); color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-vendors__list { background: var(--cp-base-color-flat); box-shadow: var(--cp-base-elevation-high); }
+.cockpit--v2 .pd-vendors__list li { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-vendors__list li + li { border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-stage:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .pd-idle-pill { background: var(--cp-feedback-color-danger-low); color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-attn__row { background: var(--cp-feedback-color-info-low); color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-attn__row:hover { background: var(--cp-feedback-color-info-low); }
+.cockpit--v2 .pd-attn__row:focus-visible { outline: 2px solid var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .pd-attn__meta { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-attn__time { color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-attn__row .lg-icon { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-tag { color: var(--cp-text-color-onbranded); }
+.cockpit--v2 .pd-tag--return { background: var(--cp-feedback-color-info-high); }
+.cockpit--v2 .pd-tag--late { background: var(--cp-feedback-color-danger-high); }
+.cockpit--v2 .pd-progress { background: var(--cp-base-color-low); }
+.cockpit--v2 .pd-progress span { background: var(--cp-feedback-color-success-low); }
+.cockpit--v2 .pd-legend { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-dot { background: var(--cp-base-color-high); }
+.cockpit--v2 .pd-dot--idle { background: var(--cp-feedback-color-danger-high); }
+.cockpit--v2 .pd-dot--putaway, .cockpit--v2 .pd-dot--receiving { background: var(--cp-feedback-color-success-low); }
+.cockpit--v2 .pd-dot--picking, .cockpit--v2 .pd-dot--packing { background: var(--cp-feedback-color-success-high); }
+.cockpit--v2 .pd-people__status { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-people__status--idle { color: var(--cp-text-color-danger); }
+.cockpit--v2 .pd-people__status--picking, .cockpit--v2 .pd-people__status--packing { color: var(--cp-text-color-success); }
+.cockpit--v2 .pd-bad { color: var(--cp-text-color-danger) !important; }
+.cockpit--v2 .pd-ok { color: var(--cp-text-color-success); }
+.cockpit--v2 .pd-muted { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-table-scroll { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-team th { border-bottom: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-team td { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-team__alert td:first-child { box-shadow: inset 3px 0 0 var(--cp-text-color-danger); }
+.cockpit--v2 .pd-sort { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-sort .lg-icon { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-sort--on .lg-icon { color: var(--cp-text-color-branded); }
+.cockpit--v2 .pd-date > .lg-icon { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-order-link { color: var(--cp-text-color-branded); }
+.cockpit--v2 .pd-menu__list { background: var(--cp-base-color-flat); box-shadow: var(--cp-base-elevation-high); }
+.cockpit--v2 .pd-menu__list button { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-menu__list button:hover:not(:disabled) { background: var(--cp-feedback-color-branded-low); }
+.cockpit--v2 .pd-menu__list button:disabled { color: var(--cp-base-color-overlay); }
+.cockpit--v2 .pd-menu__list small { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-pager__num { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-pager__gap { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-reason small { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-btn { border: 1px solid var(--cp-border-color-normal); background: var(--cp-base-color-flat); color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-btn--primary { border-color: var(--cp-action-color-branded-primary-enabled); background: var(--cp-action-color-branded-primary-enabled); color: var(--cp-text-color-onbranded); }
+.cockpit--v2 .pd-btn--primary:hover { background: var(--cp-action-color-branded-primary-hover); }
+.cockpit--v2 .pd-btn--text { color: var(--cp-text-color-branded); }
+.cockpit--v2 .pd-link { color: var(--cp-text-color-branded); }
+.cockpit--v2 .pd-icon-btn { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-icon-btn:hover { background: var(--cp-base-color-lowest); }
+.cockpit--v2 .pd-backdrop { background: var(--cp-base-color-overlay); }
+.cockpit--v2 .pd-drawer { background: var(--cp-base-color-flat); box-shadow: var(--cp-base-elevation-high); }
+.cockpit--v2 .pd-drawer__head h2 { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-drawer__foot { border-top: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-sec h3, .cockpit--v2 .pd-card h3 { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-kv dt { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-kv dd { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-card { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-item { border: 1px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-item__img { background: var(--cp-base-color-lowest); }
+.cockpit--v2 .pd-item__main span { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-day { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-events { border-inline-start: 2px solid var(--cp-border-color-normal); }
+.cockpit--v2 .pd-events__time { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-events__label { color: var(--cp-text-color-primary); }
+.cockpit--v2 .pd-events__gap { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .pd-stage-row { border: 1px solid var(--cp-border-color-normal); background: var(--cp-base-color-flat); }
+.cockpit--v2 .pd-stage-row:hover { border-color: var(--cp-action-color-branded-primary-enabled); }
+.cockpit--v2 .pd-stage-row__meta { color: var(--cp-text-color-secondary); }
+.cockpit--v2 .pd-empty { color: var(--cp-text-color-tertiary); }
+.cockpit--v2 .lg-nav__link.is-disabled { color: var(--cp-base-color-overlay); }
