@@ -1,0 +1,62 @@
+src/cockpit/v2/v2.css
+  s_5aa85af76a47b0::t_6ff5415a75f260 459-462,464-467,469-473
+  s_5aa85af76a47b0::t_c8703ba17e93d3 468
+  s_5aa85af76a47b0::t_63882d3813111e 463,480-482
+  s_5aa85af76a47b0::t_d15a2aec5658ff 483-485
+  s_5aa85af76a47b0::t_156e51bb8c13c1 474-479
+  s_5aa85af76a47b0::t_7b386e9920fb87 308,375,377,401,408,438-439
+  s_5aa85af76a47b0::t_4874cafc9ecf7f 42,44,95,98
+src/cockpit/legacy/CockpitLegacy.tsx
+  s_5aa85af76a47b0::t_5a1244fc56c157 727,735
+  s_5aa85af76a47b0::t_519507a7a5e319 659-660,663-669,761-762,765-770,776
+src/cockpit/v2/CockpitV2.tsx
+  s_5aa85af76a47b0::t_fee46883df44f8 2,102,104
+  s_5aa85af76a47b0::t_757c2e76b74435 33
+  s_5aa85af76a47b0::t_18ac40e907115e 359
+  s_5aa85af76a47b0::t_6d003ebd90a957 369-370
+  s_5aa85af76a47b0::t_6a12265d8b40fd 200-219,288-300,305-306,308-317,351
+  s_5aa85af76a47b0::t_f219c3a8b899f6 159-162
+  s_5aa85af76a47b0::t_558b2a8ff7ad8e 265,267-273
+  s_5aa85af76a47b0::t_bddf7d8da96a5c 31,177,193-198
+  s_5aa85af76a47b0::t_1669ac69bb46ba 301-304,307
+  s_5aa85af76a47b0::t_2654b75a50c96c 30,178,228
+  s_5aa85af76a47b0::t_986b8346d20875 282
+  s_5aa85af76a47b0::t_e9dd29289d01e7 16
+  s_5aa85af76a47b0::t_69fe59dca97580 220-225,253,255
+  s_5aa85af76a47b0::t_50ffe24c700cb5 199,226
+src/cockpit/prod/TeamTable.tsx
+  s_5aa85af76a47b0::t_6ff5415a75f260 70-78
+src/cockpit/v2/mobile.css
+  s_5aa85af76a47b0::t_84d75b3d8bf0ec 160-167
+  s_5aa85af76a47b0::t_ad63d102c19bc0 103-106
+  s_5aa85af76a47b0::t_0a52d21e18121a 115-119
+  s_5aa85af76a47b0::t_93c3d82b8b5afe 142-146
+  s_5aa85af76a47b0::t_519507a7a5e319 147-159
+  s_5aa85af76a47b0::t_7b386e9920fb87 14-15
+  s_5aa85af76a47b0::t_156e51bb8c13c1 121-141
+  s_5aa85af76a47b0::t_d3a56c25a1b0fe 176-179
+  s_5aa85af76a47b0::t_d5a25f6d5fed86 107-108,114
+  s_5aa85af76a47b0::t_c8703ba17e93d3 168-171
+  s_5aa85af76a47b0::t_8a1b73812bc6fa 172-175
+  s_5aa85af76a47b0::t_3588f00d32b464 120
+  s_5aa85af76a47b0::t_808dc27df5e6c2 109-113
+  s_5aa85af76a47b0::t_60e0d56fedb193 7-8,12-13,16,74
+src/domain/prod.ts
+  s_5aa85af76a47b0::t_69fe59dca97580 171-181
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "3fc60c50ffbec846e265a6210e2d2c941a2ec778",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
