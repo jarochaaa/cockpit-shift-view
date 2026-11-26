@@ -1,0 +1,20 @@
+src/cockpit/v2/v2.css
+  s_5aa85af76a47b0::t_93696389870e66 486-493,495-496
+  s_5aa85af76a47b0::t_21c04aa09d3454 494
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "da8eede976e71f2c28ff88de508dabe23589761a",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
