@@ -13,7 +13,7 @@ import i18n from './i18n';
 import { codeFor, presetsFor, initialState, reducer } from './state';
 import type { Lang, State } from './state';
 
-/** Deep link: ?view=SM14&version=cape|legacy&lang=en|es|ar opens that preset directly (used by the Figma file). */
+/** Deep link: ?view=SM14&version=cape|legacy&lang=en|es|ar&tier=vision|mvp opens that preset directly (used by the Figma file). */
 function fromUrl(base: State): State {
   const q = new URLSearchParams(window.location.search);
   let s = base;
@@ -36,7 +36,7 @@ const LANGS: { id: Lang; label: string }[] = [
 export default function App() {
   const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
   const [navOpen, setNavOpen] = useState(false);
-  const [tier, setTier] = useState<Tier>('vision');
+  const [tier, setTier] = useState<Tier>(() => (new URLSearchParams(window.location.search).get('tier') === 'mvp' ? 'mvp' : 'vision'));
   const [phone, setPhone] = useState(false);
   const [dark, setDark] = useState(false);
   const [charts, setCharts] = useState(true);
@@ -58,11 +58,11 @@ export default function App() {
     void i18n.changeLanguage(s.lang);
   }, [s.lang]);
 
-  // Keep the address shareable: it always reflects the current view, version and language.
+  // Keep the address shareable: it always reflects the current view, version, language and mode (End Vision or MVP).
   useEffect(() => {
-    const q = new URLSearchParams({ view: code, version: s.version, lang: s.lang });
+    const q = new URLSearchParams({ view: code, version: s.version, lang: s.lang, tier });
     window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}`);
-  }, [code, s.version, s.lang]);
+  }, [code, s.version, s.lang, tier]);
 
   return (
     <div className={`stage${expanded ? ' stage--expanded' : ''}`}>
