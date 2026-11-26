@@ -483,3 +483,14 @@
 
 /* Picker team: one border only (the table box), no divider line above it */
 .v2-store-layout .v2-shiftcard .v2-shiftcard__team { border-top: 0; padding-top: 0; }
+
+/* Store level: Needs attention and People right now share one height; their lists scroll down to the box border */
+.v2-store-layout .v2-nowrow > .v2-card { display: flex; flex-direction: column; max-height: 540px; min-height: 0; }
+.v2-store-layout .v2-nowrow > .v2-attncard .v2-attnlist, .v2-store-layout .v2-nowrow > .v2-people-card .v2-list--scroll { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
+.v2-store-layout .v2-nowrow > .v2-card > .v2-section-header { flex: none; border-bottom: 1px solid var(--cp-border-color-normal); }
+.v2-store-layout .v2-nowrow > .v2-people-card .v2-people-bar { flex: none; }
+.v2-store-layout .v2-nowrow > .v2-attncard .v2-attnlist > li:first-child .msm-acard { border-top: 0; }
+
+/* Needs attention: red title only; borders and dividers stay grey */
+.v2-store-layout .v2-nowrow > .v2-attncard .v2-section-header__title { color: var(--cp-text-color-danger); }
+.v2-store-layout .v2-nowrow > .v2-attncard .v2-attnlist > li:last-child .msm-acard { border-bottom: 0; }
