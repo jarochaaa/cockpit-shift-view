@@ -507,19 +507,20 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
                               )}
                             </span>
                           </td>
-                          {cols.map((k) => {
+                          {cols.map((k, ci) => {
+                            const wide = ci === cols.length - 1 && cols.length % 2 === 1 ? ' msm-cell--wide' : '';
                             if (METRIC[k]) {
                               const x = METRIC[k];
                               const v = storeValue(x, s);
                               return (
-                                <td key={k} data-label={labelOf(k)} className={`msm-cell msm-cell--${metricBand(x, v)}`}>
+                                <td key={k} data-label={labelOf(k)} className={`msm-cell msm-cell--${metricBand(x, v)}${wide}`}>
                                   {x.unit === 'min' ? v.toFixed(1) : fmtM(x, v)}
                                 </td>
                               );
                             }
                             const c = cell(s, k);
                             return (
-                              <td key={k} data-label={labelOf(k)} className={`msm-cell msm-cell--${k === 'pickers' && cell(s, 'unassigned') === 'high' ? 'high' : c}`}>
+                              <td key={k} data-label={labelOf(k)} className={`msm-cell msm-cell--${k === 'pickers' && cell(s, 'unassigned') === 'high' ? 'high' : c}${wide}`}>
                                 {k === 'age' ? (
                                   <Tag size="small" status={c === 'high' ? 'error' : c === 'mild' ? 'warning' : 'neutral'} title={t('msm.daysLong', { n: s.age })}>
                                     {value(s, k)}

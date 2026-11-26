@@ -177,3 +177,6 @@
 /* Mobile picker cards: nothing wraps them. No border, outline or shadow on any container level */
 .cockpit--v2[data-mobile] .v2-shiftcard__team, .cockpit--v2[data-mobile] .v2-shiftcard__team .v2-card--table, .cockpit--v2[data-mobile] .v2-shiftcard__team .pd-table-scroll, .cockpit--v2[data-mobile] .v2-shiftcard__team .pd-team, .cockpit--v2[data-mobile] .v2-shiftcard__team .pd-team tbody { border: 0; outline: 0; box-shadow: none; background: transparent; border-radius: 0; }
 .cockpit--v2[data-mobile] .v2-shiftcard__team { margin-inline: 0; padding-inline: 0; }
+
+/* Mobile store cards: same rule, the last odd data point spans the full row */
+.cockpit--v2[data-mobile] .msm-row > td.msm-cell--wide { grid-column: 1 / -1; }

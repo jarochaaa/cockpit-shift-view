@@ -1299,3 +1299,6 @@
 }
 .cockpit--v2[data-mobile] .msm-main .msm-grid > :last-child:nth-child(3n+1), .cockpit--v2[data-mobile] .msm-main .msm-grid > :last-child:nth-child(3n+2), .cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(3n+1), .cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(3n+2) { grid-column: auto; }
 .cockpit--v2[data-mobile] .msm-main .msm-grid > :last-child:nth-child(odd), .cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+/* Cards: an odd number of data points ends with a full-width block, never an empty slot */
+.msm-table-wrap[data-view='cards'] .msm-row > td.msm-cell--wide { grid-column: 1 / -1; }
