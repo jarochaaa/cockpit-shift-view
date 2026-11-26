@@ -1287,3 +1287,15 @@
 .cockpit--v2[data-mobile] .msm-sheet .msm-sheet__list { padding-block: 0; }
 .cockpit--v2[data-mobile] .msm-sheet .msm-sheet__list .msm-acard__head, .cockpit--v2[data-mobile] .msm-sheet .msm-sheet__list .msm-acard__text { align-self: start; }
 .cockpit--v2[data-mobile] .msm-sheet .msm-sheet__list > li > .msm-acard, .cockpit--v2[data-mobile] .msm-sheet .msm-sheet__list > li > .msm-acard:hover { align-items: start; padding-block: var(--cp-spacing-medium); }
+
+/* Boxed groups: the last cell stretches over the free columns, so every divider and the outer border stay closed whatever the number of cells */
+.msm-impact > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.msm-impact, .msm-main .msm-grid, .v2-shiftcard .v2-kpis { align-items: stretch; }
+.msm-main .msm-grid > :last-child:nth-child(3n+1), .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(3n+1) { grid-column: 1 / -1; }
+.msm-main .msm-grid > :last-child:nth-child(3n+2), .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(3n+2) { grid-column: span 2; }
+@container cockpit (max-width: 1100px) {
+  .msm-main .msm-grid > :last-child:nth-child(3n+1), .msm-main .msm-grid > :last-child:nth-child(3n+2) { grid-column: auto; }
+  .msm-main .msm-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+.cockpit--v2[data-mobile] .msm-main .msm-grid > :last-child:nth-child(3n+1), .cockpit--v2[data-mobile] .msm-main .msm-grid > :last-child:nth-child(3n+2), .cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(3n+1), .cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(3n+2) { grid-column: auto; }
+.cockpit--v2[data-mobile] .msm-main .msm-grid > :last-child:nth-child(odd), .cockpit--v2[data-mobile] .v2-shiftcard .v2-kpis:not(.v2-kpis--one) > :last-child:nth-child(odd) { grid-column: 1 / -1; }

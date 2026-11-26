@@ -43,7 +43,7 @@ export default function App() {
   const [blueprint, setBlueprint] = useState(false);
   const [rationales, setRationales] = useState(false);
   // Expanded: only the product fills the window; a floating button brings the prototype UI back.
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [iaOpen, setIaOpen] = useState(false);
   useEffect(() => {
     if (!expanded) return;

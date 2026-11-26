@@ -638,6 +638,17 @@ function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; d
         <Info k="drill" />
       </div>
 
+      {a === 'watch' || a === 'none' ? (
+        <section className="msm-suggest msm-suggest--ok">
+          <h3>{t('msm.drawer.contactStore')}</h3>
+          <p>{t('msm.drawer.noAction')}</p>
+          <div className="msm-suggest__contact">
+            <span>
+              <b>{t('msm.drawer.storePhone')}</b>
+            </span>
+          </div>
+        </section>
+      ) : (
       <section className={`msm-suggest msm-suggest--${done ? 'success' : STATUS_TONE[statusOf(s)]}`}>
         <h3>
           {t('msm.drawer.suggested')}
@@ -655,6 +666,7 @@ function StoreDrawer({ s, done, onDone, onClose, onOpenStore }: { s: StoreRow; d
           </Button>
         </div>
       </section>
+      )}
 
       <section className="msm-suggest msm-suggest--ai">
         <h3>

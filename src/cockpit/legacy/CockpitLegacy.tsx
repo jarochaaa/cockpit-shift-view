@@ -713,6 +713,20 @@ export function useCancellations(s: State) {
   return { data, rows, set: (id: string, status: CancelStatus) => setChanged((c) => ({ ...c, [id]: status })) };
 }
 
+/** Calmer cancellation reasons for the Cape version; the Legacy view keeps the production labels. */
+const SOFT_REASONS: Record<string, string> = {
+  'Unprofessional behaviour': 'Delivery partner issue',
+  'Fraud prank': 'Order could not be validated',
+  'Food quality spillage': 'Product condition issue',
+  'Mistake error': 'Order placed by mistake',
+  'Too busy': 'Store at capacity',
+  'No courier': 'No rider available',
+  'Unable to find': 'Customer not found at address',
+  'Unable to pay': 'Payment not completed',
+  'Address incomplete misstated': 'Address incomplete',
+};
+export const softReason = (r: string | null) => (r ? (SOFT_REASONS[r] ?? r) : '—');
+
 export function Cancellations({ s, dispatch }: P) {
   const c = useCancellations(s);
   const [open, setOpen] = useState<string | null>(null);
@@ -769,7 +783,7 @@ export function Cancellations({ s, dispatch }: P) {
                           <td data-label="Cancelled at">{dayTime(r.cancelledAt)}</td>
                           <td data-label="Reason">
                             <span className="pd-reason">
-                              {r.reason ?? '—'}
+                              {s.version === 'cape' ? softReason(r.reason) : (r.reason ?? '—')}
                               <small>Cancelled by {r.cancelledBy}</small>
                             </span>
                           </td>

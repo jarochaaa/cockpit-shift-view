@@ -33,7 +33,7 @@ export const NEWS: News[] = [
     kind: 'Black Friday',
     range: 'Nov 27 – 30',
     title: 'Black Friday weekend',
-    text: 'Expect +35% orders vs forecast from 18:00. Late orders and assignment time will rise.',
+    text: 'Orders +35% vs forecast from 18:00. Late orders and Assignment time are expected to rise.',
     context:
       'Black Friday weekend starts Thursday evening. Last year demand peaked between 18:00 and 23:00, with the first late orders about 40 minutes after the peak started. Forecast for this year is +35% orders vs a normal weekend.',
     impact: [
@@ -43,12 +43,12 @@ export const NEWS: News[] = [
       { metric: 'Avg basket', expect: 'Up about 12%' },
     ],
     doNow: [
-      { label: 'Request extra pickers', why: 'Ask the next shift to start 60 min early in the 6 stores below 90% coverage.' },
-      { label: 'Raise order cap', why: 'Let busy stores take more orders per slot before late orders pile up.' },
+      { label: 'Call next shift', why: 'Ask the next shift lead to start 60 min early in the 6 stores below 90% coverage.' },
+      { label: 'Raise Jira ticket', why: 'Request a higher order cap per slot for stores with high volume.' },
     ],
     ai: [
       'Between 18:00 and 23:00 read Late orders against the forecast-adjusted target, not the usual one.',
-      'Pickers coverage under 90% is the earliest warning; act before Assignment time moves.',
+      'Active / planned pickers under 90% is the earliest signal; it moves before Assignment time.',
       'A small rise in Fail rate (under 1 pt) is expected: substitutions grow with volume.',
     ],
   },
@@ -58,18 +58,18 @@ export const NEWS: News[] = [
     kind: 'Groceries Day',
     range: 'Nov 24 – 25',
     title: 'Groceries Day cashback',
-    text: 'Cashback 30% from 18:00 to 23:00. Orders +22% vs forecast; watch partial fulfilment.',
+    text: 'Cashback 30% from 18:00 to 23:00. Orders +22% vs forecast; Partial fulfilment may rise.',
     context:
-      'Groceries Day gives 30% cashback between 18:00 and 23:00 in the UAE. Promo baskets lean on a short list of SKUs, so stock-outs show up fast as partial fulfilment and fails.',
+      'Groceries Day gives 30% cashback between 18:00 and 23:00 in the UAE. Promo baskets lean on a short list of SKUs, so stock-outs show up quickly in Partial fulfilment and Fail rate.',
     impact: [
       { metric: 'Orders vs forecast', expect: 'Up about 22%' },
       { metric: 'Partial fulfilment', expect: 'Up 1 to 2 pts in high-volume stores' },
       { metric: 'nSFR', expect: 'Can dip if top SKUs run out' },
     ],
-    doNow: [{ label: 'Review stock of top SKUs', why: 'Check the 20 most promoted SKUs and ask stores to restock before 17:30.' }],
+    doNow: [{ label: 'Call stores', why: 'Call the highest-volume stores and check stock of the 20 most promoted SKUs before 17:30.' }],
     ai: [
-      'If Partial fulfilment rises in several stores at once, suspect a shared SKU or a system issue before blaming pickers.',
-      'Orders above forecast with on-time Prep is healthy demand, not a problem to fix.',
+      'If Partial fulfilment rises in several stores at once, check for a shared SKU or a system issue.',
+      'Orders above forecast with Prep time on target reflect demand, not a store issue.',
     ],
   },
   {
@@ -78,9 +78,9 @@ export const NEWS: News[] = [
     kind: 'Heavy rain',
     range: 'Nov 26 – 27',
     title: 'Heavy rain in Alexandria and Cairo',
-    text: 'Heavy rain in Alexandria and Cairo. Rider supply −15%; rider waiting (AWT) may go above target.',
+    text: 'Heavy rain in Alexandria and Cairo. Rider supply −15%; Rider waiting (AWT) may exceed target.',
     context:
-      'Heavy rain is forecast for Alexandria and Cairo on Nov 26 and 27, the first big storm of the Egyptian winter. Low streets flood and riders slow down or stay home, so rider supply usually drops about 15% and orders wait ready at the store.',
+      'Heavy rain is forecast for Alexandria and Cairo on Nov 26 and 27, the first big storm of the Egyptian winter. Rain usually slows deliveries and lowers rider supply by about 15%, so ready orders wait longer at the store.',
     impact: [
       { metric: 'Rider waiting (AWT)', expect: 'Above target in both cities' },
       { metric: 'In-store time', expect: 'Flat if prep is on time' },
@@ -88,12 +88,11 @@ export const NEWS: News[] = [
       { metric: 'Cancellations', expect: 'Up if waits pass 20 min' },
     ],
     doNow: [
-      { label: 'Ask logistics for riders', why: 'Request a rider rebalance toward the stores with the longest AWT in Alexandria and Cairo.' },
-      { label: 'Message pickers', why: 'Tell pickers to hold bags in the ready area to keep the floor clear.' },
+      { label: 'Call logistics', why: 'Ask for a rider rebalance toward the stores with the highest Rider waiting (AWT) in Alexandria and Cairo.' },
     ],
     ai: [
-      'If AWT rises but Prep time does not, the cause is rider supply: escalate to logistics, not to the store.',
-      'Late orders with normal Assignment time are a delivery problem; do not add pickers.',
+      'If Rider waiting (AWT) rises but Prep time does not, the signal points to rider supply: call logistics.',
+      'Late orders with Assignment time on target point to delivery time, not to picker coverage.',
     ],
   },
 ];
@@ -108,7 +107,6 @@ export function NewsBanner() {
   const [hover, setHover] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [open, setOpen] = useState<{ id: string; focus?: 'actions' } | null>(null);
-  const [done, setDone] = useState<Set<string>>(new Set());
   const paused = hover || open !== null;
   const slides = useRef<(HTMLDivElement | null)[]>([]);
   const state = useRef<{ x: number | null }>({ x: null });
@@ -157,7 +155,6 @@ export function NewsBanner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i]);
 
-  const mark = (key: string) => setDone((d) => new Set(d).add(key));
   const current = open ? NEWS.find((n) => n.id === open.id) : undefined;
 
   return (
@@ -207,31 +204,25 @@ export function NewsBanner() {
             ))}
         </div>
       </div>
-      {current && open && <NewsDrawer n={current} focus={open.focus} done={done} onMark={mark} onClose={() => setOpen(null)} />}
+      {current && open && <NewsDrawer n={current} focus={open.focus} onClose={() => setOpen(null)} />}
     </>
   );
 }
 
 /** More info window: the same right-hand drawer the app uses everywhere else. */
-function NewsDrawer({ n, focus, done, onMark, onClose }: { n: News; focus?: 'actions'; done: Set<string>; onMark: (key: string) => void; onClose: () => void }) {
+function NewsDrawer({ n, focus, onClose }: { n: News; focus?: 'actions'; onClose: () => void }) {
   const actionsRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (focus === 'actions') actionsRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   }, [focus]);
-  const ack = done.has(`${n.id}:ack`);
   return (
     <Drawer
       title={n.title}
       onClose={onClose}
       footer={
-        <>
-          <Button variant="tertiary" status="inverse" onClick={onClose}>
-            Close
-          </Button>
-          <Button variant="primary" disabled={ack} onClick={() => onMark(`${n.id}:ack`)}>
-            {ack ? 'Acknowledged ✓' : 'Acknowledge'}
-          </Button>
-        </>
+        <Button variant="tertiary" status="inverse" onClick={onClose}>
+          Close
+        </Button>
       }
     >
       <div className="msm-modal__body msm-dr">
@@ -256,6 +247,7 @@ function NewsDrawer({ n, focus, done, onMark, onClose }: { n: News; focus?: 'act
             ))}
           </div>
         </section>
+        {n.doNow.length > 0 && (
         <section ref={actionsRef} className={focus === 'actions' ? 'msm-dr__focus' : undefined}>
           <h3>What you can do</h3>
           <ul className="msm-modal__acts">
@@ -269,6 +261,7 @@ function NewsDrawer({ n, focus, done, onMark, onClose }: { n: News; focus?: 'act
             ))}
           </ul>
         </section>
+        )}
         <section className="msm-modal__ai">
           <h3>
             <AiIcon size={18} /> AI suggestions: how to read the data
