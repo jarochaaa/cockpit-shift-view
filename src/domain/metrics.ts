@@ -24,6 +24,7 @@ export interface Metric {
 const m = (key: string, label: string, cat: string, unit: Unit, good: 'low' | 'high', target: number, base: number, blocks: BlockId[], ia: string): Metric => ({ key, label, cat, unit, good, target, base, blocks, ia });
 
 export const METRICS: Metric[] = [
+  m('nsfr', 'nSFR', 'Quality', 'pct', 'high', 95, 96.4, ['table'], 'nSFR'),
   m('dispatch', 'Dispatch time', 'Speed', 'min', 'low', 6, 5.5, ['live', 'table'], 'Dispatch time'),
   m('delivery', 'Total delivery time', 'Speed', 'min', 'low', 35, 33, ['live', 'perf'], 'Total delivery time'),
   m('vsForecast', 'Orders vs forecast', 'Order flow', 'pct', 'low', 10, 21.5, ['live', 'perf'], 'Orders and units vs forecast'),
@@ -68,6 +69,8 @@ const rand = (seed: string) => {
 /** Placeholder value for one store: its own spread around the market baseline, worse where the store is under pressure. */
 export function storeValue(x: Metric, s: StoreRow) {
   const stress = 1 + (s.late - 10) / 200;
+  // nSFR is a share of orders: realistic range 91-99.5%, a little lower where the store is under pressure.
+  if (x.key === 'nsfr') return Math.min(99.5, 99.5 - rand(`${s.id}${x.key}`) * 8 * stress);
   const f = (0.82 + 0.36 * rand(`${s.id}${x.key}`)) * (x.good === 'low' ? stress : 1 / stress);
   return x.base * f;
 }
