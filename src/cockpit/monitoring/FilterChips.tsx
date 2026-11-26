@@ -11,7 +11,7 @@ export interface FilterChip {
 }
 
 /**
- * The one status filter of the Overview: used by Insights and by Stores by priority, so both look and behave the same.
+ * The one status filter of the Overview: used by Alerts and by Stores by priority, so both look and behave the same.
  * Icon plus count, a tooltip for the name, grey until hover / focus / selected, then the whole chip takes its state colour.
  * Pressing the selected chip goes back to All.
  */

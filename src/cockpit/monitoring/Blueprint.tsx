@@ -79,7 +79,7 @@ const BLOCKS: Record<string, Block> = {
   insights: {
     roles: ['decide', 'act'],
     n: 3,
-    name: 'Insights',
+    name: 'Alerts',
     role: 'Decision making and action triggering.',
     goes: 'Pre-digested alerts by severity (Critical, At risk, For info): what happened, the likely cause and the suggested action (Solve or Dismiss).',
     why: 'It sits beside the data and stays open, so the next step is never hunted for. It is the bridge from reading to acting.',
