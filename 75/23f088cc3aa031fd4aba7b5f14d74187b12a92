@@ -1,0 +1,25 @@
+src/cockpit/monitoring/strings.ts
+  s_5aa85af76a47b0::t_db8c8bdc7c77ce 7,31-32,199,223-224,380,404-405
+src/cockpit/monitoring/FilterChips.tsx
+  s_5aa85af76a47b0::t_db8c8bdc7c77ce 14
+src/board/Hints.tsx
+  s_5aa85af76a47b0::t_db8c8bdc7c77ce 65
+src/cockpit/monitoring/Blueprint.tsx
+  s_5aa85af76a47b0::t_db8c8bdc7c77ce 82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.15",
+  "base_commit_sha": "7523f088cc3aa031fd4aba7b5f14d74187b12a92",
+  "prompts": {},
+  "sessions": {
+    "s_5aa85af76a47b0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e22952d0-3d5d-435d-a457-9d9b70fe22ab",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Javier Arocha <arocha.grafico@gmail.com>"
+    }
+  }
+}
