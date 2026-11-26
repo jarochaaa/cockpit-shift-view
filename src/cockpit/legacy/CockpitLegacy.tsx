@@ -152,6 +152,11 @@ function Crumbs({ dispatch, store, page, vendors }: { dispatch: Dispatch<Action>
   };
   return (
     <div className="lg-crumb-row">
+      {vendors && (
+        <button type="button" className="lg-back" aria-label="Back to Overview" title="Back to Overview" onClick={() => (dispatch({ type: 'version', version: 'cape' }), dispatch({ type: 'page', page: 'monitoring' }))}>
+          <CapeIcon name="chevronLeft" size={18} />
+        </button>
+      )}
       <nav className="lg-crumbs" aria-label="Breadcrumb">
         <a href="#" onClick={go('warehouses')}>
           Store Management Cockpit
@@ -651,17 +656,17 @@ export function Orders({ s, dispatch }: P) {
                               #{r.orderId}
                             </button>
                           </td>
-                          <td>{r.shortCode}</td>
-                          <td>
+                          <td data-label="Short code">{r.shortCode}</td>
+                          <td data-label="Stage">
                             <Badge tone={stageTone(r.stage)}>{STAGE_LABEL[r.stage]}</Badge>
                           </td>
-                          <td className={typeof r.timeToPickup === 'number' && r.timeToPickup < 0 ? 'lg-late' : ''}>{pickupText(r)}</td>
-                          <td>{dayTime(r.receivedAt)}</td>
-                          <td>{r.customer}</td>
-                          <td>{r.picker ?? '—'}</td>
-                          <td>{aed(r.amount)}</td>
-                          <td>{r.cancelledAt ? dayTime(r.cancelledAt) : '—'}</td>
-                          <td>
+                          <td data-label="Time to pickup" className={typeof r.timeToPickup === 'number' && r.timeToPickup < 0 ? 'lg-late' : ''}>{pickupText(r)}</td>
+                          <td data-label="Received">{dayTime(r.receivedAt)}</td>
+                          <td data-label="Customer">{r.customer}</td>
+                          <td data-label="Picker">{r.picker ?? '—'}</td>
+                          <td data-label="Amount">{aed(r.amount)}</td>
+                          <td data-label="Cancelled at">{r.cancelledAt ? dayTime(r.cancelledAt) : '—'}</td>
+                          <td className="lg-cell-actions">
                             <RowMenu row={r} onView={() => setOpen(r.orderId)} />
                           </td>
                         </tr>
@@ -708,6 +713,20 @@ export function useCancellations(s: State) {
   return { data, rows, set: (id: string, status: CancelStatus) => setChanged((c) => ({ ...c, [id]: status })) };
 }
 
+/** Calmer cancellation reasons for the Cape version; the Legacy view keeps the production labels. */
+const SOFT_REASONS: Record<string, string> = {
+  'Unprofessional behaviour': 'Delivery partner issue',
+  'Fraud prank': 'Order could not be validated',
+  'Food quality spillage': 'Product condition issue',
+  'Mistake error': 'Order placed by mistake',
+  'Too busy': 'Store at capacity',
+  'No courier': 'No rider available',
+  'Unable to find': 'Customer not found at address',
+  'Unable to pay': 'Payment not completed',
+  'Address incomplete misstated': 'Address incomplete',
+};
+export const softReason = (r: string | null) => (r ? (SOFT_REASONS[r] ?? r) : '—');
+
 export function Cancellations({ s, dispatch }: P) {
   const c = useCancellations(s);
   const [open, setOpen] = useState<string | null>(null);
@@ -719,7 +738,7 @@ export function Cancellations({ s, dispatch }: P) {
           const v = cancellationView(c.rows, s.cancelTab);
           return (
             <>
-              <div className="lg-chips">
+              <div className="lg-chips" role="tablist" aria-label="Cancellations">
                 {(
                   [
                     ['pending_return', 'Pending return'],
@@ -727,7 +746,7 @@ export function Cancellations({ s, dispatch }: P) {
                     ['all', 'All cancelled'],
                   ] as const
                 ).map(([k, label]) => (
-                  <button key={k} type="button" className={`lg-chip${s.cancelTab === k ? ' lg-chip--on' : ''}`} aria-pressed={s.cancelTab === k} onClick={() => dispatch({ type: 'cancelTab', tab: k })}>
+                  <button key={k} type="button" role="tab" className={`lg-chip${s.cancelTab === k ? ' lg-chip--on' : ''}`} aria-selected={s.cancelTab === k} onClick={() => dispatch({ type: 'cancelTab', tab: k })}>
                     {label} · {v.counts[k]}
                   </button>
                 ))}
@@ -753,22 +772,22 @@ export function Cancellations({ s, dispatch }: P) {
                               #{r.orderId}
                             </button>
                           </td>
-                          <td>{r.shortCode}</td>
-                          <td>
+                          <td data-label="Short code">{r.shortCode}</td>
+                          <td data-label="Status">
                             <Badge tone={CANCEL_STATUS[r.status].tone}>{CANCEL_STATUS[r.status].label}</Badge>
                           </td>
-                          <td>{dayTime(r.receivedAt)}</td>
-                          <td>{r.customer}</td>
-                          <td>{r.picker ?? '—'}</td>
-                          <td>{aed(r.amount)}</td>
-                          <td>{dayTime(r.cancelledAt)}</td>
-                          <td>
+                          <td data-label="Received">{dayTime(r.receivedAt)}</td>
+                          <td data-label="Customer">{r.customer}</td>
+                          <td data-label="Picker">{r.picker ?? '—'}</td>
+                          <td data-label="Amount">{aed(r.amount)}</td>
+                          <td data-label="Cancelled at">{dayTime(r.cancelledAt)}</td>
+                          <td data-label="Reason">
                             <span className="pd-reason">
-                              {r.reason ?? '—'}
+                              {s.version === 'cape' ? softReason(r.reason) : (r.reason ?? '—')}
                               <small>Cancelled by {r.cancelledBy}</small>
                             </span>
                           </td>
-                          <td>
+                          <td className="lg-cell-actions">
                             {r.status === 'pending_return' && (
                               <span className="pd-actions">
                                 <button type="button" className="pd-btn pd-btn--text" onClick={() => c.set(r.orderId, 'dismissed')}>

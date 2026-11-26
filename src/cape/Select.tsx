@@ -1,5 +1,6 @@
 import type { ComponentPropsWithRef } from 'react';
 import classNames from 'classnames';
+import { CapeIcon } from '../cockpit/legacy/icons';
 
 export interface SelectOption {
   value: string;
@@ -10,10 +11,12 @@ export interface SelectProps extends Omit<ComponentPropsWithRef<'select'>, 'onCh
   options: SelectOption[];
   value?: string;
   onChange?: (value: string) => void;
+  wrapperClassName?: string;
 }
 
-export function Select({ options, value, onChange, className, ...rest }: SelectProps) {
+export function Select({ options, value, onChange, className, wrapperClassName, ...rest }: SelectProps) {
   return (
+    <span className={classNames('cp-select-wrap', wrapperClassName)}>
     <select
       className={classNames('cp-select', className)}
       value={value}
@@ -26,5 +29,7 @@ export function Select({ options, value, onChange, className, ...rest }: SelectP
         </option>
       ))}
     </select>
+    <CapeIcon name="chevronDown" size={18} className="cp-select-wrap__icon" />
+    </span>
   );
 }

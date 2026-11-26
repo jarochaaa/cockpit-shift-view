@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { State } from '../state';
 
 type Hint = { title: string; look: string[]; tryThis: string[]; data?: string[] };
@@ -54,14 +55,14 @@ const HINTS: Record<string, Hint> = {
   SM10: {
     title: 'Country Monitor · peak evening (Cape only)',
     look: [
-      'Persona: Area Manager doing live triage; UAE has 18 stores in Dubai, Abu Dhabi and Sharjah, plus Kuwait, Bahrain, Egypt and Qatar; City/Country leads and Ops Excellence use the same screen.',
+      'Used by Cluster 1 · Monitors (live triage and performance review) and Cluster 2 · Decision Owners (decision and action trigger); journey: Visualisation → Decision making → Action trigger. UAE has 18 stores in Dubai, Abu Dhabi and Sharjah, plus Kuwait, Bahrain, Egypt and Qatar. Store managers and shift leads use the Store level page only.',
       'KPI strip: country values weighted by order volume, coloured by attainment vs target. Assignment time and Late orders are red.',
       'Menu: a single Overview starts here; opening any store goes to its store view (SM1).',
       'Store ranking: worst first, by distance from each store\'s usual level and from the country average. Red/amber cells, deviation age chip, owner and next action.',
-      'Alerts feed: deviations with likely cause; day 4 off target escalates to the area manager\'s leader.',
+      'Alerts feed: deviations with likely cause; day 4 off target escalates to the next leader; proactive, not reactive.',
       'Every block, KPI and column has a grey "i" with why it is there, why there, and why shown that way.',
     ],
-    tryThis: ['Open Dubai Marina (A) in Needs attention: 4 of 7 pickers, 12 unassigned; request pickers from Al Barsha (B).', 'Open Al Taawun (C): prep fine, AWT 14 min → ask logistics for riders.', 'Switch Country to Kuwait or Egypt, then filter a city and a status.', 'Collapse Needs attention; turn Rationales off next to the languages.', 'Hover any "i".', 'Click any table row to open that store (SM1).'],
+    tryThis: ['Open Dubai Marina (A) in Alerts: 4 of 7 pickers, 12 unassigned; request pickers from Al Barsha (B).', 'Open Al Taawun (C): prep fine, AWT 14 min → ask logistics for riders.', 'Switch Country to Kuwait or Egypt, then filter a city and a status.', 'Collapse Insights with its arrow (it stays open while you scroll); turn Rationales off next to the languages.', 'Hover any "i".', 'Click any table row to open that store (SM1).'],
     data: ['Groceries Day (30% cashback) explains orders 22% above forecast.', 'Muwaileh, Deira, Al Reem and Al Khalidiyah show PFR rising together across cities → possible system issue.', 'Khalifa City (D) is 4 days off target and escalated.', 'Countries and cities are real MENA markets; stores and people are placeholders; basket in local currency.'],
   },
   SM11: { title: 'Order history', look: ['Stage, Fulfillment and Date filters, exact Order ID / Customer / Picker search behind Apply, order drawer, ⋮ menu, rows per page and pages.'], tryThis: ['Filter by Cancelled.', 'Open the ⋮ menu: Cancel order is disabled with its reason.', 'Click an order number.'], data: ['Customer names are placeholders.'] },
@@ -84,9 +85,15 @@ const EDGE_RECIPES: { title: string; steps: string[] }[] = [
 /** Desktop-only side box: what to look at, what to try and what the data means in the current view. */
 export function Hints({ s, code }: { s: State; code: string }) {
   const h = HINTS[s.version === 'legacy' && code === 'SM10' ? 'SM13' : code] ?? HINTS.SM1;
+  const [open, setOpen] = useState(false);
   return (
-    <aside className="tester-notes" aria-label="Facilitator hints">
-      <div className="tester-notes__tag">Facilitator hints · view {code}</div>
+    <aside className={`tester-notes${open ? '' : ' tester-notes--closed'}`} aria-label="Facilitator hints">
+      <button type="button" className="tester-notes__tag tester-notes__toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
+        <span>Facilitator hints · view {code}</span>
+        <span aria-hidden>{open ? '−' : '+'}</span>
+      </button>
+      {open && (
+        <>
       <h2>{h.title}</h2>
       <p className="tester-notes__label">Look at</p>
       <ul>
@@ -125,6 +132,8 @@ export function Hints({ s, code }: { s: State; code: string }) {
           </div>
         ))}
       </details>
+        </>
+      )}
     </aside>
   );
 }

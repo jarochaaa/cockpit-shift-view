@@ -1,8 +1,13 @@
 import { useLayoutEffect, useRef, useState } from 'react';
+import { IconButton } from '../../cape/IconButton';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tag } from '../../cape/Tag';
+import { Button } from '../../cape/Button';
 import { CapeIcon } from '../legacy/icons';
+import { useMobile } from '../v2/useMobile';
+import { FilterChips } from './FilterChips';
+import type { FilterChip } from './FilterChips';
 import './monitoring.css';
 
 export type AttentionTone = 'error' | 'warning' | 'info' | 'success';
@@ -21,20 +26,23 @@ export interface AttentionItem {
  * It fills the visible height of the cockpit frame, scrolls inside itself, collapses to a pulsing rail
  * while the page scrolls down and opens again when the page is back at the top.
  */
-export function AttentionPanel({ title, titleAddon, note, items, empty }: { title: string; titleAddon?: ReactNode; note?: ReactNode; items: AttentionItem[]; empty: string }) {
+export function AttentionPanel({ title, titleAddon, note, items, empty, side = 'end' }: { side?: 'start' | 'end'; title: string; titleAddon?: ReactNode; note?: ReactNode; items: AttentionItem[]; empty: string }) {
   const { t } = useTranslation();
+  const mobile = useMobile();
+  const [sheet, setSheet] = useState(false);
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
+  const [sev, setSev] = useState<AttentionTone | null>(null);
+  const live = items.filter((c) => !dismissed.has(c.key));
+  const countOf = (tn: AttentionTone) => live.filter((c) => c.tone === tn).length;
+  items = sev ? live.filter((c) => c.tone === sev) : live;
   const [collapsed, setCollapsed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const cur = useRef(false);
-  const set = (v: boolean) => {
-    cur.current = v;
-    setCollapsed(v);
-  };
+  const set = setCollapsed;
 
   useLayoutEffect(() => {
     const el = ref.current;
     const scroller = el?.closest('.cockpit') as HTMLElement | null;
-    if (!el || !scroller) return;
+    if (mobile || !el || !scroller) return;
     const gap = 16;
     scroller.style.overflowAnchor = 'none';
     const fit = () => {
@@ -42,34 +50,8 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
       const top = Math.max(el.getBoundingClientRect().top, sr.top + gap);
       el.style.height = `${Math.max(240, sr.bottom - gap - top)}px`;
     };
-    let last = scroller.scrollTop;
-    let lockedUntil = 0;
-    // Direction is judged on the distance travelled since the last decision, so a slow scroll still adds up.
-    // After each toggle the layout reflows (the table changes width), which can nudge scrollTop on its own;
-    // those nudges are ignored for a moment so the panel never flips back and forth.
-    const toggle = (next: boolean) => {
-      if (next === cur.current) return;
-      set(next);
-      lockedUntil = performance.now() + 350;
-    };
-    const onScroll = () => {
-      const st = scroller.scrollTop;
-      fit();
-      if (performance.now() < lockedUntil) {
-        last = st;
-        return;
-      }
-      if (st < 40) {
-        toggle(false);
-        last = st;
-        return;
-      }
-      // Scrolling down collapses it; it only opens again once the page is back at the top.
-      if (st - last > 24) toggle(true);
-      else if (st - last < -24) last = st;
-      else return;
-      last = st;
-    };
+    // The panel only follows the page height; it opens and closes with its own arrow, never by scrolling.
+    const onScroll = fit;
     fit();
     scroller.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', fit);
@@ -77,13 +59,91 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
       scroller.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', fit);
     };
-  }, []);
+  }, [mobile]);
+
+  const card = (c: AttentionItem) => (
+    <li key={c.key}>
+      <div className={`msm-acard msm-acard--${c.tone}`}>
+        <span className="msm-acard__head">
+          <Tag size="small" status={c.tone}>
+            {c.tag}
+          </Tag>
+          <span className="msm-acard__time">{c.strong}</span>
+        </span>
+        <span className="msm-acard__text">
+          <b className="msm-acard__title">{c.title}</b>
+          <span className="msm-acard__meta">{c.meta}</span>
+        </span>
+        {(c.tone === 'info' || c.onClick) && (
+          <span className="msm-acard__actions">
+            {c.tone === 'info' && (
+              <Button size="medium" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => setDismissed(new Set(dismissed).add(c.key))}>
+                {t('msm.review')}
+              </Button>
+            )}
+            {c.onClick && (
+              <Button size="medium" variant="secondary" className="msm-abtn msm-abtn--ghost" onClick={() => (setSheet(false), c.onClick?.())}>
+                {t('msm.solve')}
+              </Button>
+            )}
+          </span>
+        )}
+      </div>
+    </li>
+  );
+
+  const chips: FilterChip[] = [
+    { key: 'all', tone: 'all', icon: 'dashboard', label: t('msm.status.all'), count: live.length },
+    { key: 'error', tone: 'error', icon: 'flag', label: t('msm.status.critical'), count: countOf('error') },
+    { key: 'warning', tone: 'warning', icon: 'trending', label: t('msm.status.risk'), count: countOf('warning') },
+    { key: 'info', tone: 'info', icon: 'info', label: t('msm.legend.info'), count: countOf('info') },
+  ];
+  const legend = (
+    <div className="msm-legend">
+      <FilterChips chips={chips} value={sev ?? 'all'} onChange={(k) => setSev(k === 'all' ? null : (k as AttentionTone))} label={t('msm.legend.label', { defaultValue: 'Filter by severity' })} />
+    </div>
+  );
+
+  if (mobile)
+    return (
+      <>
+        <button type="button" className="msm-fab" aria-expanded={sheet} onClick={() => setSheet(!sheet)}>
+          <span>{title}</span>
+          <span className="msm-fab__n">{items.length}</span>
+        </button>
+        {sheet && (
+          <>
+            <div className="msm-sheet-backdrop" onClick={() => setSheet(false)} aria-hidden />
+            <section className="msm-sheet" role="dialog" aria-label={title}>
+              <span className="msm-sheet__grab" aria-hidden />
+              <div className="msm-sheet__head">
+                <h2>
+                  {title} {titleAddon}
+                </h2>
+                <Tag size="small" status="error" className="msm-attention__count">
+                  {t('msm.open', { n: items.length })}
+                </Tag>
+                <IconButton className="msm-attention__collapse" aria-label={t('msm.collapse')} onClick={() => setSheet(false)}>
+                  <CapeIcon name="close" size={20} />
+                </IconButton>
+              </div>
+              {note && <p className="msm-attention__note">{note}</p>}
+              {legend}
+              <ul className="msm-sheet__list">
+                {items.map(card)}
+                {items.length === 0 && <li className="msm-attention__note">{empty}</li>}
+              </ul>
+            </section>
+          </>
+        )}
+      </>
+    );
 
   return (
-    <div className={`msm-side${collapsed ? ' msm-side--collapsed' : ''}`} ref={ref}>
+    <div className={`msm-side${collapsed ? ' msm-side--collapsed' : ''}${side === 'start' ? ' msm-side--start' : ''}`} ref={ref}>
       {collapsed ? (
         <button type="button" className="msm-attention-rail" aria-label={t('msm.expand')} title={t('msm.expand')} onClick={() => set(false)}>
-          <CapeIcon name="doubleChevronLeft" size={20} className="msm-flip" />
+          <CapeIcon name="chevronLeft" size={20} className={side === 'start' ? 'v2-rot' : 'msm-flip'} />
           <span className="msm-attention-rail__n">{items.length}</span>
           <span className="msm-attention-rail__label">{title}</span>
         </button>
@@ -96,33 +156,18 @@ export function AttentionPanel({ title, titleAddon, note, items, empty }: { titl
             <Tag size="small" status="error" className="msm-attention__count">
               {t('msm.open', { n: items.length })}
             </Tag>
-            <button type="button" className="msm-attention__collapse" aria-label={t('msm.collapse')} title={t('msm.collapse')} onClick={() => set(true)}>
-              <CapeIcon name="doubleChevronLeft" size={20} className="v2-rot" />
-            </button>
+            {note && (
+              <IconButton className="msm-attention__info msm-edit" aria-label={String(note)} data-tip={String(note)}>
+                <CapeIcon name="info" size={20} />
+              </IconButton>
+            )}
+            <IconButton className="msm-attention__collapse msm-edit" aria-label={t('msm.collapse')} data-tip={t('msm.collapse')} onClick={() => set(true)}>
+              <CapeIcon name="chevronLeft" size={20} className={side === 'start' ? 'msm-flip' : 'v2-rot'} />
+            </IconButton>
           </div>
-          {note && <p className="msm-attention__note">{note}</p>}
+          {legend}
           <ul className="msm-attention__list">
-            {items.map((c) => (
-              <li key={c.key}>
-                <div
-                  className={`msm-acard msm-acard--${c.tone}${c.onClick ? ' is-button' : ''}`}
-                  role={c.onClick ? 'button' : undefined}
-                  tabIndex={c.onClick ? 0 : undefined}
-                  onClick={c.onClick}
-                  onKeyDown={(e) => c.onClick && (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), c.onClick())}
-                >
-                  <span className="msm-acard__top">
-                    <b>{c.title}</b>
-                    <Tag size="small" status={c.tone}>
-                      {c.tag}
-                    </Tag>
-                  </span>
-                  <span className="msm-acard__meta">{c.meta}</span>
-                  <span className="msm-acard__strong">{c.strong}</span>
-                  {c.onClick && <CapeIcon name="chevronRight" size={16} className="msm-acard__chev" />}
-                </div>
-              </li>
-            ))}
+            {items.map(card)}
             {items.length === 0 && <li className="msm-attention__note">{empty}</li>}
           </ul>
         </aside>

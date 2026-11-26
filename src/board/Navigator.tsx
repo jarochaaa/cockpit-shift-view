@@ -22,69 +22,81 @@ const EDGE_CASES: Row[] = [
 ];
 
 
-export function Navigator({ code, version, onJump, open, onToggle }: { code: string; version: Version; onJump: (id: string) => void; open: boolean; onToggle: () => void }) {
+export function Navigator({ code, version, onJump, open, onToggle, action }: { code: string; version: Version; onJump: (id: string) => void; open: boolean; onToggle: () => void; action?: React.ReactNode }) {
   const PRESETS = presetsFor(version);
   const has = (id: string) => PRESETS.some((p) => p.id === id);
   const byId = (id: string) => PRESETS.find((p) => p.id === id)!;
   const [groups, setGroups] = useState({ uc: true, ec: true, all: true });
 
-  const rowButton = (id: string, key: string) => {
+  const pick = (id: string) => {
+    onJump(id);
+    onToggle();
+  };
+  const rowButton2 = (id: string, key: string) => {
     const p = byId(id);
     return (
-      <button key={key} type="button" className={code === p.code ? 'is-on' : undefined} onClick={() => onJump(id)}>
+      <button key={key} type="button" className={code === p.code ? 'is-on' : undefined} onClick={() => pick(id)}>
         <b className="proto-nav__code">{p.code}</b>
         {p.label}
       </button>
     );
   };
-
-  const section = (rows: Row[]) =>
+  const section2 = (rows: Row[]) =>
     rows.filter((u) => u.presets.some(has)).map((u) => (
       <div key={u.title} style={{ display: 'contents' }}>
         <div className="proto-nav__uc">
           {u.title}
           <small>{u.hint}</small>
         </div>
-        {u.presets.filter(has).map((id) => rowButton(id, `${u.title}-${id}`))}
+        {u.presets.filter(has).map((id) => rowButton2(id, `${u.title}-${id}`))}
       </div>
     ));
 
   return (
-    <nav className="proto-nav" aria-label="Prototype flow" data-open={open}>
-      <button type="button" className="proto-nav__title" aria-expanded={open} onClick={onToggle}>
-        <span className="proto-nav__chev" aria-hidden />
-        Store Management Cockpit - Shift View
-      </button>
+    <>
+      <div className="proto-dock">{action}</div>
       {open && (
-        <>
-          <button type="button" className="proto-nav__group" aria-expanded={groups.uc} onClick={() => setGroups({ ...groups, uc: !groups.uc })}>
-            <span className="proto-nav__chev" aria-hidden />
-            Use cases
-            <em>{USE_CASES.length}</em>
-          </button>
-          {groups.uc && section(USE_CASES)}
-
-          <button type="button" className="proto-nav__group" aria-expanded={groups.ec} onClick={() => setGroups({ ...groups, ec: !groups.ec })}>
-            <span className="proto-nav__chev" aria-hidden />
-            Edge cases
-            <em>{EDGE_CASES.length}</em>
-          </button>
-          {groups.ec && section(EDGE_CASES)}
-
-          <button type="button" className="proto-nav__group" aria-expanded={groups.all} onClick={() => setGroups({ ...groups, all: !groups.all })}>
-            <span className="proto-nav__chev" aria-hidden />
-            Cockpit
-            <em>{PRESETS.length}</em>
-          </button>
-          {groups.all &&
-            PRESETS.map((p, i) => (
-              <div key={p.id} style={{ display: 'contents' }}>
-                {(i === 0 || PRESETS[i - 1].group !== p.group) && <div className="proto-nav__sub">{p.group}</div>}
-                {rowButton(p.id, p.id)}
+        <div className="flows-layer">
+          <div className="flows-backdrop" onClick={onToggle} aria-hidden />
+          <aside className="flows-drawer" role="dialog" aria-modal="true" aria-label="Product Flows">
+            <header className="flows-drawer__head">
+              <div>
+                <h2>Product Flows</h2>
+                <p>Store Management Cockpit - Prototype - Direction</p>
               </div>
-            ))}
-        </>
+              <button type="button" className="ia-close" onClick={onToggle} aria-label="Close">
+                ×
+              </button>
+            </header>
+            <nav className="proto-nav" aria-label="Prototype flow" data-open="true">
+              <button type="button" className="proto-nav__group" aria-expanded={groups.uc} onClick={() => setGroups({ ...groups, uc: !groups.uc })}>
+                <span className="proto-nav__chev" aria-hidden />
+                Use cases
+                <em>{USE_CASES.length}</em>
+              </button>
+              {groups.uc && section2(USE_CASES)}
+              <button type="button" className="proto-nav__group" aria-expanded={groups.ec} onClick={() => setGroups({ ...groups, ec: !groups.ec })}>
+                <span className="proto-nav__chev" aria-hidden />
+                Edge cases
+                <em>{EDGE_CASES.length}</em>
+              </button>
+              {groups.ec && section2(EDGE_CASES)}
+              <button type="button" className="proto-nav__group" aria-expanded={groups.all} onClick={() => setGroups({ ...groups, all: !groups.all })}>
+                <span className="proto-nav__chev" aria-hidden />
+                Cockpit
+                <em>{PRESETS.length}</em>
+              </button>
+              {groups.all &&
+                PRESETS.map((p, i) => (
+                  <div key={p.id} style={{ display: 'contents' }}>
+                    {(i === 0 || PRESETS[i - 1].group !== p.group) && <div className="proto-nav__sub">{p.group}</div>}
+                    {rowButton2(p.id, p.id)}
+                  </div>
+                ))}
+            </nav>
+          </aside>
+        </div>
       )}
-    </nav>
+    </>
   );
 }

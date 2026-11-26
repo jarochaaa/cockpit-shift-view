@@ -168,6 +168,17 @@ const PEOPLE: Person[] = [
   { id: 'p02', name: pickerName(2), activity: 'idle', seconds: 409 },
   { id: 'p09', name: pickerName(9), activity: 'idle', seconds: 1370 },
   { id: 'p03', name: pickerName(3), activity: 'putaway', seconds: 250 },
+  { id: 'p01', name: pickerName(1), activity: 'picking', seconds: 185 },
+  { id: 'p04', name: pickerName(4), activity: 'picking', seconds: 322 },
+  { id: 'p05', name: pickerName(5), activity: 'packing', seconds: 96 },
+  { id: 'p06', name: pickerName(6), activity: 'picking', seconds: 540 },
+  { id: 'p07', name: pickerName(7), activity: 'packing', seconds: 210 },
+  { id: 'p08', name: pickerName(8), activity: 'putaway', seconds: 145 },
+  { id: 'p10', name: pickerName(10), activity: 'picking', seconds: 74 },
+  { id: 'p11', name: pickerName(11), activity: 'packing', seconds: 388 },
+  { id: 'p12', name: pickerName(12), activity: 'picking', seconds: 251 },
+  { id: 'p13', name: pickerName(13), activity: 'putaway', seconds: 502 },
+  { id: 'p14', name: pickerName(14), activity: 'picking', seconds: 133 },
 ];
 
 export function peopleFor(s: Scenario): Person[] {

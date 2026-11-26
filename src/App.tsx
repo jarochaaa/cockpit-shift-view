@@ -1,3 +1,9 @@
+import { CapeIcon } from './cockpit/legacy/icons';
+import { ForceMobile } from './cockpit/v2/useMobile';
+import { BlueprintContext, ChartsContext, DarkContext, TierContext } from './cockpit/tier';
+import type { Tier } from './cockpit/tier';
+import { IATable } from './board/IATable';
+import { CLUSTERS } from './board/iaData';
 import { useEffect, useReducer, useState } from 'react';
 import { Hints } from './board/Hints';
 import { Navigator } from './board/Navigator';
@@ -7,7 +13,7 @@ import i18n from './i18n';
 import { codeFor, presetsFor, initialState, reducer } from './state';
 import type { Lang, State } from './state';
 
-/** Deep link: ?view=SM14&version=cape|legacy&lang=en|es|ar opens that preset directly (used by the Figma file). */
+/** Deep link: ?view=SM14&version=cape|legacy&lang=en|es|ar&tier=vision|mvp opens that preset directly (used by the Figma file). */
 function fromUrl(base: State): State {
   const q = new URLSearchParams(window.location.search);
   let s = base;
@@ -21,6 +27,8 @@ function fromUrl(base: State): State {
   return s;
 }
 
+const DISCOVERY_REPORT = 'https://docs.google.com/document/d/1xw_8w2lmjeDtXSjs45wnmcma4GJgqMknW6nzB-sfpZw/edit?tab=t.0';
+
 const LANGS: { id: Lang; label: string }[] = [
   { id: 'en', label: 'English' },
   { id: 'es', label: 'Español' },
@@ -29,8 +37,22 @@ const LANGS: { id: Lang; label: string }[] = [
 
 export default function App() {
   const [s, dispatch] = useReducer(reducer, initialState, fromUrl);
-  const [navOpen, setNavOpen] = useState(true);
-  const [rationales, setRationales] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+  const [tier, setTier] = useState<Tier>(() => (new URLSearchParams(window.location.search).get('tier') === 'mvp' ? 'mvp' : 'vision'));
+  const [phone, setPhone] = useState(false);
+  const [dark, setDark] = useState(false);
+  const [charts, setCharts] = useState(true);
+  const [blueprint, setBlueprint] = useState(false);
+  const [rationales, setRationales] = useState(false);
+  // Expanded: only the product fills the window; a floating button brings the prototype UI back.
+  const [expanded, setExpanded] = useState(true);
+  const [iaOpen, setIaOpen] = useState(false);
+  useEffect(() => {
+    if (!expanded) return;
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && !document.querySelector('.pd-layer') && setExpanded(false);
+    document.addEventListener('keydown', key);
+    return () => document.removeEventListener('keydown', key);
+  }, [expanded]);
   const code = codeFor(s);
 
   // The language switch changes the Cockpit only; the board stays English.
@@ -38,44 +60,120 @@ export default function App() {
     void i18n.changeLanguage(s.lang);
   }, [s.lang]);
 
-  // Keep the address shareable: it always reflects the current view, version and language.
+  // Keep the address shareable: it always reflects the current view, version, language and mode (End Vision or MVP).
   useEffect(() => {
-    const q = new URLSearchParams({ view: code, version: s.version, lang: s.lang });
+    const q = new URLSearchParams({ view: code, version: s.version, lang: s.lang, tier });
     window.history.replaceState(null, '', `${window.location.pathname}?${q.toString()}`);
-  }, [code, s.version, s.lang]);
+  }, [code, s.version, s.lang, tier]);
 
   return (
-    <div className="stage">
-      <Navigator code={code} version={s.version} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })} />
+    <div className={`stage${expanded ? ' stage--expanded' : ''}`}>
+      <Navigator code={code} version={s.version} open={navOpen} onToggle={() => setNavOpen(!navOpen)} onJump={(id) => dispatch({ type: 'jump', preset: id })}
+        action={
+          <button type="button" className="expand-fab" aria-label={expanded ? 'Show prototype UI' : 'Expand prototype'} data-tip={expanded ? 'Show prototype UI' : 'Expand prototype'} aria-pressed={expanded} onClick={() => setExpanded(!expanded)}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{expanded ? <path d="M10 14l-7 7M3 15v6h6M14 10l7-7M21 9V3h-6" /> : <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />}</svg>
+          </button>
+        }
+      />
 
-      <div className="board" onScroll={(e) => e.currentTarget.scrollLeft > 8 && setNavOpen(false)}>
+      <div className="board">
         <section className="board__web" aria-label="Store Management Cockpit">
           <header className="board__title">
-            <h2>Store Management Cockpit - Shift View</h2>
+            <h2>Store Management Cockpit - Prototype - Direction</h2>
             <div className="board__tags">
-              <span className="board__tag">Web</span>
-              <span className="board__tag">Desktop</span>
-              <span className="board__tag board__tag--user">
-                User: <b>{s.page === 'monitoring' ? 'Area Manager' : 'Store Manager'}</b>
-              </span>
-              <span className="board__tag">{s.page === 'monitoring' ? 'Country Monitor' : 'Shift View'}</span>
-              <span className="board__tag">{s.version === 'cape' ? 'Cape Version' : 'Legacy Version'}</span>
-              <span className="board__tag board__tag--view">
-                View <b>{code}</b>
-              </span>
+              {(s.page === 'monitoring' ? CLUSTERS : ['Store Manager', 'Shift Lead']).map((r) => (
+                <span key={r} className="board__tag board__tag--user">
+                  <b>{r}</b>
+                </span>
+              ))}
             </div>
           </header>
           <div className="board__row">
-            <div className="product">
-              {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
+            <div className={`product${phone ? ' product--phone iphone' : ''}`} data-dark={dark && s.version === 'cape' ? '' : undefined}>
+              {(() => {
+                const content = (
+                  <BlueprintContext.Provider value={blueprint && s.version === 'cape'}>
+                  <ChartsContext.Provider value={charts && s.version === 'cape'}>
+                  <DarkContext.Provider value={dark && s.version === 'cape'}>
+                  <TierContext.Provider value={s.version === 'cape' ? tier : 'vision'}>
+                    <ForceMobile.Provider value={phone && s.version === 'cape'}>
+                      {s.version === 'cape' ? <CockpitV2 s={s} dispatch={dispatch} rationales={rationales} /> : <CockpitLegacy s={s} dispatch={dispatch} />}
+                    </ForceMobile.Provider>
+                  </TierContext.Provider>
+                  </DarkContext.Provider>
+                  </ChartsContext.Provider>
+                  </BlueprintContext.Provider>
+                );
+                return phone ? (
+                  <div className="iphone__screen">
+                    <div className="iphone__status" aria-hidden>
+                      <span className="iphone__time">9:41</span>
+                      <span className="iphone__island" />
+                      <span className="iphone__sys">
+                        <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5.5" width="3" height="6.5" rx="1" /><rect x="10" y="3" width="3" height="9" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
+                        <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2.3c2.3 0 4.4.9 6 2.4l1-1.1A10.2 10.2 0 0 0 8.5.8 10.2 10.2 0 0 0 1.5 3.6l1 1.1a8.7 8.7 0 0 1 6-2.4Zm0 3.4c1.4 0 2.700.5 3.700 1.400l1-1.100a7.200 7.200 0 0 0-4.700-1.800c-1.800 0-3.500.7-4.700 1.800l1 1.100c1-.9 2.300-1.400 3.700-1.400Zm0 3.300c.7 0 1.300.3 1.800.7L8.500 11.500 6.700 9.700c.5-.4 1.100-.7 1.800-.7Z" /></svg>
+                        <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x="0.5" y="0.5" width="22" height="12" rx="3.500" stroke="currentColor" opacity="0.4" /><rect x="2" y="2" width="19" height="9" rx="2" fill="currentColor" /><path d="M24 4.500v4c.8-.3 1.500-1.100 1.500-2s-.7-1.700-1.500-2Z" fill="currentColor" opacity="0.5" /></svg>
+                      </span>
+                    </div>
+                    <div className="iphone__app">{content}</div>
+                    <span className="iphone__home" aria-hidden />
+                  </div>
+                ) : (
+                  content
+                );
+              })()}
             </div>
             <div className="side">
               <div className="view-tag">
                 View <b>{code}</b>
               </div>
-              <button type="button" className="version-switch" onClick={() => dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' })}>
-                Switch to {s.version === 'cape' ? 'Legacy Version' : 'Cape Version'}
-              </button>
+              <div className="proto-grid" role="group" aria-label="Prototype controls">
+                <button type="button" className="version-switch" onClick={() => setIaOpen(true)}>
+                  <CapeIcon name="group" size={20} />
+                  Information Architecture
+                </button>
+                <button type="button" className="version-switch" onClick={() => window.open(DISCOVERY_REPORT, '_blank', 'noopener,noreferrer')}>
+                  <CapeIcon name="info" size={20} />
+                  Discovery Report
+                </button>
+                <button type="button" className="version-switch" aria-pressed={tier === 'mvp'} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setTier(tier === 'mvp' ? 'vision' : 'mvp'))}>
+                  <CapeIcon name="flag" size={20} />
+                  MVP
+                </button>
+                <button type="button" className="version-switch" aria-pressed={blueprint} onClick={() => (blueprint ? setBlueprint(false) : (setBlueprint(true), s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), dispatch({ type: 'page', page: 'monitoring' })))}>
+                  <CapeIcon name="dashboard" size={20} />
+                  Blueprint
+                </button>
+                <button type="button" className="version-switch" aria-pressed={phone} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setPhone(!phone))}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
+                    <rect x="7" y="2.5" width="10" height="19" rx="2.5" />
+                    <path d="M10.5 18.5h3" />
+                  </svg>
+                  Mobile Version
+                </button>
+                <button type="button" className="version-switch" onClick={() => setNavOpen(true)}>
+                  <CapeIcon name="arrowRight" size={20} />
+                  Product Flows
+                </button>
+                <button type="button" className="version-switch" aria-pressed={s.version === 'legacy'} onClick={() => (setPhone(false), dispatch({ type: 'version', version: s.version === 'cape' ? 'legacy' : 'cape' }))}>
+                  <CapeIcon name="history" size={20} />
+                  Legacy Version
+                </button>
+                <button type="button" className="version-switch" aria-pressed={dark} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setDark(!dark))}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" aria-hidden>
+                    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />
+                  </svg>
+                  Dark Mode
+                </button>
+                <button type="button" className="version-switch" aria-pressed={rationales} onClick={() => setRationales(!rationales)}>
+                  <CapeIcon name="rateReview" size={20} />
+                  Rationales
+                </button>
+                <button type="button" className="version-switch" aria-pressed={charts} onClick={() => setCharts(!charts)}>
+                  <CapeIcon name="lineChart" size={20} />
+                  Charts
+                </button>
+              </div>
               <div className="lang-switch" role="group" aria-label="App language">
                 <span>App language</span>
                 <div className="lang-switch__opts">
@@ -86,24 +184,12 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              {s.version === 'cape' && s.page === 'monitoring' && (
-                <div className="lang-switch" role="group" aria-label="Rationales">
-                  <span>Rationales</span>
-                  <div className="lang-switch__opts">
-                    <button type="button" aria-pressed={rationales} onClick={() => setRationales(true)}>
-                      On
-                    </button>
-                    <button type="button" aria-pressed={!rationales} onClick={() => setRationales(false)}>
-                      Off
-                    </button>
-                  </div>
-                </div>
-              )}
               <Hints s={s} code={code} />
             </div>
           </div>
         </section>
       </div>
+      {iaOpen && <IATable onClose={() => setIaOpen(false)} />}
     </div>
   );
 }
