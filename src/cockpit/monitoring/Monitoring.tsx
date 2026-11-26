@@ -62,7 +62,7 @@ export function Info({ k }: { k: string }) {
   const metric = METRIC[k];
   const row = metric ? IA_ROWS.find((r) => r.metric === metric.ia) : undefined;
   const feas = row ? row.feas : (FEASIBILITY[k] ?? null);
-  const [why, where, how] = row ? [`Critical when: ${row.critical}`, `Asked for by ${row.persona}. Evidence: ${row.evidence}.`, `Expected action: ${row.action}`] : (t(`msm.r.${k}`, { returnObjects: true }) as string[]);
+  const [why, where, how] = row ? [`Critical when: ${row.critical}`, `Target cluster: ${row.persona}. Evidence: ${row.evidence}.`, `Expected action: ${row.action}`] : (t(`msm.r.${k}`, { returnObjects: true }) as string[]);
   return (
     <span className="msm-info" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <IconButton ref={btn} className="msm-info__btn" aria-label={t('msm.info.label')} aria-expanded={open} onClick={() => setOpen(!open)} onBlur={() => setOpen(false)}>
@@ -267,8 +267,11 @@ export function Monitoring({ dispatch, rationales }: { dispatch: Dispatch<Action
         return tile('pfr', pct(C.pfr), band(C.pfr, TARGET.pfr), pct(TARGET.pfr, 0));
       case 'fail':
         return tile('fail', pct(C.fail), band(C.fail, TARGET.fail), pct(TARGET.fail, 0));
-      case 'nsfr':
-        return tile('nsfr', pct(SECONDARY.nsfr), SECONDARY.nsfr >= 95 ? 'meets' : 'mild', pct(95, 0));
+      case 'nsfr': {
+        // Country nSFR is the order-weighted average of its stores, so it matches the Stores table.
+        const nsfr = countryValue(METRIC.nsfr, scoped);
+        return tile('nsfr', `${nsfr.toFixed(1)}%`, nsfr >= 95 ? 'meets' : 'mild', pct(95, 0));
+      }
       case 'basket':
         return tile('basket', `${market.currency} ${market.basket.toLocaleString('en-US', { maximumFractionDigits: market.basket >= 1000 ? 0 : 2 })}`, 'neutral');
       case 'refunds':

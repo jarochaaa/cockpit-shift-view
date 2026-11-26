@@ -55,11 +55,11 @@ const HINTS: Record<string, Hint> = {
   SM10: {
     title: 'Country Monitor · peak evening (Cape only)',
     look: [
-      'Persona: Area Manager doing live triage; UAE has 18 stores in Dubai, Abu Dhabi and Sharjah, plus Kuwait, Bahrain, Egypt and Qatar; City/Country leads and Ops Excellence use the same screen.',
+      'Used by Cluster 1 · Monitors (live triage and performance review) and Cluster 2 · Decision Owners (decision and action trigger); journey: Visualisation → Decision making → Action trigger. UAE has 18 stores in Dubai, Abu Dhabi and Sharjah, plus Kuwait, Bahrain, Egypt and Qatar. Store managers and shift leads use the Store level page only.',
       'KPI strip: country values weighted by order volume, coloured by attainment vs target. Assignment time and Late orders are red.',
       'Menu: a single Overview starts here; opening any store goes to its store view (SM1).',
       'Store ranking: worst first, by distance from each store\'s usual level and from the country average. Red/amber cells, deviation age chip, owner and next action.',
-      'Alerts feed: deviations with likely cause; day 4 off target escalates to the area manager\'s leader.',
+      'Alerts feed: deviations with likely cause; day 4 off target escalates to the next leader; proactive, not reactive.',
       'Every block, KPI and column has a grey "i" with why it is there, why there, and why shown that way.',
     ],
     tryThis: ['Open Dubai Marina (A) in Insights: 4 of 7 pickers, 12 unassigned; request pickers from Al Barsha (B).', 'Open Al Taawun (C): prep fine, AWT 14 min → ask logistics for riders.', 'Switch Country to Kuwait or Egypt, then filter a city and a status.', 'Collapse Insights with its arrow (it stays open while you scroll); turn Rationales off next to the languages.', 'Hover any "i".', 'Click any table row to open that store (SM1).'],

@@ -38,7 +38,7 @@ export function IATable({ onClose }: { onClose: () => void }) {
           </button>
         </header>
         <div className="ia-tools">
-          <input type="search" placeholder="Search data point, persona or source" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
+          <input type="search" placeholder="Search data point, cluster or source" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
           <div className="ia-chips" role="group" aria-label="Category">
             {CATS.map((c) => (
               <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}>
@@ -51,7 +51,7 @@ export function IATable({ onClose }: { onClose: () => void }) {
           <table className="ia-table">
             <thead>
               <tr>
-                {['Category', 'Data point / metric', 'Description', 'Target persona', 'Current source / tool', 'Feasibility', 'Critical when', 'Expected action when critical', 'LATAM class', 'Evidence', 'Top 10 (rank · why)'].map((h) => (
+                {['Category', 'Data point / metric', 'Description', 'Target cluster', 'Current source / tool', 'Feasibility', 'Critical when', 'Expected action when critical', 'LATAM class', 'Evidence', 'Top 10 (rank · why)'].map((h) => (
                   <th key={h}>{h}</th>
                 ))}
               </tr>

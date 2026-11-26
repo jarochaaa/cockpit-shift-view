@@ -3,7 +3,7 @@ import { ForceMobile } from './cockpit/v2/useMobile';
 import { BlueprintContext, ChartsContext, DarkContext, TierContext } from './cockpit/tier';
 import type { Tier } from './cockpit/tier';
 import { IATable } from './board/IATable';
-import { ROLES } from './board/iaData';
+import { CLUSTERS } from './board/iaData';
 import { useEffect, useReducer, useState } from 'react';
 import { Hints } from './board/Hints';
 import { Navigator } from './board/Navigator';
@@ -26,6 +26,8 @@ function fromUrl(base: State): State {
   if (preset) s = reducer(s, { type: 'jump', preset: preset.id });
   return s;
 }
+
+const DISCOVERY_REPORT = 'https://docs.google.com/document/d/1xw_8w2lmjeDtXSjs45wnmcma4GJgqMknW6nzB-sfpZw/edit?tab=t.0';
 
 const LANGS: { id: Lang; label: string }[] = [
   { id: 'en', label: 'English' },
@@ -79,7 +81,7 @@ export default function App() {
           <header className="board__title">
             <h2>Store Management Cockpit - Prototype - Direction</h2>
             <div className="board__tags">
-              {(s.page === 'monitoring' ? ROLES.filter((r) => r !== 'Store Manager' && r !== 'Shift Lead') : ['Store Manager', 'Shift Lead']).map((r) => (
+              {(s.page === 'monitoring' ? CLUSTERS : ['Store Manager', 'Shift Lead']).map((r) => (
                 <span key={r} className="board__tag board__tag--user">
                   <b>{r}</b>
                 </span>
@@ -129,6 +131,10 @@ export default function App() {
                 <button type="button" className="version-switch" onClick={() => setIaOpen(true)}>
                   <CapeIcon name="group" size={20} />
                   Information Architecture
+                </button>
+                <button type="button" className="version-switch" onClick={() => window.open(DISCOVERY_REPORT, '_blank', 'noopener,noreferrer')}>
+                  <CapeIcon name="info" size={20} />
+                  Discovery Report
                 </button>
                 <button type="button" className="version-switch" aria-pressed={tier === 'mvp'} onClick={() => (s.version === 'legacy' && dispatch({ type: 'version', version: 'cape' }), setTier(tier === 'mvp' ? 'vision' : 'mvp'))}>
                   <CapeIcon name="flag" size={20} />
